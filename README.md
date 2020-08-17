@@ -1,2 +1,2 @@
 # qserv-ncsa
-Documentation, configuration and scripts for installing Qserv at NCSA
+Documentation, configuration and scripts for installing and managing Qserv at NCSA
