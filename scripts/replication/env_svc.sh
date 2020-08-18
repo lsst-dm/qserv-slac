@@ -60,6 +60,9 @@ Options restricting a scope of the operation:
 
     -d|--db
         database service
+
+    -n|--nginx
+        nginx web server
 "
 
 USE_JEMALLOC=
@@ -68,6 +71,7 @@ ALL=1
 WORKER=
 MASTER_CONTROLLER=
 DB_SERVICE=
+NGINX=
 
 for i in "$@"; do
     case $i in
@@ -86,6 +90,10 @@ for i in "$@"; do
         ALL=
         DB_SERVICE=1
         ;;
+    -n|--nginx)
+        ALL=
+        NGINX=1
+        ;;
     -j|--jemalloc)
         USE_JEMALLOC=1
         ;;
@@ -102,6 +110,7 @@ done
 if [ ! -z "${ALL}" ]; then
     MASTER_CONTROLLER=1
     DB_SERVICE=1
+    NGINX=1
 else
     WORKERS=$WORKER
 fi

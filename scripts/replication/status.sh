@@ -44,3 +44,9 @@ if [ -n "${DB_SERVICE}" ]; then
     HOST="qserv-${MASTER}"
     ssh -n $HOST 'echo "["'$MASTER'"] database service: "$(docker ps -a | grep '$DB_CONTAINER_NAME')'
 fi
+
+if [ -n "${NGINX}" ]; then
+    HOST="qserv-${MASTER}"
+    ssh -n $HOST 'echo "["'$MASTER'"] nginx: "$(docker ps -a | grep '$NGINX_CONTAINER_NAME')'
+fi
+

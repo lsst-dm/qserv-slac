@@ -73,14 +73,23 @@ LOG_CONFIG="log4cxx.replication.properties"
 # to store core files, as well as various debug information.
 WORK_DIR="${REPLICATION_DATA_DIR}/work"
 
+# The configuration files of the nginx web proxy
+NGINX_CONFIG_DIR=${basedir}/nginx
+
+# The home folder of the nginx web proxy. This folder also containes
+# the Qserv Dashboard Web application.
+NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
+
 # Tags for the relevant containers
 #REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-25961"
 REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-25986"
 DB_IMAGE_TAG="mariadb:10.2.16"
+NGINX_IMAGE_TAG="nginx:latest"
 
 DB_CONTAINER_NAME="qserv-replica-mariadb"
 MASTER_CONTAINER_NAME="qserv-replica-master-http"
 WORKER_CONTAINER_NAME="qserv-replica-worker"
+NGINX_CONTAINER_NAME="qserv-replica-nginx"
 
 WORKERS="$(get_param workers)"
 MASTER="$(get_param master)"

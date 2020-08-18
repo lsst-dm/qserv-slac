@@ -24,7 +24,7 @@
 # Start services on all nodes
 
 set -e
-set -x
+
 # Load parameters of the setup into the corresponding environment
 # variables
 
@@ -124,4 +124,19 @@ if [ -n "${MASTER_CONTROLLER}" ]; then
         "${REPLICATION_IMAGE_TAG}" \
         bash -c \''lsst qserv-replica-master-http ${PARAMETERS} --config=${CONFIG} --instance-id=${INSTANCE_ID} --qserv-db-password="${QSERV_MASTER_DB_PASSWORD}" --auth-key="${AUTH_KEY}" --debug >& /qserv/replication/log/${MASTER_CONTAINER_NAME}.log'\' &
 fi
+
+# Start nginx
+
+if [ -n "${NGINX}" ]; then
+    HOST="qserv-${MASTER}"
+    echo "[${MASTER}] starting nginx"
+    ssh -n $HOST docker run \
+        --detach \
+        --network host \
+        --name "${NGINX_CONTAINER_NAME}" \
+        -v "${NGINX_ROOT_DIR}:/usr/share/nginx/html:ro" \
+        -v "${NGINX_CONFIG_DIR}/conf.d/default.conf:/etc/nginx/conf.d/default.conf:ro" \
+        "${NGINX_IMAGE_TAG}"
+fi
+unset basedir
 wait

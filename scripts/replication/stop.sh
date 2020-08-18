@@ -44,4 +44,9 @@ if [ -n "${DB_SERVICE}" ]; then
     HOST="qserv-${MASTER}"
     ssh -n $HOST 'echo "["'$MASTER'"] database service: "$(docker stop '$DB_CONTAINER_NAME')" "$(docker rm '$DB_CONTAINER_NAME')'&
 fi
+if [ -n "${NGINX}" ]; then
+    HOST="qserv-${MASTER}"
+    ssh -n $HOST 'echo "["'$MASTER'"] nginx: "$(docker stop '$NGINX_CONTAINER_NAME')" "$(docker rm '$NGINX_CONTAINER_NAME')'&
+
+fi
 wait
