@@ -1,0 +1,4 @@
+scripts/replication/secrets/auth_key
+scripts/replication/secrets/db_root_password
+scripts/replication/secrets/qserv_worker_db_password
+scripts/replication/secrets/qserv_master_db_password
