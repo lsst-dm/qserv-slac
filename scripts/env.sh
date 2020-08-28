@@ -2,7 +2,7 @@
 # ===========================
 
 # The latest version of the Qserv container
-BRANCH=tickets_DM-26207
+BRANCH=tickets_DM-26609
 
 # Data directory location on docker host, optional
 HOST_DATA_DIR=/qserv/qserv-prod/data

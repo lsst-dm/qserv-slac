@@ -81,10 +81,7 @@ NGINX_CONFIG_DIR=${basedir}/nginx
 NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 
 # Tags for the relevant containers
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-25961"
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-25986"
-# Fixed a crash due to Protobuf overflow in the Replication worker service
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-26486"
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-26530"
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
 
