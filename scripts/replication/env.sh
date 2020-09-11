@@ -81,7 +81,7 @@ NGINX_CONFIG_DIR=${basedir}/nginx
 NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 
 # Tags for the relevant containers
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-26530"
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-26609"
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
 
