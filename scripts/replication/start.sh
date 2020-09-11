@@ -135,7 +135,7 @@ if [ -n "${NGINX}" ]; then
         --network host \
         --name "${NGINX_CONTAINER_NAME}" \
         -v "${NGINX_ROOT_DIR}:/usr/share/nginx/html:ro" \
-        -v "${NGINX_CONFIG_DIR}/conf.d/default.conf:/etc/nginx/conf.d/default.conf:ro" \
+        -v "${NGINX_CONFIG_DIR}/conf.d:/etc/nginx/conf.d:ro" \
         "${NGINX_IMAGE_TAG}"
 fi
 unset basedir
