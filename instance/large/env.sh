@@ -27,7 +27,7 @@ MASTER_FORMAT="lsst-qserv-master%02g"
 
 # Optional, default to <SSH_HOSTNAME_FORMAT>
 # then $MASTER"
-SSH_MASTER_FORMAT="qserv-master03"
+SSH_MASTER_FORMAT="qserv-master${MASTER_ID}"
 
 # Format for all node's hostname
 HOSTNAME_FORMAT="lsst-qserv-db%02g"
