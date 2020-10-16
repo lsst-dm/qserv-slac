@@ -69,6 +69,8 @@ for WORKER in $WORKERS; do
     HOST="qserv-${WORKER}"
     echo "[${WORKER}] starting worker agent"
     ssh -n $HOST docker run \
+        --privileged \
+        --cap-add=SYS_PTRACE \
         --detach \
         --network host \
         --memory 42949672960 \
@@ -79,6 +81,7 @@ for WORKER in $WORKERS; do
         -v "${QSERV_DATA_DIR}/export:/qserv/data/export" \
         -v "${CONFIG_DIR}:/qserv/replication/config:ro" \
         -v "${LOG_DIR}:/qserv/replication/log" \
+        -v "/datasets:/datasets:ro" \
         -e "WORKER_CONTAINER_NAME=${WORKER_CONTAINER_NAME}" \
         -e "LSST_LOG_CONFIG=/qserv/replication/config/${LOG_CONFIG}" \
         -e "CONFIG=${CONFIG}" \
@@ -102,6 +105,8 @@ if [ -n "${MASTER_CONTROLLER}" ]; then
         OPT_LD_PRELOAD=/qserv/lib/libjemalloc.so
     fi
     ssh -n $HOST docker run \
+        --privileged \
+        --cap-add=SYS_PTRACE \
         --detach \
         --network host \
         --name "${MASTER_CONTAINER_NAME}" \
@@ -136,6 +141,7 @@ if [ -n "${NGINX}" ]; then
         --name "${NGINX_CONTAINER_NAME}" \
         -v "${NGINX_ROOT_DIR}:/usr/share/nginx/html:ro" \
         -v "${NGINX_CONFIG_DIR}/conf.d:/etc/nginx/conf.d:ro" \
+        -v "/datasets:/datasets:ro" \
         "${NGINX_IMAGE_TAG}"
 fi
 unset basedir
