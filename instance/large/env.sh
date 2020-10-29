@@ -16,8 +16,8 @@ HOST_LOG_DIR=/qserv/qserv-prod/log
 # Temporary directory location on docker host, optional
 HOST_TMP_DIR=/qserv/qserv-prod/tmp
 
-# The home directory of the master container for dumping core files
-HOST_MASTER_HOME_DIR=/qserv/qserv-prod/master
+# The home directory of the containers for dumping core files
+HOST_CORE_FILES_DIR=/qserv/qserv-prod/core-files
 
 # ulimit memory lock setting, in bytes, optional
 ULIMIT_MEMLOCK=10737418240
