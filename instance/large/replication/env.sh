@@ -82,11 +82,9 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 
 # Tags for the relevant containers
 
-# "Extend the Ingest system to allow pulling table contributions from a remote store
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27091"
-
 # REST API for obtaining and altering table schema (developed in a context
 # of "Migrate BLOB/TEXT columns of table gaia_02.gaia_source to VARCHAR/CHAR in the small Qserv cluster"
+# Remote file ingest with http:// and file:///
 REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27273"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
