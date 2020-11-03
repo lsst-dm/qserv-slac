@@ -82,6 +82,7 @@ for WORKER in $WORKERS; do
         -v "${CONFIG_DIR}:/qserv/replication/config:ro" \
         -v "${LOG_DIR}:/qserv/replication/log" \
         -v "/datasets:/datasets:ro" \
+        -v "/lsstdata:/lsstdata:ro" \
         -e "WORKER_CONTAINER_NAME=${WORKER_CONTAINER_NAME}" \
         -e "LSST_LOG_CONFIG=/qserv/replication/config/${LOG_CONFIG}" \
         -e "CONFIG=${CONFIG}" \
