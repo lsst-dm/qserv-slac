@@ -85,7 +85,12 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 # REST API for obtaining and altering table schema (developed in a context
 # of "Migrate BLOB/TEXT columns of table gaia_02.gaia_source to VARCHAR/CHAR in the small Qserv cluster"
 # Remote file ingest with http:// and file:///
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27273"
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27273"
+
+# Extended vesion of the "secondary index" builder to allow "LOAD DATA LOCAL INFILE".
+# This version includes the remote file ingest with http:// and file:///. And it
+# does not include DM-27273 (SQL table scema migration REST services).
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27400"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
