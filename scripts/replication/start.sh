@@ -90,8 +90,9 @@ for WORKER in $WORKERS; do
         -e "WORKER=${WORKER}" \
         -e "QSERV_WORKER_DB_PASSWORD=${QSERV_WORKER_DB_PASSWORD}" \
         -e "AUTH_KEY=${AUTH_KEY}" \
+        -e "ADMIN_AUTH_KEY=${ADMIN_AUTH_KEY}" \
        "${REPLICATION_IMAGE_TAG}" \
-        bash -c \''lsst qserv-replica-worker ${WORKER} --config=${CONFIG} --instance-id=${INSTANCE_ID} --qserv-db-password="${QSERV_WORKER_DB_PASSWORD}" --auth-key="${AUTH_KEY}" --debug >& /qserv/replication/log/${WORKER_CONTAINER_NAME}.log'\' &
+        bash -c \''lsst qserv-replica-worker ${WORKER} --config=${CONFIG} --instance-id=${INSTANCE_ID} --qserv-db-password="${QSERV_WORKER_DB_PASSWORD}" --auth-key="${AUTH_KEY}" --admin-auth-key="${ADMIN_AUTH_KEY}" --debug >& /qserv/replication/log/${WORKER_CONTAINER_NAME}.log'\' &
 done
 
 # Start master controller
@@ -127,8 +128,9 @@ if [ -n "${MASTER_CONTROLLER}" ]; then
         -e "OPT_LD_PRELOAD=${OPT_LD_PRELOAD}" \
         -e "QSERV_MASTER_DB_PASSWORD=${QSERV_MASTER_DB_PASSWORD}" \
         -e "AUTH_KEY=${AUTH_KEY}" \
+        -e "ADMIN_AUTH_KEY=${ADMIN_AUTH_KEY}" \
         "${REPLICATION_IMAGE_TAG}" \
-        bash -c \''lsst qserv-replica-master-http ${PARAMETERS} --config=${CONFIG} --instance-id=${INSTANCE_ID} --qserv-db-password="${QSERV_MASTER_DB_PASSWORD}" --auth-key="${AUTH_KEY}" --debug >& /qserv/replication/log/${MASTER_CONTAINER_NAME}.log'\' &
+        bash -c \''lsst qserv-replica-master-http ${PARAMETERS} --config=${CONFIG} --instance-id=${INSTANCE_ID} --qserv-db-password="${QSERV_MASTER_DB_PASSWORD}" --auth-key="${AUTH_KEY}" --admin-auth-key="${ADMIN_AUTH_KEY}" --debug >& /qserv/replication/log/${MASTER_CONTAINER_NAME}.log'\' &
 fi
 
 # Start nginx

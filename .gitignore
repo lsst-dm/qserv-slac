@@ -1,4 +1,5 @@
 instance/*/replication/secrets/auth_key
+instance/*/replication/secrets/admin_auth_key
 instance/*/replication/secrets/db_root_password
 instance/*/replication/secrets/qserv_worker_db_password
 instance/*/replication/secrets/qserv_master_db_password

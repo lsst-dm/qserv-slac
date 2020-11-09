@@ -90,7 +90,10 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 # Extended vesion of the "secondary index" builder to allow "LOAD DATA LOCAL INFILE".
 # This version includes the remote file ingest with http:// and file:///. And it
 # does not include DM-27273 (SQL table scema migration REST services).
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27400"
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27400"
+
+# Deleting published catalogs and tables with "admin_auth_key"
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-24959"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
@@ -110,6 +113,7 @@ QSERV_WORKER_DB_PASSWORD="$(get_param secrets/qserv_worker_db_password)"
 QSERV_MASTER_DB_PASSWORD="$(get_param secrets/qserv_master_db_password)"
 
 AUTH_KEY="$(get_param secrets/auth_key)"
+ADMIN_AUTH_KEY="$(get_param secrets/admin_auth_key)"
 
 CONFIG="mysql://qsreplica@lsst-qserv-${MASTER}:${DB_PORT}/qservReplica"
 

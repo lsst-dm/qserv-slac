@@ -85,7 +85,10 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 # REST API for obtaining and altering table schema (developed in a context
 # of "Migrate BLOB/TEXT columns of table gaia_02.gaia_source to VARCHAR/CHAR in the small Qserv cluster"
 # Remote file ingest with http:// and file:///
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27273"
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27273"
+
+# Deleting published catalogs and tables with "admin_auth_key"
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-24959"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
@@ -105,6 +108,7 @@ QSERV_WORKER_DB_PASSWORD="$(get_param secrets/qserv_worker_db_password)"
 QSERV_MASTER_DB_PASSWORD="$(get_param secrets/qserv_master_db_password)"
 
 AUTH_KEY="$(get_param secrets/auth_key)"
+ADMIN_AUTH_KEY="$(get_param secrets/admin_auth_key)"
 
 CONFIG="mysql://qsreplica@lsst-qserv-${MASTER}:${DB_PORT}/qservReplica"
 
