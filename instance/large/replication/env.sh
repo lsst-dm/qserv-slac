@@ -84,7 +84,10 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 
 # Running HTTP REST server of Master Controller in its won thread pool.
 # The ticket includeds all prior developments mergd into the master branch.
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27606"
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27606"
+# Reinforced table management operatons in Ingest workers.
+# The ticket includeds all prior developments merged into the master branch.
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27681"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
