@@ -6,7 +6,11 @@
 
 # A fix to the workers going unchecked and consuming over 29k threads
 # in the heavy load scenario.
-BRANCH=tickets_DM-27334
+#BRANCH=tickets_DM-27334
+
+# A fix to a possible race condition fixed in QueryRequest::ProcessResponse.
+# Tis may cause spurious crashes of Qserv master.
+BRANCH=tickets_DM-27781
 
 # Data directory location on docker host, optional
 HOST_DATA_DIR=/qserv/qserv-prod/data
