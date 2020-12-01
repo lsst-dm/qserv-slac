@@ -88,7 +88,11 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 #REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27273"
 
 # Deleting published catalogs and tables with "admin_auth_key"
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-24959"
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-24959"
+
+# Reinforced table management operatons in Ingest workers.
+# The ticket includeds all prior developments merged into the master branch.
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27681"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
