@@ -101,6 +101,7 @@ DB_CONTAINER_NAME="qserv-replica-mariadb"
 MASTER_CONTAINER_NAME="qserv-replica-master-http"
 WORKER_CONTAINER_NAME="qserv-replica-worker"
 NGINX_CONTAINER_NAME="qserv-replica-nginx"
+TOOLS_CONTAINER_NAME="qserv-replica-tools"
 
 WORKERS="$(get_param workers)"
 MASTER="$(get_param master)"

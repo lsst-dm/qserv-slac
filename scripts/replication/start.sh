@@ -30,6 +30,15 @@ set -e
 
 . $(dirname "$0")/env_svc.sh
 
+# Optional setting of the JEMALLOC profiles
+
+OPT_MALLOC_CONF=
+OPT_LD_PRELOAD=
+if [ ! -z "${USE_JEMALLOC}" ]; then
+    OPT_MALLOC_CONF=prof_leak:true,lg_prof_interval:31,lg_prof_sample:22,prof_final:true
+    OPT_LD_PRELOAD=/qserv/lib/libjemalloc.so
+fi
+
 # Start database services on the master node
 #
 # The general log is temporarily disabled because it results in a huge size
@@ -100,12 +109,6 @@ done
 if [ -n "${MASTER_CONTROLLER}" ]; then
     HOST="qserv-${MASTER}"
     echo "[${MASTER}] starting master controller"
-    OPT_MALLOC_CONF=
-    OPT_LD_PRELOAD=
-    if [ ! -z "${USE_JEMALLOC}" ]; then
-        OPT_MALLOC_CONF=prof_leak:true,lg_prof_interval:31,lg_prof_sample:22,prof_final:true
-        OPT_LD_PRELOAD=/qserv/lib/libjemalloc.so
-    fi
     ssh -n $HOST docker run \
         --privileged \
         --cap-add=SYS_PTRACE \
@@ -131,6 +134,33 @@ if [ -n "${MASTER_CONTROLLER}" ]; then
         -e "ADMIN_AUTH_KEY=${ADMIN_AUTH_KEY}" \
         "${REPLICATION_IMAGE_TAG}" \
         bash -c \''lsst qserv-replica-master-http ${PARAMETERS} --config=${CONFIG} --instance-id=${INSTANCE_ID} --qserv-db-password="${QSERV_MASTER_DB_PASSWORD}" --auth-key="${AUTH_KEY}" --admin-auth-key="${ADMIN_AUTH_KEY}" --debug >& /qserv/replication/log/${MASTER_CONTAINER_NAME}.log'\' &
+fi
+
+if [ -n "${TOOLS}" ]; then
+    HOST="qserv-${MASTER}"
+    echo "[${MASTER}] starting tools container for interactive operations"
+    ssh -n $HOST docker run \
+        --detach \
+        --privileged \
+        --cap-add=SYS_PTRACE \
+        --network host \
+        --name "${TOOLS_CONTAINER_NAME}" \
+        -u ${CONTAINER_UID}:${CONTAINER_GID} \
+        -v "/etc/passwd:/etc/passwd:ro" \
+        -v "${WORK_DIR}:/qserv/replication/work" \
+        -v "${QSERV_DATA_DIR}/qserv:/qserv/data/qserv" \
+        -v "${QSERV_DATA_DIR}/ingest:/qserv/data/ingest" \
+        -v "${CONFIG_DIR}:/qserv/replication/config:ro" \
+        -v "${LOG_DIR}:/qserv/replication/log" \
+        -e "CONFIG=${CONFIG}" \
+        -e "INSTANCE_ID=${INSTANCE_ID}" \
+        -e "OPT_MALLOC_CONF=${OPT_MALLOC_CONF}" \
+        -e "OPT_LD_PRELOAD=${OPT_LD_PRELOAD}" \
+        -e "QSERV_MASTER_DB_PASSWORD=${QSERV_MASTER_DB_PASSWORD}" \
+        -e "AUTH_KEY=${AUTH_KEY}" \
+        -e "ADMIN_AUTH_KEY=${ADMIN_AUTH_KEY}" \
+        "${REPLICATION_IMAGE_TAG}" \
+        sleep 1000000000
 fi
 
 # Start nginx

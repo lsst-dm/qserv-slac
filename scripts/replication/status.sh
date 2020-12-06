@@ -50,3 +50,7 @@ if [ -n "${NGINX}" ]; then
     ssh -n $HOST 'echo "["'$MASTER'"] nginx: "$(docker ps -a | grep '$NGINX_CONTAINER_NAME')'
 fi
 
+if [ -n "${TOOLS}" ]; then
+    HOST="qserv-${MASTER}"
+    ssh -n $HOST 'echo "["'$MASTER'"] tools: "$(docker ps -a | grep '$TOOLS_CONTAINER_NAME')'
+fi

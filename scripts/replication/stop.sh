@@ -47,6 +47,9 @@ fi
 if [ -n "${NGINX}" ]; then
     HOST="qserv-${MASTER}"
     ssh -n $HOST 'echo "["'$MASTER'"] nginx: "$(docker stop '$NGINX_CONTAINER_NAME')" "$(docker rm '$NGINX_CONTAINER_NAME')'&
-
+fi
+if [ -n "${TOOLS}" ]; then
+    HOST="qserv-${MASTER}"
+    ssh -n $HOST 'echo "["'$MASTER'"] tools: "$(docker stop '$TOOLS_CONTAINER_NAME')" "$(docker rm '$TOOLS_CONTAINER_NAME')'&
 fi
 wait

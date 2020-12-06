@@ -85,9 +85,17 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 # Running HTTP REST server of Master Controller in its won thread pool.
 # The ticket includeds all prior developments mergd into the master branch.
 #REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27606"
+
 # Reinforced table management operatons in Ingest workers.
 # The ticket includeds all prior developments merged into the master branch.
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27681"
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27681"
+
+# Improved file I/O error reporting at ingest worker services
+# when ingesting from file:/// or http://
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27772"
+
+# Advanced test for the Messenger. The ticket includes the previous one.
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27855"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
@@ -96,6 +104,7 @@ DB_CONTAINER_NAME="qserv-replica-mariadb"
 MASTER_CONTAINER_NAME="qserv-replica-master-http"
 WORKER_CONTAINER_NAME="qserv-replica-worker"
 NGINX_CONTAINER_NAME="qserv-replica-nginx"
+TOOLS_CONTAINER_NAME="qserv-replica-tools"
 
 WORKERS="$(get_param workers)"
 MASTER="$(get_param master)"

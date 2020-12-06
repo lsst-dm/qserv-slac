@@ -63,7 +63,9 @@ Options restricting a scope of the operation:
 
     -n|--nginx
         nginx web server
-"
+
+    -t|--tools
+        interactive tools"
 
 USE_JEMALLOC=
 
@@ -72,6 +74,7 @@ WORKER=
 MASTER_CONTROLLER=
 DB_SERVICE=
 NGINX=
+TOOLS=
 
 for i in "$@"; do
     case $i in
@@ -94,6 +97,10 @@ for i in "$@"; do
         ALL=
         NGINX=1
         ;;
+    -t|--tools)
+        ALL=
+        TOOLS=1
+        ;;
     -j|--jemalloc)
         USE_JEMALLOC=1
         ;;
@@ -111,6 +118,7 @@ if [ ! -z "${ALL}" ]; then
     MASTER_CONTROLLER=1
     DB_SERVICE=1
     NGINX=1
+    TOOLS=1
 else
     WORKERS=$WORKER
 fi
