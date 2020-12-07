@@ -52,7 +52,14 @@ gdb /qserv/bin/qserv-replica-messenger-test
 ```
 Then in GDB one can do:
 ```
-run db01 --config=$CONFIG --instance-id=$INSTANCE_ID --requests=20000 --max-active-requests=2000 --proc-time-sec=1 --expiration-ival-sec=4 --events-report-ival-sec=1
+run db01 --config=$CONFIG --instance-id=$INSTANCE_ID \
+  --requests=20000 --max-active-requests=2000 --proc-time-sec=1 --expiration-ival-sec=4 --events-report-ival-sec=1
+```
+Or:
+```
+CMD_ARGUMENTS="db01 --requests=100000 --max-active-requests=2000 --proc-time-sec=0 --expiration-ival-sec=2 --events-report-ival-sec=1"
+gdb /qserv/bin/qserv-replica-messenger-test \
+  -ex "run --config=$CONFIG --instance-id=$INSTANCE_ID $CMD_ARGUMENTS --debug"
 ```
 
 An example of running applications w/o GDB:
