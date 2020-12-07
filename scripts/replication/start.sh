@@ -92,6 +92,7 @@ for WORKER in $WORKERS; do
         -v "${LOG_DIR}:/qserv/replication/log" \
         -v "/datasets:/datasets:ro" \
         -v "/lsstdata:/lsstdata:ro" \
+        -v "${CORE_FILES_DIR}:/tmp/core-files" \
         -e "WORKER_CONTAINER_NAME=${WORKER_CONTAINER_NAME}" \
         -e "LSST_LOG_CONFIG=/qserv/replication/config/${LOG_CONFIG}" \
         -e "CONFIG=${CONFIG}" \
@@ -122,6 +123,7 @@ if [ -n "${MASTER_CONTROLLER}" ]; then
         -v "${QSERV_DATA_DIR}/ingest:/qserv/data/ingest" \
         -v "${CONFIG_DIR}:/qserv/replication/config:ro" \
         -v "${LOG_DIR}:/qserv/replication/log" \
+        -v "${CORE_FILES_DIR}:/tmp/core-files" \
         -e "MASTER_CONTAINER_NAME=${MASTER_CONTAINER_NAME}" \
         -e "'PARAMETERS=${MASTER_PARAMETERS}'" \
         -e "LSST_LOG_CONFIG=/qserv/replication/config/${LOG_CONFIG}" \
@@ -152,6 +154,7 @@ if [ -n "${TOOLS}" ]; then
         -v "${QSERV_DATA_DIR}/ingest:/qserv/data/ingest" \
         -v "${CONFIG_DIR}:/qserv/replication/config:ro" \
         -v "${LOG_DIR}:/qserv/replication/log" \
+        -v "${CORE_FILES_DIR}:/tmp/core-files" \
         -e "CONFIG=${CONFIG}" \
         -e "INSTANCE_ID=${INSTANCE_ID}" \
         -e "OPT_MALLOC_CONF=${OPT_MALLOC_CONF}" \

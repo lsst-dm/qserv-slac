@@ -73,6 +73,9 @@ LOG_CONFIG="log4cxx.replication.properties"
 # to store core files, as well as various debug information.
 WORK_DIR="${REPLICATION_DATA_DIR}/work"
 
+# The home directory of the containers for dumping core files
+CORE_FILES_DIR="${REPLICATION_DATA_DIR}/core-files"
+
 # The configuration files of the nginx web proxy
 NGINX_CONFIG_DIR=${basedir}/nginx
 
