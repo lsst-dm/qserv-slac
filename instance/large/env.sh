@@ -14,7 +14,12 @@
 # of Qserv. Note, this tag excluded the aove explained fix for the race condition
 # as per DM-27781. It's possible that race never existed, and crashes were caused
 # by bugs in XRootD v4.
-BRANCH=deps_20201209_2324
+#BRANCH=deps_20201209_2324
+
+# Another buf-fix version of Qserv based on XrootD v5. Same Qserv functionality
+# as the previous one. This verson may potentially have lower performance due to
+# additional reinforcements in the XRootD/SSI protocol.
+BRANCH=deps_20201210_0904
 
 # Data directory location on docker host, optional
 HOST_DATA_DIR=/qserv/qserv-prod/data
