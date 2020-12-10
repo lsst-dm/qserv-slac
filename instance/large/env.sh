@@ -7,8 +7,14 @@
 # in the heavy load scenario.
 #BRANCH=tickets_DM-27334
 # A fix to a possible race condition fixed in QueryRequest::ProcessResponse.
-# Tis may cause spurious crashes of Qserv master.
-BRANCH=tickets_DM-27781
+# This may cause spurious crashes of Qserv master.
+#BRANCH=tickets_DM-27781
+
+# The first version of Qserv build on top of XRootD v5 and the master branch
+# of Qserv. Note, this tag excluded the aove explained fix for the race condition
+# as per DM-27781. It's possible that race never existed, and crashes were caused
+# by bugs in XRootD v4.
+BRANCH=deps_20201209_2324
 
 # Data directory location on docker host, optional
 HOST_DATA_DIR=/qserv/qserv-prod/data
