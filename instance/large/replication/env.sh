@@ -98,7 +98,10 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 #REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27772"
 
 # Advanced test for the Messenger. The ticket includes the previous one.
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27855"
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27855"
+
+# Testing crashes in client classes communicating with Qserv workers
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27240"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"

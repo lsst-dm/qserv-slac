@@ -19,7 +19,23 @@
 # Another buf-fix version of Qserv based on XrootD v5. Same Qserv functionality
 # as the previous one. This verson may potentially have lower performance due to
 # additional reinforcements in the XRootD/SSI protocol.
-BRANCH=deps_20201210_0904
+#BRANCH=deps_20201210_0904
+
+# Migrated worker class QueryRunner to use Boost Protobuf Arena. The container
+# is build on top of deps_20201210_0904 plus minor changes in the logging.
+# BRANCH=tickets_DM-27781
+
+# Same as deps_20201210_0904 (no changes of DM-27781) plus Protobuf 3.14.0
+# instead of 3.9.2 as it was in previous versions.
+#BRANCH=deps_20201217_0012
+
+# A new version of DM-27781 with minor changes in setting Protobuf object
+# for MySQL where the crash was happening and additional printouts
+# of strings in that context. This tag is bsed on deps_20201217_0012.
+#BRANCH=tickets_DM-27781
+
+# Includes everything mentioned above
+BRANCH=deps_20210106_0022
 
 # Data directory location on docker host, optional
 HOST_DATA_DIR=/qserv/qserv-prod/data
