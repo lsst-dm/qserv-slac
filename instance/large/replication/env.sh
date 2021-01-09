@@ -102,7 +102,12 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 
 # Testing crashes in client classes communicating with Qserv workers
 # The branch is based on qserv/qserv:deps_20210106_0344.
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27240"
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27240"
+
+# Same as above. Plus reinforced implementation of the database service
+# managing the persistent state of replicas.
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28047"
+
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
