@@ -35,7 +35,7 @@
 #BRANCH=tickets_DM-27781
 
 # Includes everything mentioned above
-BRANCH=deps_20210106_0022
+BRANCH=deps_20210106_0344
 
 # Data directory location on docker host, optional
 HOST_DATA_DIR=/qserv/qserv-prod/data
