@@ -106,8 +106,12 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 
 # Same as above. Plus reinforced implementation of the database service
 # managing the persistent state of replicas.
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28047"
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28047"
 
+# Fixed a bug in the Controller-workers protocol (controller lockups)
+# as per DM-27855. On-going develppment of the transaction contributions
+# as per DM-26101.
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-26101"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
