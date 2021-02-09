@@ -111,7 +111,14 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 # Fixed a bug in the Controller-workers protocol (controller lockups)
 # as per DM-27855. On-going develppment of the transaction contributions
 # as per DM-26101.
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-26101"
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-26101"
+
+# Includes all mentioned above. Plus a support for transaction contexts (requires
+# extended schema for transaction table).
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-26172"
+
+# Add support for XRootD/SSI reconnects
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28606"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
