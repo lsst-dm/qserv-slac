@@ -118,7 +118,11 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 #REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-26172"
 
 # Add support for XRootD/SSI reconnects
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28606"
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28606"
+
+# Optimized implementation of jobs that operate over MySQL partitions
+# at the transaction abort/commit time.
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28603"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
