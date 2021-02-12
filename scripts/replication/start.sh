@@ -62,6 +62,9 @@ if [ -n "${DB_SERVICE}" ]; then
         "${DB_IMAGE_TAG}" \
         --port="${DB_PORT}" \
         --max-connections=16384 \
+        --connect_timeout=28800 \
+        --net_read_timeout=600 \
+        --net_write_timeout=600 \
         --query-cache-size=0 \
         --log-error="${DB_DATA_DIR}/log/${DB_CONTAINER_NAME}.error.log" \
         --slow-query-log --slow-query-log-file="${DB_DATA_DIR}/log/${DB_CONTAINER_NAME}.slow-query.log" \
