@@ -122,7 +122,11 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 
 # Optimized implementation of jobs that operate over MySQL partitions
 # at the transaction abort/commit time.
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28603"
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28603"
+
+# Fixed a bug in the implementation of DatabaseServices::beginTransactionContrib
+# that was causing problems when connecting to MySQL.
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28812"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
