@@ -35,7 +35,13 @@
 #BRANCH=tickets_DM-27781
 
 # Includes everything mentioned above
-BRANCH=deps_20210106_0344
+#BRANCH=deps_20210106_0344
+
+# Optimized czar-workers protocol
+#BRANCH=tickets_DM-2313
+
+# Includes the previous one. Query cancellation optimization.
+BRANCH=tickets_DM-29840
 
 # Data directory location on docker host, optional
 HOST_DATA_DIR=/qserv/qserv-prod/data
