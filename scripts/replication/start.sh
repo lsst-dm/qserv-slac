@@ -101,11 +101,11 @@ for WORKER in $WORKERS; do
         -e "CONFIG=${CONFIG}" \
         -e "INSTANCE_ID=${INSTANCE_ID}" \
         -e "WORKER=${WORKER}" \
-        -e "QSERV_WORKER_DB_PASSWORD=${QSERV_WORKER_DB_PASSWORD}" \
+        -e "QSERV_WORKER_DB=${QSERV_WORKER_DB}" \
         -e "AUTH_KEY=${AUTH_KEY}" \
         -e "ADMIN_AUTH_KEY=${ADMIN_AUTH_KEY}" \
        "${REPLICATION_IMAGE_TAG}" \
-        bash -c \''lsst qserv-replica-worker ${WORKER} --config=${CONFIG} --instance-id=${INSTANCE_ID} --qserv-db-password="${QSERV_WORKER_DB_PASSWORD}" --auth-key="${AUTH_KEY}" --admin-auth-key="${ADMIN_AUTH_KEY}" --debug >& /qserv/replication/log/${WORKER_CONTAINER_NAME}.log'\' &
+        bash -c \''lsst qserv-replica-worker ${WORKER} --config=${CONFIG} --instance-id=${INSTANCE_ID} --qserv-worker-db="${QSERV_WORKER_DB}" --auth-key="${AUTH_KEY}" --admin-auth-key="${ADMIN_AUTH_KEY}" --debug >& /qserv/replication/log/${WORKER_CONTAINER_NAME}.log'\' &
 done
 
 # Start master controller
@@ -134,11 +134,11 @@ if [ -n "${MASTER_CONTROLLER}" ]; then
         -e "INSTANCE_ID=${INSTANCE_ID}" \
         -e "OPT_MALLOC_CONF=${OPT_MALLOC_CONF}" \
         -e "OPT_LD_PRELOAD=${OPT_LD_PRELOAD}" \
-        -e "QSERV_MASTER_DB_PASSWORD=${QSERV_MASTER_DB_PASSWORD}" \
+        -e "QSERV_CZAR_DB=${QSERV_CZAR_DB}" \
         -e "AUTH_KEY=${AUTH_KEY}" \
         -e "ADMIN_AUTH_KEY=${ADMIN_AUTH_KEY}" \
         "${REPLICATION_IMAGE_TAG}" \
-        bash -c \''lsst qserv-replica-master-http ${PARAMETERS} --config=${CONFIG} --instance-id=${INSTANCE_ID} --qserv-db-password="${QSERV_MASTER_DB_PASSWORD}" --auth-key="${AUTH_KEY}" --admin-auth-key="${ADMIN_AUTH_KEY}" --debug >& /qserv/replication/log/${MASTER_CONTAINER_NAME}.log'\' &
+        bash -c \''lsst qserv-replica-master-http ${PARAMETERS} --config=${CONFIG} --instance-id=${INSTANCE_ID} --qserv-czar-db="${QSERV_CZAR_DB}" --auth-key="${AUTH_KEY}" --admin-auth-key="${ADMIN_AUTH_KEY}" --debug >& /qserv/replication/log/${MASTER_CONTAINER_NAME}.log'\' &
 fi
 
 if [ -n "${TOOLS}" ]; then
@@ -162,7 +162,7 @@ if [ -n "${TOOLS}" ]; then
         -e "INSTANCE_ID=${INSTANCE_ID}" \
         -e "OPT_MALLOC_CONF=${OPT_MALLOC_CONF}" \
         -e "OPT_LD_PRELOAD=${OPT_LD_PRELOAD}" \
-        -e "QSERV_MASTER_DB_PASSWORD=${QSERV_MASTER_DB_PASSWORD}" \
+        -e "QSERV_CZAR_DB=${QSERV_CZAR_DB}" \
         -e "AUTH_KEY=${AUTH_KEY}" \
         -e "ADMIN_AUTH_KEY=${ADMIN_AUTH_KEY}" \
         "${REPLICATION_IMAGE_TAG}" \

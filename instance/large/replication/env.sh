@@ -129,7 +129,26 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 #REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28812"
 
 # Refactored the Configuration service to use JSON for the transient state.
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28860"
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28860"
+
+# Same as above plus added connection strings to the CZAR and worker
+# databases instead of complicated configuration and using command-line
+# options for passwords.
+#
+# NOTE: This tag requires schema changes - eliminating columns
+# `db_host`, `db_port` and `db_user` from table `qservReplica`.`config_worker`.
+# In addition two entries in the category 'worker_defaults` need to be eliminated
+# as well: 'db_port' and 'db_user'.
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-29717"
+
+# The tag includes the previous one (which is already mered into the master
+# branch) and also included a fix to a race condition within the worker Ingest
+# service.
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-29860"
+
+# The bug fix in using CSS to delete tables in the REST service
+# DELETE /ingest/table
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30099"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
@@ -144,15 +163,19 @@ WORKERS="$(get_param workers)"
 MASTER="$(get_param master)"
 
 DB_PORT=23306
+QSERV_CZAR_DB_PORT=3306
+QSERV_WORKER_DB_PORT=3306
 
 DB_ROOT_PASSWORD="$(get_param secrets/db_root_password)"
+QSERV_CZAR_DB_PASSWORD="$(get_param secrets/qserv_czar_db_password)"
 QSERV_WORKER_DB_PASSWORD="$(get_param secrets/qserv_worker_db_password)"
-QSERV_MASTER_DB_PASSWORD="$(get_param secrets/qserv_master_db_password)"
 
 AUTH_KEY="$(get_param secrets/auth_key)"
 ADMIN_AUTH_KEY="$(get_param secrets/admin_auth_key)"
 
 CONFIG="mysql://qsreplica@lsst-qserv-${MASTER}:${DB_PORT}/qservReplica"
+QSERV_CZAR_DB="mysql://root:${QSERV_CZAR_DB_PASSWORD}@localhost:${QSERV_CZAR_DB_PORT}/qservMeta"
+QSERV_WORKER_DB="mysql://root:${QSERV_WORKER_DB_PASSWORD}@localhost:${QSERV_WORKER_DB_PORT}/qservw_worker"
 
 # Optional parameters of the Master Controller
 MASTER_PARAMETERS="--debug --worker-evict-timeout=600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600"
