@@ -41,7 +41,11 @@
 #BRANCH=tickets_DM-2313
 
 # Includes the previous one. Query cancellation optimization.
-BRANCH=tickets_DM-29840
+#BRANCH=tickets_DM-29840
+
+# Fixed a race condition in the Replication system's monitoring code within
+# Qserv workers.
+BRANCH=tickets_DM-26574
 
 # Data directory location on docker host, optional
 HOST_DATA_DIR=/qserv/qserv-prod/data
