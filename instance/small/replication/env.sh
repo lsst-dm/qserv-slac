@@ -85,17 +85,9 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 
 # Tags for the relevant containers
 
-# REST API for obtaining and altering table schema (developed in a context
-# of "Migrate BLOB/TEXT columns of table gaia_02.gaia_source to VARCHAR/CHAR in the small Qserv cluster"
-# Remote file ingest with http:// and file:///
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27273"
-
-# Deleting published catalogs and tables with "admin_auth_key"
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-24959"
-
-# Reinforced table management operatons in Ingest workers.
-# The ticket includeds all prior developments merged into the master branch.
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27681"
+# The bug fix in using CSS to delete tables in the REST service
+# DELETE /ingest/table
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30099"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
@@ -110,15 +102,19 @@ WORKERS="$(get_param workers)"
 MASTER="$(get_param master)"
 
 DB_PORT=23306
+QSERV_CZAR_DB_PORT=3306
+QSERV_WORKER_DB_PORT=3306
 
 DB_ROOT_PASSWORD="$(get_param secrets/db_root_password)"
+QSERV_CZAR_DB_PASSWORD="$(get_param secrets/qserv_czar_db_password)"
 QSERV_WORKER_DB_PASSWORD="$(get_param secrets/qserv_worker_db_password)"
-QSERV_MASTER_DB_PASSWORD="$(get_param secrets/qserv_master_db_password)"
 
 AUTH_KEY="$(get_param secrets/auth_key)"
 ADMIN_AUTH_KEY="$(get_param secrets/admin_auth_key)"
 
 CONFIG="mysql://qsreplica@lsst-qserv-${MASTER}:${DB_PORT}/qservReplica"
+QSERV_CZAR_DB="mysql://root:${QSERV_CZAR_DB_PASSWORD}@localhost:${QSERV_CZAR_DB_PORT}/qservMeta"
+QSERV_WORKER_DB="mysql://root:${QSERV_WORKER_DB_PASSWORD}@localhost:${QSERV_WORKER_DB_PORT}/qservw_worker"
 
 # Optional parameters of the Master Controller
 MASTER_PARAMETERS="--debug --worker-evict-timeout=600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600"

@@ -1,1 +1,0 @@
-../../../../scripts/replication/secrets/README.md
