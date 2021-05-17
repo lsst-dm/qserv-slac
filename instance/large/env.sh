@@ -45,7 +45,13 @@
 
 # Fixed a race condition in the Replication system's monitoring code within
 # Qserv workers.
-BRANCH=tickets_DM-26574
+#BRANCH=tickets_DM-26574
+
+# The latest stable branch (it doesn't include the previous fix of DM-26574)
+#BRANCH=deps_20210514_1739
+
+# Based on deps_20210514_1739, and included DM-26574 merged into the 'master' branch.
+BRANCH=2021.05.02
 
 # Data directory location on docker host, optional
 HOST_DATA_DIR=/qserv/qserv-prod/data
