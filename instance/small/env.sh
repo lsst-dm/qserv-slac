@@ -1,16 +1,8 @@
 # Site-specific configuration
 # ===========================
 
-# The latest version of the Qserv container
-#BRANCH=tickets_DM-26609
-
-# A fix to the workers going unchecked and consuming over 29k threads
-# in the heavy load scenario.
-#BRANCH=tickets_DM-27334
-
-# A fix to a possible race condition fixed in QueryRequest::ProcessResponse.
-# Tis may cause spurious crashes of Qserv master.
-BRANCH=tickets_DM-27781
+# Based on deps_20210514_1739, and included DM-26574 merged into the 'master' branch.
+BRANCH=2021.05.02
 
 # Data directory location on docker host, optional
 HOST_DATA_DIR=/qserv/qserv-prod/data
