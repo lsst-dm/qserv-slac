@@ -53,6 +53,10 @@
 # Based on deps_20210514_1739, and included DM-26574 merged into the 'master' branch.
 BRANCH=2021.05.02
 
+# The experimental tag with optimized parametes preventing worker lock ups
+# reported in DM-30236.
+#BRANCH=tickets_DM-30238
+
 # Data directory location on docker host, optional
 HOST_DATA_DIR=/qserv/qserv-prod/data
 
