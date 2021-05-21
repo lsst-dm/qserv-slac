@@ -51,11 +51,14 @@
 #BRANCH=deps_20210514_1739
 
 # Based on deps_20210514_1739, and included DM-26574 merged into the 'master' branch.
-BRANCH=2021.05.02
+# BRANCH=2021.05.02
 
 # The experimental tag with optimized parametes preventing worker lock ups
 # reported in DM-30236.
 #BRANCH=tickets_DM-30238
+
+# The latest version for pre-production testing
+BRANCH=2021.05.03-rc1
 
 # Data directory location on docker host, optional
 HOST_DATA_DIR=/qserv/qserv-prod/data
@@ -92,6 +95,9 @@ SSH_HOSTNAME_FORMAT="qserv-db%02g"
 # Workers range
 WORKER_FIRST_ID=01
 WORKER_LAST_ID=30
+
+# The name of the Qserv containers
+CONTAINER_NAME="qserv"
 
 # Advanced configuration
 # ======================
