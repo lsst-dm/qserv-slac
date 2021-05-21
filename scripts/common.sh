@@ -46,7 +46,7 @@ fi
 # Advanced configuration
 # ======================
 
-CONTAINER_NAME=qserv                                # Do not edit
+#CONTAINER_NAME=qserv                                # Do not edit
 
 MASTER_IMAGE="qserv/qserv:${BRANCH}_master"         # Do not edit
 WORKER_IMAGE="qserv/qserv:${BRANCH}_worker"         # Do not edit

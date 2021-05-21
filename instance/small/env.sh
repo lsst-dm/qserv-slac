@@ -61,6 +61,9 @@ SSH_HOSTNAME_FORMAT="qserv-db%02g"
 WORKER_FIRST_ID=31
 WORKER_LAST_ID=36
 
+# The name of the Qserv containers
+CONTAINER_NAME="qserv"
+
 # Advanced configuration
 # ======================
 
