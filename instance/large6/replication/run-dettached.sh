@@ -1,0 +1,1 @@
+../../../scripts/replication/run-dettached.sh
