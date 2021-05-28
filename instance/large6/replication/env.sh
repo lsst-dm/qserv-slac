@@ -85,9 +85,8 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 
 # Tags for the relevant containers
 
-# The bug fix in using CSS to delete tables in the REST service
-# DELETE /ingest/table
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30099"
+# Based on deps_20210520_0632
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-29880"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
@@ -101,9 +100,9 @@ TOOLS_CONTAINER_NAME="qserv-6-replica-tools"
 WORKERS="$(get_param workers)"
 MASTER="$(get_param master)"
 
-DB_PORT=23366
-QSERV_CZAR_DB_PORT=3366
-QSERV_WORKER_DB_PORT=3366
+DB_PORT=23306
+QSERV_CZAR_DB_PORT=3306
+QSERV_WORKER_DB_PORT=3306
 
 DB_ROOT_PASSWORD="$(get_param secrets/db_root_password)"
 QSERV_CZAR_DB_PASSWORD="$(get_param secrets/qserv_czar_db_password)"

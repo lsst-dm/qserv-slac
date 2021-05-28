@@ -60,6 +60,9 @@
 # The latest version for pre-production testing
 BRANCH=2021.05.03-rc1
 
+# Scripts for modifying Qserv startup behavior
+HOST_SCRIPTS_DIR=/qserv/qserv-prod/scripts
+
 # Data directory location on docker host, optional
 HOST_DATA_DIR=/qserv/qserv-prod/data
 
@@ -98,6 +101,13 @@ WORKER_LAST_ID=30
 
 # The name of the Qserv containers
 CONTAINER_NAME="qserv"
+
+# Override default ports
+WMGR_PORT=5013
+CMSD_PORT=2132
+XROOTD_PORT=1095
+PROXY_PORT=4046
+MYSQL_PORT=3366
 
 # Advanced configuration
 # ======================

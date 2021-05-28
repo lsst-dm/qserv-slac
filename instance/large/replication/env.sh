@@ -85,70 +85,8 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 
 # Tags for the relevant containers
 
-# Running HTTP REST server of Master Controller in its won thread pool.
-# The ticket includeds all prior developments mergd into the master branch.
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27606"
-
-# Reinforced table management operatons in Ingest workers.
-# The ticket includeds all prior developments merged into the master branch.
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27681"
-
-# Improved file I/O error reporting at ingest worker services
-# when ingesting from file:/// or http://
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27772"
-
-# Advanced test for the Messenger. The ticket includes the previous one.
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27855"
-
-# Testing crashes in client classes communicating with Qserv workers
-# The branch is based on qserv/qserv:deps_20210106_0344.
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-27240"
-
-# Same as above. Plus reinforced implementation of the database service
-# managing the persistent state of replicas.
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28047"
-
-# Fixed a bug in the Controller-workers protocol (controller lockups)
-# as per DM-27855. On-going develppment of the transaction contributions
-# as per DM-26101.
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-26101"
-
-# Includes all mentioned above. Plus a support for transaction contexts (requires
-# extended schema for transaction table).
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-26172"
-
-# Add support for XRootD/SSI reconnects
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28606"
-
-# Optimized implementation of jobs that operate over MySQL partitions
-# at the transaction abort/commit time.
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28603"
-
-# Fixed a bug in the implementation of DatabaseServices::beginTransactionContrib
-# that was causing problems when connecting to MySQL.
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28812"
-
-# Refactored the Configuration service to use JSON for the transient state.
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28860"
-
-# Same as above plus added connection strings to the CZAR and worker
-# databases instead of complicated configuration and using command-line
-# options for passwords.
-#
-# NOTE: This tag requires schema changes - eliminating columns
-# `db_host`, `db_port` and `db_user` from table `qservReplica`.`config_worker`.
-# In addition two entries in the category 'worker_defaults` need to be eliminated
-# as well: 'db_port' and 'db_user'.
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-29717"
-
-# The tag includes the previous one (which is already mered into the master
-# branch) and also included a fix to a race condition within the worker Ingest
-# service.
-#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-29860"
-
-# The bug fix in using CSS to delete tables in the REST service
-# DELETE /ingest/table
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30099"
+# Based on deps_20210520_0632
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-29880"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
@@ -162,9 +100,9 @@ TOOLS_CONTAINER_NAME="qserv-replica-tools"
 WORKERS="$(get_param workers)"
 MASTER="$(get_param master)"
 
-DB_PORT=23306
-QSERV_CZAR_DB_PORT=3306
-QSERV_WORKER_DB_PORT=3306
+DB_PORT=23366
+QSERV_CZAR_DB_PORT=3366
+QSERV_WORKER_DB_PORT=3366
 
 DB_ROOT_PASSWORD="$(get_param secrets/db_root_password)"
 QSERV_CZAR_DB_PASSWORD="$(get_param secrets/qserv_czar_db_password)"

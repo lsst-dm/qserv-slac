@@ -1,12 +1,12 @@
 # Site-specific configuration
 # ===========================
 
-# Based on deps_20210514_1739, and included DM-26574 merged into the 'master' branch.
-BRANCH=2021.05.02
+# The latest stable branch
+#BRANCH=2021.05.03-rc1
 
-# The experimental tag with optimized parametes preventing worker lock ups
-# reported in DM-30236.
-#BRANCH=tickets_DM-30238
+# The last stable branch that used to work in the "small" cluster
+# for many weeks w/o showing any problems.
+BRANCH=deps_20210106_0022
 
 # Scripts for modifying Qserv startup behavior
 HOST_SCRIPTS_DIR=/qserv/qserv-dev/scripts
@@ -50,12 +50,12 @@ WORKER_LAST_ID=06
 # The name of the Qserv containers
 CONTAINER_NAME="qserv-6"
 
-# Override efault ports
-WMGR_PORT=5013
-CMSD_PORT=2132
-XROOTD_PORT=1095
-PROXY_PORT=4046
-MYSQL_PORT=3366
+# Override default ports
+WMGR_PORT=5012
+CMSD_PORT=2131
+XROOTD_PORT=1094
+PROXY_PORT=4040
+MYSQL_PORT=3306
 
 # Advanced configuration
 # ======================
