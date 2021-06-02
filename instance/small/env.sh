@@ -23,7 +23,13 @@
 
 # The last stable branch that used to work in the "small" cluster
 # for many weeks w/o showing any problems.
-BRANCH=deps_20210106_0022
+#BRANCH=deps_20210106_0022
+
+# The latest stable branch
+#BRANCH=2021.05.03-rc1
+
+#BRANCH=2021.05.02
+BRANCH=tickets_DM-30236
 
 # Data directory location on docker host, optional
 HOST_DATA_DIR=/qserv/qserv-prod/data
