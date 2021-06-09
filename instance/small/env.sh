@@ -29,7 +29,8 @@
 #BRANCH=2021.05.03-rc1
 
 #BRANCH=2021.05.02
-BRANCH=tickets_DM-30236
+#BRANCH=tickets_DM-30236
+BRANCH=2021.06.01-rc1
 
 # Data directory location on docker host, optional
 HOST_DATA_DIR=/qserv/qserv-prod/data
