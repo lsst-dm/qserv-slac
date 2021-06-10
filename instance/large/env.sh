@@ -58,7 +58,8 @@
 #BRANCH=tickets_DM-30238
 
 # The latest version for pre-production testing
-BRANCH=2021.05.03-rc1
+#BRANCH=2021.05.03-rc1
+BRANCH=2021.06.01-rc1
 
 # Scripts for modifying Qserv startup behavior
 HOST_SCRIPTS_DIR=/qserv/qserv-prod/scripts
