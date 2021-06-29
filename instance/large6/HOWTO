@@ -21,9 +21,9 @@ for h in $(seq --format="qserv-db%02.0f" 1 6); do
 done
 
 # Deleting master and worker log files of the 'dev' instance
-\sudo -u qserv-6 rm -vf /qserv/qserv-dev/log/*.log;
+\sudo -u qserv rm -vf /qserv/qserv-dev/log/*.log;
 for h in $(seq --format="qserv-db%02.0f" 1 6); do
-    ssh -n ${h} '\sudo -u qserv-6 rm -vf /qserv/qserv-dev/log/*.log'&
+    ssh -n ${h} '\sudo -u qserv rm -vf /qserv/qserv-dev/log/*.log'&
 done; wait
 
 # Increasing the connection limit in MySQL
