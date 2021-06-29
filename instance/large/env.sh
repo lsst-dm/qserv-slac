@@ -58,8 +58,26 @@
 #BRANCH=tickets_DM-30238
 
 # The latest version for pre-production testing
-#BRANCH=2021.05.03-rc1
-BRANCH=2021.06.01-rc1
+#BRANCH=2021.06.01-rc1
+
+# Another attempto to fix worker lock ups
+#BRANCH=tickets_DM-30818
+
+# The last stable branch that used to work in the "small" cluster
+# for many weeks w/o showing any problems.
+#BRANCH=deps_20210106_0022
+
+# This branch excluded most problematic "improvements" made in Qserv since deps_20210106_0022
+# This has been the most stable version so far. No worker crashes after after intensive testings
+# on thousadnds of queries over 2 days.
+# BRANCH=tickets_DM-30906
+
+# Same as DM-30906 plus DM-28750
+# BAD branch! Locks up on a large mix of queries.
+#BRANCH=tickets_DM-30914
+
+# The last stable release base on DM-30906
+BRANCH=2021.6.3-rc1
 
 # Scripts for modifying Qserv startup behavior
 HOST_SCRIPTS_DIR=/qserv/qserv-prod/scripts
