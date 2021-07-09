@@ -3,8 +3,26 @@ for h in $(seq --format="qserv-db%02.0f" 1 30); do
     echo; echo "** $h **";
     ssh -n $h "docker exec -i qserv bash -c \"sed -i 's/^export XRD_LOGLEVEL=Debug/#export XRD_LOGLEVEL=Debug/' /qserv/run/etc/sysconfig/qserv\"";
     ssh -n $h "docker exec -i qserv bash -c \"sed -i 's/^unset XRDSSIDEBUG/#unset XRDSSIDEBUG/' /qserv/run/etc/sysconfig/qserv\"";
-    ssh -n $h "docker exec -i qserv bash -c \"sed -i 's/^#export XRDSSIDEBUG=0/export XRDSSIDEBUG=0/' /qserv/run/etc/sysconfig/qserv\"";
+    ssh -n $h "docker exec -i qserv bash -c \"sed -i 's/^#export XRDSSIDEBUG=0/export XRDSSIDEBUG=1/' /qserv/run/etc/sysconfig/qserv\"";
     ssh -n $h "docker exec -i qserv bash -c \"cat /qserv/run/etc/sysconfig/qserv | egrep 'XRD_LOGLEVEL|XRDSSIDEBUG'\"";
+done
+
+docker exec -i qserv bash -c "cat /qserv/run/etc/sysconfig/qserv | egrep 'XRD_LOGLEVEL|XRDSSIDEBUG'"
+for h in $(seq --format="qserv-db%02.0f" 1 30); do
+    echo; echo "** $h **";
+    ssh -n $h "docker exec -i qserv bash -c \"cat /qserv/run/etc/sysconfig/qserv | egrep 'XRD_LOGLEVEL|XRDSSIDEBUG'\"";
+done
+
+for h in $(seq --format="qserv-db%02.0f" 1 30); do
+    echo; echo "** $h **";
+    ssh -n $h "docker exec -i qserv bash -c \"sed -i 's/    ssi.trace all debug/    ssi.trace all debug\n    xrootd.trace fs request response/' /qserv/run/etc/lsp.cf\"";
+    ssh -n $h "docker exec -i qserv bash -c \"cat /qserv/run/etc/lsp.cf | egrep 'trace|debug'\"";
+done
+
+docker exec -i qserv bash -c "cat /qserv/run/etc/lsp.cf | egrep 'trace|debug'"
+for h in $(seq --format="qserv-db%02.0f" 1 30); do
+    echo; echo "** $h **";
+    ssh -n $h "docker exec -i qserv bash -c \"cat /qserv/run/etc/lsp.cf | egrep 'trace|debug'\"";
 done
 
 
@@ -12,9 +30,8 @@ done
 docker exec -i qserv bash -c "sed -i 's/^log4j.rootLogger=INFO, CONSOLE/log4j.rootLogger=ERROR, CONSOLE/' /qserv/run/etc/log4cxx.czar.properties";
 docker exec -i qserv bash -c "cat /qserv/run/etc/log4cxx.czar.properties";
 for h in $(seq --format="qserv-db%02.0f" 1 30); do
-    echo; echo "** $h **";
-    ssh -n $h "docker exec -i qserv bash -c \"sed -i 's/^log4j.rootLogger=DEBUG, CONSOLE/log4j.rootLogger=ERROR, CONSOLE/' /qserv/run/etc/log4cxx.worker.properties\"";
-done
+    ssh -n $h "docker exec -i qserv bash -c \"sed -i 's/^log4j.rootLogger=DEBUG, CONSOLE/log4j.rootLogger=ERROR, CONSOLE/' /qserv/run/etc/log4cxx.worker.properties\""&
+done; wait
 for h in $(seq --format="qserv-db%02.0f" 1 30); do
     echo; echo "** $h **";
     ssh -n $h "docker exec -i qserv bash -c \"cat /qserv/run/etc/log4cxx.worker.properties\"";
@@ -48,9 +65,10 @@ for h in $(seq --format="qserv-db%02.0f" 1 30); do
 done
 
 ## Restarting master and worker services
-docker exec -it qserv run/etc/init.d/mysql-proxy restart;
+docker exec -it qserv bash -c 'run/etc/init.d/mysql-proxy restart'&
 for h in $(seq --format="qserv-db%02.0f" 1 30); do
-    echo; echo "** $h **";
-    ssh -n $h "docker exec -i qserv bash -c \"/qserv/run/etc/init.d/xrootd restart\"";
-done
+    ssh -n $h "docker exec -i qserv bash -c \"/qserv/run/etc/init.d/xrootd restart\""&
+done; wait
+
+
 
