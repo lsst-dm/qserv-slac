@@ -2,19 +2,11 @@
 # ===========================
 
 # The latest stable branch
-#BRANCH=2021.05.03-rc1
+BRANCH=2021.6.4-rc1
 
 # The last stable branch that used to work in the "small" cluster
 # for many weeks w/o showing any problems.
 #BRANCH=deps_20210106_0022
-
-# The latest version for pre-production testing
-#BRANCH=tickets_DM-29952
-#BRANCH=2021.06.01-rc1
-
-
-# The latest stable branch for testing lockups when processing n-n queries
-BRANCH=2021.6.3-rc1
 
 # Scripts for modifying Qserv startup behavior
 HOST_SCRIPTS_DIR=/qserv/qserv-dev/scripts

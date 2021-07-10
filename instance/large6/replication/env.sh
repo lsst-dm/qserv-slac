@@ -89,7 +89,10 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 #REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-29880"
 
 # Streamlined REST service for locating regular tables
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30666"
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30666"
+
+# Automatically creating missing folders at master and worker servers
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30074"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
