@@ -1,12 +1,38 @@
 # Site-specific configuration
 # ===========================
 
+# Improved data transmission performance of the workers under light data
+# throughput worlkoad. Includes the one below.
+#BRANCH=tickets_DM-31185
+
+# Based on deps_20210720_0516. Improved buffer handling at workers.
+#BRANCH=tickets_DM-31123
+
+# Based on 'master', improvements for processing unconstrained large-result
+# queries, improved logging in 'xrootd'.
+#BRANCH=deps_20210720_0516
+
+# Optimized handling of the large result queries
+#BRANCH=tickets_DM-30942
+
+# The uber-jobs for testing Qserv lockups
+#BRANCH=tickets_DM-29952
+
 # The latest stable branch
-BRANCH=2021.6.4-rc1
+#BRANCH=2021.6.4-rc1
 
 # The last stable branch that used to work in the "small" cluster
 # for many weeks w/o showing any problems.
 #BRANCH=deps_20210106_0022
+
+# A solution to the Qserv lockups
+#BRANCH=2021.7.1-rc1
+
+# The latest stable release
+# BRANCH=2021.9.1-rc1
+
+# Possible fix to the all-sky COUNT_* queries pileups
+BRANCH=tickets_DM-32346
 
 # Scripts for modifying Qserv startup behavior
 HOST_SCRIPTS_DIR=/qserv/qserv-dev/scripts

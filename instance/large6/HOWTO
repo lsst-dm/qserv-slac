@@ -1,3 +1,12 @@
+# disable LSST logging at XROOTD
+docker exec -it qserv-6 bash -c 'sed -i "s/logfile=@libXrdSsiLog.so/logfile=\/qserv\/run\/var\/log\/\$\{prog\}-raw.log/" /qserv/run/etc/init.d/xrootd'
+docker exec -it qserv-6 bash -c 'cat /qserv/run/etc/init.d/xrootd | grep "logfile="'
+for h in $(seq --format="qserv-db%02.0f" 1 6); do
+    echo; echo "** $h **";
+    ssh -n $h "docker exec -i qserv-6 bash -c \"sed -i 's/logfile=@libXrdSsiLog.so/logfile=\/qserv\/run\/var\/log\/\$\{prog\}-raw.log/' /qserv/run/etc/init.d/xrootd\""
+    ssh -n $h "docker exec -i qserv-6 bash -c \"cat /qserv/run/etc/init.d/xrootd | grep 'logfile='\""
+done
+
 ## Enabling XRD debugging in the worker's log file
 for h in $(seq --format="qserv-db%02.0f" 1 6); do
     echo; echo "** $h **";
@@ -46,8 +55,9 @@ done
 
 # Deleting master and worker log files of the 'dev' instance
 \sudo -u qserv rm -vf /qserv/qserv-dev/log/*.log;
+\sudo -u qserv rm -vf /qserv/qserv-dev/log/master/*.log;
 for h in $(seq --format="qserv-db%02.0f" 1 6); do
-    ssh -n ${h} '\sudo -u qserv rm -vf /qserv/qserv-dev/log/*.log'&
+    ssh -n ${h} '\sudo -u qserv rm -vf /qserv/qserv-dev/log/*.log; \sudo -u qserv rm -vf /qserv/qserv-dev/log/worker/*.log'&
 done; wait
 
 # Increasing the connection limit in MySQL
@@ -73,6 +83,7 @@ done
 
 ## Restarting master and worker services
 docker exec -it qserv-6 run/etc/init.d/mysql-proxy restart;
+docker exec -it qserv-6 run/etc/init.d/xrootd restart;
 for h in $(seq --format="qserv-db%02.0f" 1 6); do
     echo; echo "** $h **";
     ssh -n $h "docker exec -i qserv-6 bash -c \"/qserv/run/etc/init.d/xrootd restart\"";
