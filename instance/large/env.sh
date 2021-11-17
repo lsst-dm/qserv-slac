@@ -77,7 +77,16 @@
 #BRANCH=tickets_DM-30914
 
 # The last stable release base on DM-30906
-BRANCH=2021.6.3-rc1
+# BRANCH=2021.6.3-rc1
+
+# Optimized handling of the large result queries
+#BRANCH=tickets_DM-30942
+#BRANCH=tickets_DM-31123
+#BRANCH=tickets_DM-31185
+BRANCH=tickets_DM-31537
+
+# The latest stable release
+#BRANCH=2021.8.1-rc1
 
 # Scripts for modifying Qserv startup behavior
 HOST_SCRIPTS_DIR=/qserv/qserv-prod/scripts

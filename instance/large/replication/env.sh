@@ -92,7 +92,16 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 #REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30666"
 
 # Automatically creating missing folders at master and worker servers
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30074"
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30074"
+
+# Fixed a bug. Includes the previous tag that was already merged into the master branch.
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-31073"
+
+# Extended REST services of the Replication-Ingest system
+# REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-31309"
+
+# Added support for many directors (API version 7)
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28433"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
