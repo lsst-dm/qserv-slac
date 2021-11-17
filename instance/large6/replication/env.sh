@@ -76,12 +76,10 @@ WORK_DIR="${REPLICATION_DATA_DIR}/work"
 # The home directory of the containers for dumping core files
 CORE_FILES_DIR="${REPLICATION_DATA_DIR}/core-files"
 
-# The configuration files of the nginx web proxy
-NGINX_CONFIG_DIR=${basedir}/nginx
-
-# The home folder of the nginx web proxy. This folder also containes
-# the Qserv Dashboard Web application.
-NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
+# The home folder of the local development version of the Qserv Dashboard
+# and other Web apps served by the built-in HTTP server of the Master
+# Replication Controller.
+HTTP_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 
 # Tags for the relevant containers
 
@@ -92,15 +90,68 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 #REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30666"
 
 # Automatically creating missing folders at master and worker servers
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30074"
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30074"
 
-DB_IMAGE_TAG="mariadb:10.2.16"
-NGINX_IMAGE_TAG="nginx:latest"
+# Fixed a bug. Includes the previous tag that was already merged into the master branch.
+# REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-31073"
+
+# Improved Ingest system to support the binary data type in the table schema,
+# quoted fields in the input files.
+# REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30103"
+
+# Extended REST services of the Replication-Ingest system
+# REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-31309"
+
+# Extended configuration options for libcurl when pulling files from
+# an object store.
+# REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-31478"
+
+# Extended Controller-workers protocol to make worker not depending
+# on configuration parameters of the source replicas' workers.
+# REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-26141"
+
+# Added an option for ignoring duplicate keys when creating table-level
+# indexes at workers.
+# REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-31718"
+
+# Extended states of the table schema contributions.
+# ATTENTION: this requires the schema change for table 'transaction_contrib'.
+# REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-31682"
+
+# Asynchronous ingest. 
+# ATTENTION: this requires the schema change for table 'transaction_contrib'.
+# REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30687"
+
+# Fixed a bug in the ASYNC ingest in the group cancelation of
+# the contribution requests by the transaction identifier.
+# REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-32227"
+
+# # Added support for many directors (API version 7)
+# REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-28433"
+
+# Priority-based request dispatcher at the Controller
+# REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-32322"
+
+# Serving static content from the Controller's HTTP server
+# REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-32323"
+
+# The first atempt to run the lite container
+# REPLICATION_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-25-g8aa830e2a"
+
+# DM-32444: Reinforce table registration service to enforce the right
+#           ordering of tables.
+# REPLICATION_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-31-ga9f566f8b"
+
+# DM-32395: Qserv Replication system should scan all tables and retain
+#           row counters in the persistent state.
+REPLICATION_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-61-gdefd950b0"
+
+# DB_IMAGE_TAG="mariadb:10.2.16"
+DB_IMAGE_TAG="qserv/lite-mariadb:2021.10.1-lite-rc2"
 
 DB_CONTAINER_NAME="qserv-6-replica-mariadb"
 MASTER_CONTAINER_NAME="qserv-6-replica-master-http"
 WORKER_CONTAINER_NAME="qserv-6-replica-worker"
-NGINX_CONTAINER_NAME="qserv-6-replica-nginx"
 TOOLS_CONTAINER_NAME="qserv-6-replica-tools"
 
 WORKERS="$(get_param workers)"
@@ -113,11 +164,12 @@ QSERV_WORKER_DB_PORT=3306
 DB_ROOT_PASSWORD="$(get_param secrets/db_root_password)"
 QSERV_CZAR_DB_PASSWORD="$(get_param secrets/qserv_czar_db_password)"
 QSERV_WORKER_DB_PASSWORD="$(get_param secrets/qserv_worker_db_password)"
+DB_QSREPLICA_PASSWORD="$(get_param secrets/db_qsreplica_password)"
 
 AUTH_KEY="$(get_param secrets/auth_key)"
 ADMIN_AUTH_KEY="$(get_param secrets/admin_auth_key)"
 
-CONFIG="mysql://qsreplica@lsst-qserv-${MASTER}:${DB_PORT}/qservReplica"
+CONFIG="mysql://qsreplica:${DB_QSREPLICA_PASSWORD}@lsst-qserv-${MASTER}:${DB_PORT}/qservReplica"
 QSERV_CZAR_DB="mysql://root:${QSERV_CZAR_DB_PASSWORD}@localhost:${QSERV_CZAR_DB_PORT}/qservMeta"
 QSERV_WORKER_DB="mysql://root:${QSERV_WORKER_DB_PASSWORD}@localhost:${QSERV_WORKER_DB_PORT}/qservw_worker"
 

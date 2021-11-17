@@ -1,1 +1,1 @@
-../../../scripts/replication/start.sh
+../../../scripts/replication/lite/start.sh

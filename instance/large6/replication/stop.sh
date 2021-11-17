@@ -1,1 +1,1 @@
-../../../scripts/replication/stop.sh
+../../../scripts/replication/lite/stop.sh

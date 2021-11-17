@@ -1,1 +1,1 @@
-../../../scripts/replication/status.sh
+../../../scripts/replication/lite/status.sh

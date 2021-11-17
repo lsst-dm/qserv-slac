@@ -30,15 +30,6 @@ set -e
 
 . $(dirname "$0")/env_svc.sh
 
-# Optional setting of the JEMALLOC profiles
-
-OPT_MALLOC_CONF=
-OPT_LD_PRELOAD=
-if [ ! -z "${USE_JEMALLOC}" ]; then
-    OPT_MALLOC_CONF=prof_leak:true,lg_prof_interval:31,lg_prof_sample:22,prof_final:true
-    OPT_LD_PRELOAD=/qserv/lib/libjemalloc.so
-fi
-
 # Start database services on the master node
 #
 # The general log is temporarily disabled because it results in a huge size
@@ -105,7 +96,7 @@ for WORKER in $WORKERS; do
         -e "AUTH_KEY=${AUTH_KEY}" \
         -e "ADMIN_AUTH_KEY=${ADMIN_AUTH_KEY}" \
        "${REPLICATION_IMAGE_TAG}" \
-        bash -c \''lsst qserv-replica-worker ${WORKER} --config=${CONFIG} --instance-id=${INSTANCE_ID} --qserv-worker-db="${QSERV_WORKER_DB}" --auth-key="${AUTH_KEY}" --admin-auth-key="${ADMIN_AUTH_KEY}" --do-not-create-folders --debug >& /qserv/replication/log/${WORKER_CONTAINER_NAME}.log'\' &
+        bash -c \''qserv-replica-worker ${WORKER} --config=${CONFIG} --instance-id=${INSTANCE_ID} --qserv-worker-db="${QSERV_WORKER_DB}" --auth-key="${AUTH_KEY}" --admin-auth-key="${ADMIN_AUTH_KEY}" --do-not-create-folders --debug >& /qserv/replication/log/${WORKER_CONTAINER_NAME}.log'\' &
 done
 
 # Start master controller
@@ -124,7 +115,7 @@ if [ -n "${MASTER_CONTROLLER}" ]; then
         -v "${WORK_DIR}:/qserv/replication/work" \
         -v "${QSERV_DATA_DIR}/qserv:/qserv/data/qserv" \
         -v "${QSERV_DATA_DIR}/ingest:/qserv/data/ingest" \
-        -v "${NGINX_ROOT_DIR}:/qserv/replication/www" \
+        -v "${HTTP_ROOT_DIR}:/usr/local/qserv/www/" \
         -v "${CONFIG_DIR}:/qserv/replication/config:ro" \
         -v "${LOG_DIR}:/qserv/replication/log" \
         -v "${CORE_FILES_DIR}:/tmp/core-files" \
@@ -133,13 +124,11 @@ if [ -n "${MASTER_CONTROLLER}" ]; then
         -e "LSST_LOG_CONFIG=/qserv/replication/config/${LOG_CONFIG}" \
         -e "CONFIG=${CONFIG}" \
         -e "INSTANCE_ID=${INSTANCE_ID}" \
-        -e "OPT_MALLOC_CONF=${OPT_MALLOC_CONF}" \
-        -e "OPT_LD_PRELOAD=${OPT_LD_PRELOAD}" \
         -e "QSERV_CZAR_DB=${QSERV_CZAR_DB}" \
         -e "AUTH_KEY=${AUTH_KEY}" \
         -e "ADMIN_AUTH_KEY=${ADMIN_AUTH_KEY}" \
         "${REPLICATION_IMAGE_TAG}" \
-        bash -c \''lsst qserv-replica-master-http ${PARAMETERS} --config=${CONFIG} --instance-id=${INSTANCE_ID} --qserv-czar-db="${QSERV_CZAR_DB}" --auth-key="${AUTH_KEY}" --admin-auth-key="${ADMIN_AUTH_KEY}" --http-root=/qserv/replication/www --do-not-create-folders --debug >& /qserv/replication/log/${MASTER_CONTAINER_NAME}.log'\' &
+        bash -c \''qserv-replica-master-http ${PARAMETERS} --config=${CONFIG} --instance-id=${INSTANCE_ID} --qserv-czar-db="${QSERV_CZAR_DB}" --auth-key="${AUTH_KEY}" --admin-auth-key="${ADMIN_AUTH_KEY}" --http-root=/usr/local/qserv/www/ --do-not-create-folders --debug >& /qserv/replication/log/${MASTER_CONTAINER_NAME}.log'\' &
 fi
 
 if [ -n "${TOOLS}" ]; then
@@ -161,28 +150,11 @@ if [ -n "${TOOLS}" ]; then
         -v "${CORE_FILES_DIR}:/tmp/core-files" \
         -e "CONFIG=${CONFIG}" \
         -e "INSTANCE_ID=${INSTANCE_ID}" \
-        -e "OPT_MALLOC_CONF=${OPT_MALLOC_CONF}" \
-        -e "OPT_LD_PRELOAD=${OPT_LD_PRELOAD}" \
         -e "QSERV_CZAR_DB=${QSERV_CZAR_DB}" \
         -e "AUTH_KEY=${AUTH_KEY}" \
         -e "ADMIN_AUTH_KEY=${ADMIN_AUTH_KEY}" \
         "${REPLICATION_IMAGE_TAG}" \
         sleep 1000000000
-fi
-
-# Start nginx
-
-if [ -n "${NGINX}" ]; then
-    HOST="qserv-${MASTER}"
-    echo "[${MASTER}] starting nginx"
-    ssh -n $HOST docker run \
-        --detach \
-        --network host \
-        --name "${NGINX_CONTAINER_NAME}" \
-        -v "${NGINX_ROOT_DIR}:/usr/share/nginx/html:ro" \
-        -v "${NGINX_CONFIG_DIR}/conf.d:/etc/nginx/conf.d:ro" \
-        -v "/datasets:/datasets:ro" \
-        "${NGINX_IMAGE_TAG}"
 fi
 unset basedir
 wait

@@ -1,1 +1,1 @@
-../../../scripts/replication/env_svc.sh
+../../../scripts/replication/lite/env_svc.sh
