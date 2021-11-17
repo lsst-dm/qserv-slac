@@ -1,0 +1,114 @@
+./stop.sh
+
+# Deleting master and worker log files of the 'dev' instance
+\sudo -u qserv rm -vf /qserv/qserv-dev/log/*.log;
+\sudo -u qserv rm -vf /qserv/qserv-dev/log/master/*;
+\sudo -u qserv rm -vf /qserv/qserv-dev/log/master/.lock;
+for h in $(seq --format="qserv-db%02.0f" 1 6); do
+    ssh -n ${h} '\sudo -u qserv rm -vf /qserv/qserv-dev/log/*.log; \sudo -u qserv rm -vf /qserv/qserv-dev/log/worker/*; \sudo -u qserv rm -vf /qserv/qserv-dev/log/worker/.lock'&
+done; wait
+
+
+./start.sh
+
+# Preload chunks for catalog wise_01
+docker cp /qserv/qserv-dev/data/etc/workerchunkdata.txt qserv-6:/qserv/run/etc/workerchunkdata.txt
+
+
+# Disable thread limit at XrootD
+# xrd.sched mint 8 maxt 2048 avlt 512 idle 780
+docker exec -i qserv-6 bash -c "sed -i 's/^xrd.sched mint 8 maxt 2048 avlt 512 idle 780/#xrd.sched mint 8 maxt 2048 avlt 512 idle 780/' /qserv/run/etc/lsp.cf";
+docker exec -it qserv-6 bash -c "cat /qserv/run/etc/lsp.cf | grep xrd.sched"
+for h in $(seq --format="qserv-db%02.0f" 1 6); do
+    echo; echo "** $h **";
+    ssh -n $h "docker exec -i qserv-6 bash -c \"sed -i 's/^xrd.sched mint 8 maxt 2048 avlt 512 idle 780/#xrd.sched mint 8 maxt 2048 avlt 512 idle 780/' /qserv/run/etc/lsp.cf\""
+    ssh -n $h "docker exec -i qserv-6 bash -c \"cat /qserv/run/etc/lsp.cf | grep xrd.sched\""
+done
+
+# disable LSST logging at XROOTD
+docker exec -it qserv-6 bash -c 'sed -i "s/logfile=@libXrdSsiLog.so/logfile=\/qserv\/run\/var\/log\/\$\{prog\}-raw.log/" /qserv/run/etc/init.d/xrootd'
+docker exec -it qserv-6 bash -c 'cat /qserv/run/etc/init.d/xrootd | grep "logfile="'
+for h in $(seq --format="qserv-db%02.0f" 1 6); do
+    echo; echo "** $h **";
+    ssh -n $h "docker exec -i qserv-6 bash -c \"sed -i 's/logfile=@libXrdSsiLog.so/logfile=\/qserv\/run\/var\/log\/\$\{prog\}-raw.log/' /qserv/run/etc/init.d/xrootd\""
+    ssh -n $h "docker exec -i qserv-6 bash -c \"cat /qserv/run/etc/init.d/xrootd | grep 'logfile='\""
+done
+
+# Enable more tracing at workers
+for h in $(seq --format="qserv-db%02.0f" 1 6); do
+    echo; echo "** $h **";
+    ssh -n $h "docker exec -i qserv-6 bash -c \"sed -i 's/    ssi.trace all debug/    ssi.trace all debug\n    xrootd.trace fs request response/' /qserv/run/etc/lsp.cf\"";
+    ssh -n $h "docker exec -i qserv-6 bash -c \"cat /qserv/run/etc/lsp.cf | egrep 'trace|debug'\"";
+done
+
+# Enable more tracing at workers (master branch)
+docker exec -i qserv-6 bash -c "sed -i 's/# xrootd.trace all debug/ssi.trace all debug\nxrootd.trace fs request response/' /qserv/run/etc/lsp.cf"
+docker exec -i qserv-6 bash -c "cat /qserv/run/etc/lsp.cf | egrep 'trace|debug'"
+for h in $(seq --format="qserv-db%02.0f" 1 6); do
+    echo; echo "** $h **";
+    ssh -n $h "docker exec -i qserv-6 bash -c \"sed -i 's/# xrootd.trace all debug/ssi.trace all debug\nxrootd.trace fs request response/' /qserv/run/etc/lsp.cf\"";
+    ssh -n $h "docker exec -i qserv-6 bash -c \"cat /qserv/run/etc/lsp.cf | egrep 'trace|debug'\"";
+done
+
+
+#Enable SSI debug messages in the LSST Logger
+# log4j.logger.lsst.qserv.xrdssi.msgs=ERROR
+docker exec -i qserv-6 bash -c "sed -i 's/^log4j.logger.lsst.qserv.xrdssi.msgs=ERROR/log4j.logger.lsst.qserv.xrdssi.msgs=INFO/' /qserv/run/etc/log4cxx.czar.properties";
+docker exec -i qserv-6 bash -c "cat /qserv/run/etc/log4cxx.czar.properties | grep 'log4j.logger.lsst.qserv.xrdssi.msgs'";
+for h in $(seq --format="qserv-db%02.0f" 1 6); do
+    echo; echo "** $h **";
+    ssh -n $h "docker exec -i qserv-6 bash -c \"sed -i 's/^log4j.logger.lsst.qserv.xrdssi.msgs=ERROR/log4j.logger.lsst.qserv.xrdssi.msgs=INFO/' /qserv/run/etc/log4cxx.worker.properties\"";
+done
+for h in $(seq --format="qserv-db%02.0f" 1 6); do
+    echo; echo "** $h **";
+    ssh -n $h "docker exec -i qserv-6 bash -c \"cat /qserv/run/etc/log4cxx.worker.properties | grep 'log4j.logger.lsst.qserv.xrdssi.msgs'\"";
+done
+
+#Enable SSI debug messages in the LSST Logger (master branch)
+docker exec -i qserv-6 bash -c "sed -i 's/^log4j.logger.lsst.qserv.xrdssi.msgs=WARN/log4j.logger.lsst.qserv.xrdssi.msgs=INFO/' /qserv/run/etc/log4cxx.czar.properties";
+docker exec -i qserv-6 bash -c "cat /qserv/run/etc/log4cxx.czar.properties | grep 'log4j.logger.lsst.qserv.xrdssi.msgs'";
+for h in $(seq --format="qserv-db%02.0f" 1 6); do
+    echo; echo "** $h **";
+    ssh -n $h "docker exec -i qserv-6 bash -c \"sed -i 's/^log4j.logger.lsst.qserv.xrdssi.msgs=WARN/log4j.logger.lsst.qserv.xrdssi.msgs=INFO/' /qserv/run/etc/log4cxx.worker.properties\"";
+done
+for h in $(seq --format="qserv-db%02.0f" 1 6); do
+    echo; echo "** $h **";
+    ssh -n $h "docker exec -i qserv-6 bash -c \"cat /qserv/run/etc/log4cxx.worker.properties | grep 'log4j.logger.lsst.qserv.xrdssi.msgs'\"";
+done
+
+
+
+# Logging level DEBUG
+docker exec -i qserv-6 bash -c "sed -i 's/^log4j.logger.lsst.qserv.xrdssi.msgs=ERROR/log4j.logger.lsst.qserv.xrdssi.msgs=DEBUG/' /qserv/run/etc/log4cxx.czar.properties";
+docker exec -i qserv-6 bash -c "cat /qserv/run/etc/log4cxx.czar.properties | grep 'log4j.logger.lsst.qserv.xrdssi.msgs'";
+for h in $(seq --format="qserv-db%02.0f" 1 6); do
+    echo; echo "** $h **";
+    ssh -n $h "docker exec -i qserv-6 bash -c \"sed -i 's/^log4j.logger.lsst.qserv.xrdssi.msgs=ERROR/log4j.logger.lsst.qserv.xrdssi.msgs=DEBUG/' /qserv/run/etc/log4cxx.worker.properties\"";
+done
+for h in $(seq --format="qserv-db%02.0f" 1 6); do
+    echo; echo "** $h **";
+    ssh -n $h "docker exec -i qserv-6 bash -c \"cat /qserv/run/etc/log4cxx.worker.properties | grep 'log4j.logger.lsst.qserv.xrdssi.msgs'\"";
+done
+
+
+# Disable SSI debug messages in the LSST Logger
+docker exec -i qserv-6 bash -c "sed -i 's/^log4j.logger.lsst.qserv.xrdssi.msgs=INFO/log4j.logger.lsst.qserv.xrdssi.msgs=ERROR/' /qserv/run/etc/log4cxx.czar.properties";
+docker exec -i qserv-6 bash -c "cat /qserv/run/etc/log4cxx.czar.properties | grep 'log4j.logger.lsst.qserv.xrdssi.msgs'";
+for h in $(seq --format="qserv-db%02.0f" 1 6); do
+    echo; echo "** $h **";
+    ssh -n $h "docker exec -i qserv-6 bash -c \"sed -i 's/^log4j.logger.lsst.qserv.xrdssi.msgs=INFO/log4j.logger.lsst.qserv.xrdssi.msgs=ERROR/' /qserv/run/etc/log4cxx.worker.properties\"";
+done
+for h in $(seq --format="qserv-db%02.0f" 1 6); do
+    echo; echo "** $h **";
+    ssh -n $h "docker exec -i qserv-6 bash -c \"cat /qserv/run/etc/log4cxx.worker.properties | grep 'log4j.logger.lsst.qserv.xrdssi.msgs'\"";
+done
+
+
+## Restarting master and worker services
+docker exec -it qserv-6 run/etc/init.d/mysql-proxy restart;
+docker exec -it qserv-6 run/etc/init.d/xrootd restart;
+for h in $(seq --format="qserv-db%02.0f" 1 6); do
+    echo; echo "** $h **";
+    ssh -n $h "docker exec -i qserv-6 bash -c \"/qserv/run/etc/init.d/xrootd restart\"";
+done
+
