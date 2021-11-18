@@ -1,1 +1,1 @@
-../../scripts/pull_all.sh
+../../scripts/lite/pull_all.sh

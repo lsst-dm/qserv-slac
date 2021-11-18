@@ -1,1 +1,1 @@
-../../scripts/stop_all.sh
+../../scripts/lite/stop_all.sh

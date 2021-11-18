@@ -1,0 +1,209 @@
+#!/bin/bash
+
+# This script is supposed to be sourced from the Qserv management scripts
+# in order to set up proper values of the corresponding parameters.
+
+basedir=$(dirname "$0")
+if [ -z "$basedir" ] || [ "$0" = "bash" ]; then
+    >&2 echo "error: variable 'basedir' is not defined"
+    return 1 
+fi
+basedir=$(readlink -e "$basedir")
+if [ ! -d "$basedir" ]; then
+    >&2 echo "error: path 'basedir' is not a valid directory"
+    return 1
+fi
+
+function get_param {
+    local path="$basedir/$1"
+    if [ ! -f "$path" ]; then
+        >&2 echo "file not found: $path"
+        return 1
+    fi
+    cat "$path"
+}
+
+function update_config {
+    local config=$(basename $1)
+    if [ -z "${config}" ]; then
+        >&2 echo "no config file found in the input path: $1"
+        return 1
+    fi
+    WORKER=$(echo $WORKERS | head -1 | awk '{print $1}')
+    if [ ! -z "${WORKER}" ]; then
+        HOST="qserv-${WORKER}"
+        outfile="${QSERV_BASE_DIR}/${1}"
+        infile="/tmp/${config}.$(date +'%s')"
+        scp ${HOST}:${outfile} $infile >& /dev/null
+        vim $infile > /dev/tty
+        for WORKER in $WORKERS; do
+            echo "[${WORKER}] updating configuration at ${outfile}"
+            HOST="qserv-${WORKER}"
+            scp $infile ${HOST}:${infile} >& /dev/null
+            ssh -n $HOST "sudo -u qserv cp $infile $outfile; rm $infile"
+        done
+        rm $infile
+    else
+        >&2 echo "error: no workers have been selected for the operation"
+        exit 1
+    fi
+}
+
+
+CZAR="$(get_param czar)"
+ALL_WORKERS="$(get_param workers)"
+
+CZAR_DB_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-mariadb"
+CZAR_CMSD_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-cmsd"
+CZAR_XROOTD_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-xrootd"
+CZAR_PROXY_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-proxy"
+
+WORKER_DB_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}worker-mariadb"
+WORKER_CMSD_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}worker-cmsd"
+WORKER_XROOTD_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}worker-xrootd"
+
+CZAR_DB_PASSWORD="$(get_param secrets/czar_db_root_password)"
+WORKER_DB_PASSWORD="$(get_param secrets/worker_db_root_password)"
+
+# User account under which the containers will be run
+CONTAINER_UID=1000
+CONTAINER_GID=1000
+
+unset basedir
+unset -f get_param
+
+# Parse command-line options
+
+HELP="
+General usage:
+
+    ${0} [OPTIONS]
+
+General options:
+
+    -h|--help
+        print this help
+
+Options restricting a scope of the operation:
+
+    -a|--all
+        Affects all serices of czar and the select workers.
+
+    --czar-all
+        Affects all services of czar.
+
+    --czar-db
+        MariaDB service of czar.
+
+    --czar-cmsd
+        Redirector service of czar.
+
+    --czar-xrootd
+        XROOTD service of czar.
+
+    --czar-proxy
+        MySQL proxy service of czar (the czar itself).
+
+    --worker=<name>
+        Select a subset of workers affected by the operation. If '*' is specified
+        in place of the worker name then the select services of all workers
+        will be assumed. Note that single quotes are required here in order
+        to prevent the shell from expanding the wildcard symbol into a list
+        of local files in the current working directory.
+        Notes:
+          * not using this option is equivalent to specifying --worker='*'.
+          * passing the empty string --worker='' will exclude all workers.
+
+    --worker-all
+        Affects all services of the select workers.
+
+    --worker-db
+        MariaDB service of the select workers.
+
+    --worker-cmsd
+        Redirector service of the select workers.
+
+    --worker-xrootd
+        XROOTD service of the select worker."
+
+CZAR_ALL_SERVICES=
+CZAR_DB=
+CZAR_CMSD=
+CZAR_XROOTD=
+CZAR_PROXY=
+
+WORKERS="$ALL_WORKERS"
+WORKER_ALL_SERVICES=
+WORKER_DB=
+WORKER_CMSD=
+WORKER_XROOTD=
+
+for i in "$@"; do
+    case $i in
+    -a|--all)
+        CZAR_DB=1
+        CZAR_CMSD=1
+        CZAR_XROOTD=1
+        CZAR_PROXY=1
+        WORKER_DB=1
+        WORKER_CMSD=1
+        WORKER_XROOTD=1
+        ;;
+    --czar-all)
+        CZAR_DB=1
+        CZAR_CMSD=1
+        CZAR_XROOTD=1
+        CZAR_PROXY=1
+        ;;
+    --czar-db)
+        CZAR_DB=1
+        ;;
+    --czar-cmsd)
+        CZAR_CMSD=1
+        ;;
+    --czar-xrootd)
+        CZAR_XROOTD=1
+        ;;
+    --czar-proxy)
+        CZAR_PROXY=1
+        ;;
+    --worker=*)
+        WORKER="${i#*=}"
+        if [ "${WORKER}" != "*" ]; then
+            WORKERS=$WORKER
+        fi
+        unset WORKER
+        ;;
+    --worker-all)
+        WORKER_DB=1
+        WORKER_CMSD=1
+        WORKER_XROOTD=1
+        ;;
+    --worker-db)
+        WORKER_DB=1
+        ;;
+    --worker-cmsd)
+        WORKER_CMSD=1
+        ;;
+    --worker-xrootd)
+        WORKER_XROOTD=1
+        ;;
+    -h|--help)
+        (>&2 echo "${HELP}")
+        return 2
+        ;;
+    *)
+        >&2 echo "error: unknown option '${i}'${HELP}"
+        return 1
+        ;;
+    esac
+done
+if [ -z "${CZAR_DB}${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}${WORKER_DB}${WORKER_CMSD}${WORKER_XROOTD}" ]; then
+    >&2
+echo "error: please, select services to be affected by the operation, or use -a|--all
+       for all services
+${HELP}"
+    return 2
+fi
+unset HELP
+

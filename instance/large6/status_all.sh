@@ -1,1 +1,1 @@
-../../scripts/status_all.sh
+../../scripts/lite/status_all.sh

@@ -1,1 +1,1 @@
-../../scripts/start_all.sh
+../../scripts/lite/start_all.sh
