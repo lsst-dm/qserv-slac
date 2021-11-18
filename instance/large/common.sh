@@ -1,0 +1,1 @@
+../../scripts/lite/common.sh

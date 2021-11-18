@@ -1,0 +1,1 @@
+../../scripts/lite/pull_all.sh

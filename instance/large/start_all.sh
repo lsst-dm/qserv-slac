@@ -1,0 +1,1 @@
+../../scripts/lite/start_all.sh

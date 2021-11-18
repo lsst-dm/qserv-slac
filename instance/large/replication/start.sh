@@ -1,0 +1,1 @@
+../../../scripts/replication/lite/start.sh
