@@ -5,7 +5,9 @@
 # parameters.
 
 DB_IMAGE_TAG="qserv/lite-mariadb:2021.10.1-lite-rc2"
-QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-lite-rc2"
+
+#QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-79-g86efba8bb"
+QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-80-g34de04a0f"
 
 CONTAINER_NAME_PREFIX="qserv-"
 
