@@ -13,7 +13,7 @@ if [ -n "${CZAR_DB}" ]; then
   HOST="qserv-${CZAR}"
   ssh -n $HOST docker pull $DB_IMAGE_TAG&
 fi
-if [ -n "${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}" ]; then
+if [ -n "${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}${CZAR_DEBUG}" ]; then
   HOST="qserv-${CZAR}"
   ssh -n $HOST docker pull $QSERV_IMAGE_TAG&
 fi

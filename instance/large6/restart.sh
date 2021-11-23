@@ -1,0 +1,1 @@
+../../scripts/lite/restart.sh

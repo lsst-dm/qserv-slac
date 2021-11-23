@@ -64,7 +64,8 @@ HTTP_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 
 # DM-32395: Qserv Replication system should scan all tables and retain
 #           row counters in the persistent state.
-REPLICATION_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-61-gdefd950b0"
+#REPLICATION_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-61-gdefd950b0"
+REPLICATION_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-62-g1b3737d9e-dirty"
 
 # DB_IMAGE_TAG="mariadb:10.2.16"
 DB_IMAGE_TAG="qserv/lite-mariadb:2021.10.1-lite-rc2"

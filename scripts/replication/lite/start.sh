@@ -91,12 +91,11 @@ for WORKER in $WORKERS; do
         -e "LSST_LOG_CONFIG=/qserv/replication/config/${LOG_CONFIG}" \
         -e "CONFIG=${CONFIG}" \
         -e "INSTANCE_ID=${INSTANCE_ID}" \
-        -e "WORKER=${WORKER}" \
         -e "QSERV_WORKER_DB=${QSERV_WORKER_DB}" \
         -e "AUTH_KEY=${AUTH_KEY}" \
         -e "ADMIN_AUTH_KEY=${ADMIN_AUTH_KEY}" \
        "${REPLICATION_IMAGE_TAG}" \
-        bash -c \''qserv-replica-worker ${WORKER} --config=${CONFIG} --instance-id=${INSTANCE_ID} --qserv-worker-db="${QSERV_WORKER_DB}" --auth-key="${AUTH_KEY}" --admin-auth-key="${ADMIN_AUTH_KEY}" --do-not-create-folders --debug >& /qserv/replication/log/${WORKER_CONTAINER_NAME}.log'\' &
+        bash -c \''qserv-replica-worker --config=${CONFIG} --instance-id=${INSTANCE_ID} --qserv-worker-db="${QSERV_WORKER_DB}" --auth-key="${AUTH_KEY}" --admin-auth-key="${ADMIN_AUTH_KEY}" --do-not-create-folders --debug >& /qserv/replication/log/${WORKER_CONTAINER_NAME}.log'\' &
 done
 
 # Start master controller

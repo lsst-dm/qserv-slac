@@ -25,6 +25,10 @@ if [ -n "${CZAR_PROXY}" ]; then
   HOST="qserv-${CZAR}"
   ssh -n $HOST 'echo "["'$CZAR'"] proxy:   "$(docker ps -a | grep '$CZAR_PROXY_CONTAINER_NAME')'
 fi
+if [ -n "${CZAR_DEBUG}" ]; then
+  HOST="qserv-${CZAR}"
+  ssh -n $HOST 'echo "["'$CZAR'"] debug:   "$(docker ps -a | grep '$CZAR_DEBUG_CONTAINER_NAME')'
+fi
 for WORKER in $WORKERS; do
   HOST="qserv-${WORKER}"
   if [ -n "${WORKER_DB}" ]; then

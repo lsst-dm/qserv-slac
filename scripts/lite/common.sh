@@ -57,6 +57,7 @@ CZAR_DB_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-mariadb"
 CZAR_CMSD_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-cmsd"
 CZAR_XROOTD_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-xrootd"
 CZAR_PROXY_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-proxy"
+CZAR_DEBUG_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-debug"
 
 WORKER_DB_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}worker-mariadb"
 WORKER_CMSD_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}worker-cmsd"
@@ -104,6 +105,10 @@ Options restricting a scope of the operation:
     --czar-proxy
         MySQL proxy service of czar (the czar itself).
 
+    ---czar-debug
+        The side-cart container with GDB and other tools needed to debug
+        problems in Qserv (inspecting core files, etc.).
+
     --worker=<name>
         Select a subset of workers affected by the operation. If '*' is specified
         in place of the worker name then the select services of all workers
@@ -131,6 +136,7 @@ CZAR_DB=
 CZAR_CMSD=
 CZAR_XROOTD=
 CZAR_PROXY=
+CZAR_DEBUG=
 
 WORKERS="$ALL_WORKERS"
 WORKER_ALL_SERVICES=
@@ -145,6 +151,7 @@ for i in "$@"; do
         CZAR_CMSD=1
         CZAR_XROOTD=1
         CZAR_PROXY=1
+        CZAR_DEBUG=1
         WORKER_DB=1
         WORKER_CMSD=1
         WORKER_XROOTD=1
@@ -154,6 +161,7 @@ for i in "$@"; do
         CZAR_CMSD=1
         CZAR_XROOTD=1
         CZAR_PROXY=1
+        CZAR_DEBUG=1
         ;;
     --czar-db)
         CZAR_DB=1
@@ -166,6 +174,9 @@ for i in "$@"; do
         ;;
     --czar-proxy)
         CZAR_PROXY=1
+        ;;
+    --czar-debug)
+        CZAR_DEBUG=1
         ;;
     --worker=*)
         WORKER="${i#*=}"
@@ -198,7 +209,7 @@ for i in "$@"; do
         ;;
     esac
 done
-if [ -z "${CZAR_DB}${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}${WORKER_DB}${WORKER_CMSD}${WORKER_XROOTD}" ]; then
+if [ -z "${CZAR_DB}${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}${CZAR_DEBUG}${WORKER_DB}${WORKER_CMSD}${WORKER_XROOTD}" ]; then
     >&2
 echo "error: please, select services to be affected by the operation, or use -a|--all
        for all services
