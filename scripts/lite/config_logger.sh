@@ -32,8 +32,18 @@ if [ -n "${WORKER_DB}" ]; then
     exit 1
 fi
 if [ -n "${WORKER_CMSD}" ]; then
-    update_config config-etc/log/cmsd.cfg
+    update_config ${QSERV_BASE_DIR}/config-etc/log/cmsd.cfg
 fi
 if [ -n "${WORKER_XROOTD}" ]; then
-    update_config config-etc/log/xrootd.cfg
+    update_config ${QSERV_BASE_DIR}/config-etc/log/xrootd.cfg
+fi
+if [ -n "${REPL_DB}" ]; then
+    >&2 echo "error: repolication system's mariadb service can't be reconfigured by this tool"
+    exit 1
+fi
+if [ -n "${REPL_CONTR}" ]; then
+    sudo -u qserv vim ${REPL_BASE_DIR}/config/log4cxx.replication.properties
+fi
+if [ -n "${REPL_WORKER}" ]; then
+    update_config ${REPL_BASE_DIR}/config/log4cxx.replication.properties
 fi

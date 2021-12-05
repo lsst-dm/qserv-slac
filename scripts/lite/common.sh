@@ -32,7 +32,7 @@ function update_config {
     WORKER=$(echo $WORKERS | head -1 | awk '{print $1}')
     if [ ! -z "${WORKER}" ]; then
         HOST="qserv-${WORKER}"
-        outfile="${QSERV_BASE_DIR}/${1}"
+        outfile="${1}"
         infile="/tmp/${config}.$(date +'%s')"
         scp ${HOST}:${outfile} $infile >& /dev/null
         vim $infile > /dev/tty
@@ -51,6 +51,7 @@ function update_config {
 
 
 CZAR="$(get_param czar)"
+MASTER="$(get_param master)"
 ALL_WORKERS="$(get_param workers)"
 
 CZAR_DB_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-mariadb"
@@ -63,8 +64,21 @@ WORKER_DB_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}worker-mariadb"
 WORKER_CMSD_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}worker-cmsd"
 WORKER_XROOTD_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}worker-xrootd"
 
-CZAR_DB_PASSWORD="$(get_param secrets/czar_db_root_password)"
-WORKER_DB_PASSWORD="$(get_param secrets/worker_db_root_password)"
+REPL_DB_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-mariadb"
+REPL_CONTR_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-contr"
+REPL_TOOLS_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-tools"
+REPL_WORKER_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-worker"
+
+QSERV_CZAR_DB_PASSWORD="$(get_param secrets/qserv_czar_db_root_password)"
+QSERV_WORKER_DB_PASSWORD="$(get_param secrets/qserv_worker_db_root_password)"
+REPL_DB_ROOT_PASSWORD="$(get_param secrets/repl_db_root_password)"
+REPL_DB_QSREPLICA_PASSWORD="$(get_param secrets/repl_db_qsreplica_password)"
+REPL_AUTH_KEY="$(get_param secrets/repl_auth_key)"
+REPL_ADMIN_AUTH_KEY="$(get_param secrets/repl_admin_auth_key)"
+
+QSERV_CZAR_DB_CONN="mysql://root:${QSERV_CZAR_DB_PASSWORD}@localhost:${QSERV_CZAR_DB_PORT}/qservMeta"
+QSERV_WORKER_DB_CONN="mysql://root:${QSERV_WORKER_DB_PASSWORD}@localhost:${QSERV_WORKER_DB_PORT}/qservw_worker"
+REPL_DB_CONN="mysql://qsreplica:${REPL_DB_QSREPLICA_PASSWORD}@lsst-qserv-${MASTER}:${REPL_DB_PORT}/qservReplica"
 
 # User account under which the containers will be run
 CONTAINER_UID=1000
@@ -76,7 +90,7 @@ unset -f get_param
 # Parse command-line options
 
 HELP="
-General usage:
+Usage:
 
     ${0} [OPTIONS]
 
@@ -89,6 +103,19 @@ Options restricting a scope of the operation:
 
     -a|--all
         Affects all serices of czar and the select workers.
+
+    --worker=<name>
+        Select a subset of workers affected by the operation. If '*' is specified
+        in place of the worker name then the select services of all workers
+        will be assumed. Note that single quotes are required here in order
+        to prevent the shell from expanding the wildcard symbol into a list
+        of local files in the current working directory.
+        Notes:
+          * applies to both Qserb and th eReplication system workers.
+          * not using this option is equivalent to specifying --worker='*'.
+          * passing the empty string --worker='' will exclude all workers.
+
+Selectors for the Qserv czar:
 
     --czar-all
         Affects all services of czar.
@@ -109,15 +136,7 @@ Options restricting a scope of the operation:
         The side-cart container with GDB and other tools needed to debug
         problems in Qserv (inspecting core files, etc.).
 
-    --worker=<name>
-        Select a subset of workers affected by the operation. If '*' is specified
-        in place of the worker name then the select services of all workers
-        will be assumed. Note that single quotes are required here in order
-        to prevent the shell from expanding the wildcard symbol into a list
-        of local files in the current working directory.
-        Notes:
-          * not using this option is equivalent to specifying --worker='*'.
-          * passing the empty string --worker='' will exclude all workers.
+Selectors for Qserv workers:
 
     --worker-all
         Affects all services of the select workers.
@@ -129,7 +148,30 @@ Options restricting a scope of the operation:
         Redirector service of the select workers.
 
     --worker-xrootd
-        XROOTD service of the select worker."
+        XROOTD service of the select worker.
+
+Selectors for the Replication/Ingest system services:
+
+    --repl-all
+        Affects all services of the system.
+
+    --repl-contr
+        Master Controller.
+
+    --repl-tools
+        Replication container that runs on the same host where the Master
+        Controller is being run. The container shares the work directory
+        of the Controller.
+
+    --repl-db
+        MariaDB service.
+
+    --repl-worker
+        Worker services (replicaton and ingest). Note that workers
+        affected by the scripts are specified via the option --worker.
+"
+
+WORKERS="$ALL_WORKERS"
 
 CZAR_ALL_SERVICES=
 CZAR_DB=
@@ -138,11 +180,17 @@ CZAR_XROOTD=
 CZAR_PROXY=
 CZAR_DEBUG=
 
-WORKERS="$ALL_WORKERS"
 WORKER_ALL_SERVICES=
 WORKER_DB=
 WORKER_CMSD=
 WORKER_XROOTD=
+
+REPL_ALL_SERVICES=
+REPL_DB=
+REPL_CONTR=
+REPL_TOOLS=
+REPL_WORKER=
+
 
 for i in "$@"; do
     case $i in
@@ -155,6 +203,17 @@ for i in "$@"; do
         WORKER_DB=1
         WORKER_CMSD=1
         WORKER_XROOTD=1
+        REPL_DB=1
+        REPL_CONTR=1
+        REPL_TOOLS=1
+        REPL_WORKER=1
+        ;;
+    --worker=*)
+        WORKER="${i#*=}"
+        if [ "${WORKER}" != "*" ]; then
+            WORKERS=$WORKER
+        fi
+        unset WORKER
         ;;
     --czar-all)
         CZAR_DB=1
@@ -178,13 +237,6 @@ for i in "$@"; do
     --czar-debug)
         CZAR_DEBUG=1
         ;;
-    --worker=*)
-        WORKER="${i#*=}"
-        if [ "${WORKER}" != "*" ]; then
-            WORKERS=$WORKER
-        fi
-        unset WORKER
-        ;;
     --worker-all)
         WORKER_DB=1
         WORKER_CMSD=1
@@ -199,6 +251,24 @@ for i in "$@"; do
     --worker-xrootd)
         WORKER_XROOTD=1
         ;;
+    --repl-all)
+        REPL_DB=1
+        REPL_CONTR=1
+        REPL_TOOLS=1
+        REPL_WORKER=1
+        ;;
+    --repl-db)
+        REPL_DB=1
+        ;;
+    --repl-contr)
+        REPL_CONTR=1
+        ;;
+    --repl-tools)
+        REPL_TOOLS=1
+        ;;
+    --repl-worker)
+        REPL_WORKER=1
+        ;;
     -h|--help)
         (>&2 echo "${HELP}")
         return 2
@@ -209,7 +279,7 @@ for i in "$@"; do
         ;;
     esac
 done
-if [ -z "${CZAR_DB}${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}${CZAR_DEBUG}${WORKER_DB}${WORKER_CMSD}${WORKER_XROOTD}" ]; then
+if [ -z "${CZAR_DB}${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}${CZAR_DEBUG}${WORKER_DB}${WORKER_CMSD}${WORKER_XROOTD}${REPL_DB}${REPL_CONTR}${REPL_TOOLS}${REPL_WORKER}" ]; then
     >&2
 echo "error: please, select services to be affected by the operation, or use -a|--all
        for all services

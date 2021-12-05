@@ -43,4 +43,19 @@ if [ -n "${WORKER_XROOTD}" ]; then
     ssh -n $HOST 'sudo -u qserv rm -vf '${QSERV_BASE_DIR}'/log/'${WORKER_XROOTD_CONTAINER_NAME}'.log'&
   done
 fi
+if [ -n "${REPL_DB}" ]; then
+    sudo -u qserv rm -vf ${REPL_BASE_DIR}/log/${REPL_DB_CONTAINER_NAME}.*.log&
+fi
+if [ -n "${REPL_CONTR}" ]; then
+    sudo -u qserv rm -vf ${REPL_BASE_DIR}/log/${REPL_CONTR_CONTAINER_NAME}.*.log&
+fi
+if [ -n "${REPL_TOOLS}" ]; then
+    sudo -u qserv rm -vf ${REPL_BASE_DIR}/log/${REPL_TOOLS_CONTAINER_NAME}.*.log&
+fi
+if [ -n "${REPL_WORKER}" ]; then
+  for WORKER in $WORKERS; do
+    HOST="qserv-${WORKER}"
+    ssh -n $HOST 'sudo -u qserv rm -vf '${REPL_BASE_DIR}'/log/'${REPL_WORKER_CONTAINER_NAME}'.log'&
+  done
+fi
 wait

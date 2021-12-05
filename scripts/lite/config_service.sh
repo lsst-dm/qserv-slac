@@ -32,8 +32,17 @@ if [ -n "${WORKER_DB}" ]; then
     exit 1
 fi
 if [ -n "${WORKER_CMSD}" ]; then
-    update_config config-etc/cmsd.cfg
+    update_config ${QSERV_BASE_DIR}/config-etc/cmsd.cfg
 fi
 if [ -n "${WORKER_XROOTD}" ]; then
-    update_config config-etc/xrdssi.cfg
+    update_config ${QSERV_BASE_DIR}config-etc/xrdssi.cfg
 fi
+if [ -n "${REPL_DB}" ]; then
+    >&2 echo "error: replication system's mariadb service can't be reconfigured by this tool"
+    exit 1
+fi
+if [ -n "${REPL_WORKER}" ]; then
+    >&2 echo "error: replication system's worker services can't be reconfigured by this tool"
+    exit 1
+fi
+
