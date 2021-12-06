@@ -1,8 +1,0 @@
-docker exec -it qserv-6-replica-tools bash
-mysql -hlsst-qserv-master01 -uqsreplica -pCHANGEME -P23306 qservReplica
-qserv-replica-test DATABASE TABLE_ROW_STATS dp01_dc2_catalogs_01 object --config=$CONFIG
-
-qserv-replica-controller-cmd SQL_TABLE_ROW_STATS db03 dp01_dc2_catalogs_01 object --config=$CONFIG --chunk=59916 --instance-id=large6:qserv-dev
-
-qserv-replica-job SQL ROW_STATS dp01_dc2_catalogs_01 object --config=$CONFIG --instance-id=large6:qserv-dev --state-update-policy=ENABLED --worker-response-timeout=3600
-
