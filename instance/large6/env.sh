@@ -8,7 +8,7 @@
 # ----- Qserv -----
 # -----------------
 
-DB_IMAGE_TAG="qserv/lite-mariadb:2021.10.1-lite-rc2"
+QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2021.10.1-lite-rc2"
 
 # The latest stable release.
 # QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-lite-rc2"

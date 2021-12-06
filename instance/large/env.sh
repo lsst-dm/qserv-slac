@@ -4,31 +4,48 @@
 # management scripts in order to set up proper values of the corresponding
 # parameters.
 
-DB_IMAGE_TAG="qserv/lite-mariadb:2021.10.1-lite-rc2"
+# -----------------
+# ----- Qserv -----
+# -----------------
 
-# The curreht stable branch deployed in IDF
-QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-lite-rc2"
+QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2021.10.1-lite-rc2"
 
-# Igor's tag base on he master branch plus extended message logging
-#QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-62-g1b3737d9e-dirty"
-
-# John's original tag based on the PR of https://jira.lsstcorp.org/browse/DM-31537.
-#QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-79-g86efba8bb"
-
-# John's latest tag based on the PR of https://jira.lsstcorp.org/browse/DM-31537.
-#QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-80-g34de04a0f"
+# The latest stable release.
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-lite-rc2"
 
 # John's latest tag based on the PR of https://jira.lsstcorp.org/browse/DM-31537
 # that that puts back the "LIMIT N" optimization implemented
 # in https://jira.lsstcorp.org/browse/DM-30942
-#QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-84-ga799207f0"
-
-CONTAINER_NAME_PREFIX="qserv-"
-
-CZAR_DB_PORT=3366
-WORKER_DB_PORT=3366
+QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-84-ga799207f0"
 
 QSERV_BASE_DIR="/qserv/qserv-prod"
+QSERV_CZAR_DB_PORT=3366
+QSERV_WORKER_DB_PORT=3366
+
+# -------------------------------------
+# ----- Replication/Ingest system -----
+# -------------------------------------
+
+REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2021.10.1-lite-rc2"
+
+# DM-32810: Replication system's workers should learn their identity
+#           from the Qserv worker databases.
+REPL_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-83-geb1646869"
+
+REPL_BASE_DIR="${QSERV_BASE_DIR}/replication"
+REPL_DB_PORT=23366
+REPL_INSTANCE_ID="large:qserv-prod"
+REPL_CONTR_PARAMETERS="--worker-evict-timeout=600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --debug"
+REPL_WORKER_PARAMETERS="--do-not-create-folders --debug"
+REPL_LSST_LOG_CONFIG="log4cxx.replication.properties"
+REPL_HTTP_ROOT_DIR="/qserv/qserv-prod/management/qserv_web/www"
+
+# Limit size of the replication containers by 40 GB
+REPL_MEMORY_LIMIT=42949672960
+
+# ----- Common parameters
+
+CONTAINER_NAME_PREFIX="qserv-"
 
 # 10 GB
 ULIMIT_MEMLOCK=10995116277760

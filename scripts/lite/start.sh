@@ -24,8 +24,8 @@ if [ -n "${CZAR_DB}" ]; then
     -v "${QSERV_BASE_DIR}/qserv:/home/qserv" \
     -v "${QSERV_BASE_DIR}/var-run-mysqld:/var/run/mysqld" \
     -e "MYSQL_ROOT_PASSWORD=${QSERV_CZAR_DB_ROOT_PASSWORD}" \
-    "${DB_IMAGE_TAG}" \
-    --port="${CZAR_DB_PORT}" \
+    "${QSERV_DB_IMAGE_TAG}" \
+    --port="${QSERV_CZAR_DB_PORT}" \
     --socket=/var/run/mysqld/mysqld.sock \
     --max-connections=16384 \
     --connect_timeout=28800 \
@@ -146,8 +146,8 @@ if [ -n "${WORKER_DB}" ]; then
         -v "${QSERV_BASE_DIR}/core-files:/tmp/core-files" \
         -v "${QSERV_BASE_DIR}/qserv:/home/qserv" \
         -e "MYSQL_ROOT_PASSWORD=${QSERV_WORKER_DB_ROOT_PASSWORD}" \
-        "${DB_IMAGE_TAG}" \
-        --port="${WORKER_DB_PORT}" \
+        "${QSERV_DB_IMAGE_TAG}" \
+        --port="${QSERV_WORKER_DB_PORT}" \
         --max-connections=16384 \
         --connect_timeout=28800 \
         --net_read_timeout=90000 \
