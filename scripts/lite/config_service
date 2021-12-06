@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Reconfigure services
+
+set -e
+
+# Load parameters of the setup into the corresponding environment
+# variables
+
+. $(dirname "$0")/config/env
+
+if [ -n "${CZAR_CMSD}" ]; then
+    sudo -u qserv vim ${QSERV_BASE_DIR}/config-etc/cmsd.cnf
+fi
+if [ -n "${CZAR_XROOTD}" ]; then
+    sudo -u qserv vim ${QSERV_BASE_DIR}/config-etc/xrootd.cnf
+fi
+if [ -n "${CZAR_PROXY}" ]; then
+    sudo -u qserv vim ${QSERV_BASE_DIR}/config-etc/my-proxy.cnf
+    sudo -u qserv vim ${QSERV_BASE_DIR}/config-etc/qserv-czar.cnf
+fi
+if [ -n "${WORKER_CMSD}" ]; then
+    update_config ${QSERV_BASE_DIR}/config-etc/cmsd.cfg
+fi
+if [ -n "${WORKER_XROOTD}" ]; then
+    update_config ${QSERV_BASE_DIR}/config-etc/xrdssi.cfg
+fi

@@ -1,1 +1,0 @@
-../../scripts/lite/pull.sh
