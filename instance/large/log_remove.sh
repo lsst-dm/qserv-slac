@@ -1,1 +1,0 @@
-../../scripts/lite/log_remove.sh

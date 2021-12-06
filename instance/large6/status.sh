@@ -1,1 +1,0 @@
-../../scripts/lite/status.sh

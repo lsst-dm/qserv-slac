@@ -1,2 +1,1 @@
-instance/*/secrets
-instance/*/classic/replication/secrets
+instance/*/config/secrets

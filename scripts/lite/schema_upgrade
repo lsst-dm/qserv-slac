@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Upgrade database schemas
+
+set -e
+
+# Load parameters of the setup into the corresponding environment
+# variables
+
+. $(dirname "$0")/config/env
+
+if [ -n "${CZAR_DB}" ]; then
+  echo "[${MASTER}] upgrading qserv czar mariadb"
+  ssh -n $MASTER docker run \
+      --network=host \
+      --rm \
+      -u ${CONTAINER_UID}:${CONTAINER_GID} \
+      -v /etc/passwd:/etc/passwd:ro \
+      "${QSERV_IMAGE_TAG}" \
+      entrypoint smig-update --czar-connection=${QSERV_CZAR_DB_CONN}
+fi
+
+if [ -n "${WORKER_DB}" ]; then
+  for WORKER in $WORKERS; do
+    echo "[${WORKER}] upgrading qserv worker mariadb"
+    ssh -n $WORKER docker run \
+        --network=host \
+        --rm \
+        -u ${CONTAINER_UID}:${CONTAINER_GID} \
+        "${QSERV_IMAGE_TAG}" \
+        entrypoint smig-update --worker-connection=${QSERV_WORKER_DB_CONN}
+  done
+  wait
+fi
+
+if [ -n "${REPL_DB}" ]; then
+  echo "[${MASTER}] upgrading repl mariadb"
+  ssh -n $MASTER docker run \
+      --network=host \
+      --rm \
+      -u ${CONTAINER_UID}:${CONTAINER_GID} \
+      -v /etc/passwd:/etc/passwd:ro \
+      "${REPL_IMAGE_TAG}" \
+      entrypoint smig-update --repl-connection=${REPL_DB_ROOT_CONN}
+fi

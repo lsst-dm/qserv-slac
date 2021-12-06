@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# List core dump files of the select services
+
+set -e
+
+# Load parameters of the setup into the corresponding environment
+# variables
+
+. $(dirname "$0")/config/env
+
+function core_files_ls {
+    local HOST=$1
+    local CONTAINER_NAME=$2
+    local CORE_FILES_DIR=${CORE_FILES_BASE_DIR}/${CONTAINER_NAME}
+    ssh -n $HOST 'sudo -u qserv ls -l '"${CORE_FILES_DIR}/core.*" 2>/dev/null | awk '{print "  "$0}' > /dev/tty
+}
+
+echo
+echo "[${MASTER}]"
+if [ -n "${CZAR_CMSD}" ]; then
+  echo
+  core_files_ls ${MASTER} ${CZAR_CMSD_CONTAINER_NAME}
+fi
+if [ -n "${CZAR_XROOTD}" ]; then
+  echo
+  core_files_ls ${MASTER} ${CZAR_XROOTD_CONTAINER_NAME}
+fi
+if [ -n "${CZAR_PROXY}" ]; then
+  echo
+  core_files_ls ${MASTER} ${CZAR_PROXY_CONTAINER_NAME}
+fi
+if [ -n "${REPL_CONTR}" ]; then
+  echo
+  core_files_ls ${MASTER} ${REPL_CONTR_CONTAINER_NAME}
+fi
+for WORKER in $WORKERS; do
+  echo
+  echo "[${WORKER}]"
+  if [ -n "${WORKER_CMSD}" ]; then
+    echo
+    core_files_ls ${WORKER} ${WORKER_CMSD_CONTAINER_NAME}
+  fi
+  if [ -n "${WORKER_XROOTD}" ]; then
+    echo
+    core_files_ls ${WORKER} ${WORKER_XROOTD_CONTAINER_NAME}
+  fi
+  if [ -n "${REPL_WORKER}" ]; then
+    echo
+    core_files_ls ${WORKER} ${REPL_WORKER_CONTAINER_NAME}
+  fi
+done
+echo

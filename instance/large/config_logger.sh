@@ -1,1 +1,0 @@
-../../scripts/lite/config_logger.sh
