@@ -1,0 +1,12 @@
+[gapon@lsst-qserv-master03 small]$ tail /qserv/qserv-prod/replication/log/qserv-replica-master-http.log
+2021-06-02T03:37:35.040Z  LWP 529   DEBUG  DatabaseServicesMySQL::controllers  fromTimeStamp=0 toTimeStamp=18446744073709551615 maxEntries=0 
+2021-06-02T03:37:35.042Z  LWP 529   DEBUG  DatabaseServicesMySQL::controllers  fromTimeStamp=0 toTimeStamp=18446744073709551615 maxEntries=0 ** DONE **
+2021-06-02T03:37:35.182Z  LWP 537   DEBUG  DatabaseServicesMySQL::controller id=b00d838c-d273-4b86-aeb5-3c21d78e3b00 
+2021-06-02T03:37:35.183Z  LWP 537   DEBUG  DatabaseServicesMySQL::controller id=b00d838c-d273-4b86-aeb5-3c21d78e3b00 ** DONE **
+2021-06-02T03:37:35.183Z  LWP 537   DEBUG  DatabaseServicesMySQL::readControllerEvents  controllerId=b00d838c-d273-4b86-aeb5-3c21d78e3b00 fromTimeStamp=1622604959756 toTimeStamp=18446744073709551615 maxEntries=1000 
+2021-06-02T03:37:35.185Z  LWP 537   DEBUG  DatabaseServicesMySQL::readControllerEvents  controllerId=b00d838c-d273-4b86-aeb5-3c21d78e3b00 fromTimeStamp=1622604959756 toTimeStamp=18446744073709551615 maxEntries=1000 ** DONE **
+2021-06-02T03:37:59.618Z  LWP 480   ERROR  DatabaseServicesMySQL::saveReplicaInfoCollection failed, exception: Connection[8]::execute(_inTransaction=1)  mysql_real_query failed, query: 'INSERT INTO `replica_file` VALUES (LAST_INSERT_ID(),'Object_106134.MYD',15423796,1600387552,'',0,0)', error: Lock wait timeout exceeded; try restarting transaction, errno: 1205
+terminate called after throwing an instance of 'lsst::qserv::replica::database::mysql::Error'
+  what():  Connection[8]::execute(_inTransaction=1)  mysql_real_query failed, query: 'INSERT INTO `replica_file` VALUES (LAST_INSERT_ID(),'Object_106134.MYD',15423796,1600387552,'',0,0)', error: Lock wait timeout exceeded; try restarting transaction, errno: 1205
+/home/qserv/lsst: line 7:   456 Aborted                 (core dumped) $@
+
