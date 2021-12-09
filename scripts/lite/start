@@ -262,7 +262,7 @@ if [ -n "${REPL_DB}" ]; then
       --max_heap_table_size=4G \
       --query-cache-size=0 \
       --log-error="${LOG_DIR}/${REPL_DB_CONTAINER_NAME}.error.log" \
-      --slow-query-log --slow-query-log-file="${REPL_BASE_DIR}/log/${REPL_DB_CONTAINER_NAME}.slow-query.log" \
+      --slow-query-log --slow-query-log-file="${LOG_DIR}/${REPL_DB_CONTAINER_NAME}.slow-query.log" \
       --log-warnings=2 \
       --pid-file="${LOG_DIR}/${REPL_DB_CONTAINER_NAME}.pid"&
 fi
