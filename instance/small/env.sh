@@ -1,36 +1,31 @@
 # Site-specific configuration
 # ===========================
 
-# Based on deps_20210514_1739, and included DM-26574 merged into the 'master' branch.
-#BRANCH=2021.05.01
-#BRANCH=2021.05.02
-
 # Rolled back to the older stable version due to lock ups in the Qserv workers
 # (presumably) cased by a change in the czar/workers protocol. The change was
 # introduces in branch DM-2313.
-#
-# UPDATE: This branch has been tested and doesn't seem to have any worker lock-ups.
 #BRANCH=deps_20210413_0808
 
 # This container was built right after merging DM-2313. It's meant to test if the problem
 # was caused by DM-2313, and not anyting else after that.
 #BRANCH=deps_20210421_0122
 
-# The experimental tag with optimized parametes preventing worker lock ups
-# reported in DM-30236.
-# UPDATE: still locks up.
-#BRANCH=tickets_DM-30238
-
 # The last stable branch that used to work in the "small" cluster
 # for many weeks w/o showing any problems.
 #BRANCH=deps_20210106_0022
 
 # The latest stable branch
-#BRANCH=2021.05.03-rc1
+# (reverts per-query-task and xrootd metadata changes)
+#BRANCH=2021.6.4-rc1
 
-#BRANCH=2021.05.02
-#BRANCH=tickets_DM-30236
-BRANCH=2021.06.01-rc1
+# A solution to the Qserv lockups
+#BRANCH=2021.7.1-rc1
+
+# The latest stable release
+#BRANCH=2021.9.1-rc1
+
+# The latest stable release
+BRANCH=2021.9.2-rc1
 
 # Data directory location on docker host, optional
 HOST_DATA_DIR=/qserv/qserv-prod/data

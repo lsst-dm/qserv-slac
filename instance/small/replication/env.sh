@@ -90,7 +90,18 @@ NGINX_ROOT_DIR=/qserv/qserv-prod/management/qserv_web/www
 #REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30099"
 
 # Based on deps_20210520_0632
-REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30095"
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30095"
+
+# Streamlined REST service for locating regular tables
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30666"
+
+# Improved Ingest system to support the binary data type in the table schema,
+# quoted fields in the input files.
+#REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-30103"
+
+# Extended configuration options for libcurl when pulling files from
+# an object store.
+REPLICATION_IMAGE_TAG="qserv/replica:tools-DM-31478"
 
 DB_IMAGE_TAG="mariadb:10.2.16"
 NGINX_IMAGE_TAG="nginx:latest"
