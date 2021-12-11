@@ -1,1 +1,0 @@
-../../../scripts/replication/env_svc.sh

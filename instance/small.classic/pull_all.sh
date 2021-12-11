@@ -1,1 +1,0 @@
-../../scripts/pull_all.sh

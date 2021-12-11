@@ -57,4 +57,4 @@ ULIMIT_MEMLOCK=10995116277760
 
 # Other parameters are set by the following script based on the above defined
 # one, or be loaded from predefined locations.
-. $(dirname "$0")/../../scripts/lite/common
+. $(dirname "$0")/../../bin/common
