@@ -1,8 +1,4 @@
 # qserv-ncsa
-Documentation, configuration files and scripts for managing Qserv instances at NCSA.
+Configuration files and scripts for managing Qserv instances at NCSA.
 
-To use the scripts one has to go first to a select instance at folder
-```
-instance/<instance-name>/
-```
-
+Documentation on existing deployments, tools and the management procedures can be found at [Managing Qserv instances at NCSA](https://confluence.lsstcorp.org/display/DM/Managing+Qserv+instances+at+NCSA).
