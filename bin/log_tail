@@ -1,0 +1,78 @@
+#/bin/bash -f
+
+set -e
+
+PREFIX=$(date +'%s');
+DEFAULT_LINES=100
+LINES=${DEFAULT_LINES}
+REGEXP=
+HELP="
+Usage:
+  [--lines=<num>] [--regexp=<pattern>] [<service specificaton>]
+
+Where:
+  --lines=<number>
+      The number of lines in the end of each log file to search for
+      the given pattern. Default: '${DEFAULT_LINES}'.
+
+  --regexp=<pattern>
+      A regular expression. If the one is provided the content of the log stream
+      will be filtered using 'egrep <pattern>'. Otherwise, no additional
+      processing will be made on the stream.
+";
+
+ARGS=
+for i in "$@"; do
+    case $i in
+    --lines=*)
+        LINES="${i#*=}"
+        ;;
+    --regexp=*)
+        REGEXP="${i#*=}"
+        ;;
+    *)
+        if [ -n "${ARGS}" ]; then
+            ARGS="${ARGS} ${i}"
+        else
+            ARGS="${i}"
+        fi
+        ;;
+    esac
+done
+if [ ! -n "${LINES}" ]; then
+    LINES=${DEFAULT_LINES}
+fi
+
+# Load parameters of the setup into the corresponding environment
+# variables
+
+. $(dirname "$0")/config/env ${ARGS}
+
+function get_logfile {
+  local HOST="$1"
+  local CONTAINER="$2"
+  local INFILE="${LOG_DIR}/${CONTAINER}.log"
+  local OUTFILE="/tmp/${PREFIX}.${HOST}.${CONTAINER}.log"
+  ssh -n $HOST -- "\sudo -u qserv tail -q -n ${LINES} ${INFILE}" | egrep "${REGEXP}" | awk '{print $1"  '${HOST}'"substr($0,length($1)+1)}' > ${OUTFILE}&
+}
+
+if [ -n "${CZAR_PROXY}" ]; then
+  get_logfile $MASTER $CZAR_PROXY_CONTAINER_NAME
+fi
+if [ -n "${REPL_CONTR}" ]; then
+  get_logfile $MASTER $REPL_CONTR_CONTAINER_NAME
+fi
+for HOST in $WORKERS; do
+  if [ -n "${WORKER_CMSD}" ]; then
+    get_logfile $HOST $WORKER_CMSD_CONTAINER_NAME
+  fi
+  if [ -n "${WORKER_XROOTD}" ]; then
+    get_logfile $HOST $WORKER_XROOTD_CONTAINER_NAME
+  fi
+  if [ -n "${REPL_WORKER}" ]; then
+    get_logfile $HOST $REPL_WORKER_CONTAINER_NAME
+  fi
+done
+wait
+cat /tmp/${PREFIX}.*.log | sort
+rm /tmp/${PREFIX}.*.log
