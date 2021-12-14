@@ -358,6 +358,7 @@ if [ -n "${REPL_WORKER}" ]; then
       -v "/lsstdata:/lsstdata:ro" \
       -v "${CORE_FILES_DIR}:/tmp/core-files" \
       -e "'REPL_WORKER_CONTAINER_NAME=${REPL_WORKER_CONTAINER_NAME}'" \
+      -e "'REPL_WORKER_PARAMETERS=${REPL_WORKER_PARAMETERS}'" \
       -e "'LSST_LOG_CONFIG=/qserv/replication/config/${REPL_LSST_LOG_CONFIG}'" \
       -e "'REPL_DB_CONN=${REPL_DB_CONN}'" \
       -e "'REPL_INSTANCE_ID=${REPL_INSTANCE_ID}'" \
