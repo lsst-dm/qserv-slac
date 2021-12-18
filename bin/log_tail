@@ -6,6 +6,7 @@ PREFIX=$(date +'%s');
 DEFAULT_LINES=100
 LINES=${DEFAULT_LINES}
 REGEXP=
+MERGE=
 HELP="
 Usage:
   [--lines=<num>] [--regexp=<pattern>] [<service specificaton>]
@@ -19,6 +20,9 @@ Where:
       A regular expression. If the one is provided the content of the log stream
       will be filtered using 'egrep <pattern>'. Otherwise, no additional
       processing will be made on the stream.
+  --merge
+      Sort and merge results read from all log files based on the timestamps.
+      Otherwise group results by the log files.
 ";
 
 ARGS=
@@ -29,6 +33,9 @@ for i in "$@"; do
         ;;
     --regexp=*)
         REGEXP="${i#*=}"
+        ;;
+    --merge)
+        MERGE=1
         ;;
     *)
         if [ -n "${ARGS}" ]; then
@@ -74,5 +81,11 @@ for HOST in $WORKERS; do
   fi
 done
 wait
-cat /tmp/${PREFIX}.*.log | sort
+if [ -n "${MERGE}" ]; then
+  cat /tmp/${PREFIX}.*.log | sort
+else
+  for f in $(ls /tmp/${PREFIX}.*.log); do
+    cat $f
+  done
+fi
 rm /tmp/${PREFIX}.*.log
