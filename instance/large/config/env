@@ -19,7 +19,8 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2021.10.1-lite-rc2"
 # QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-84-ga799207f0"
 
 # Same as above. Plus FIFO at "czar".
-QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-85-gf2b3b0f11"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-85-gf2b3b0f11"
+QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-87-gc51a5a3cc-dirty"
 
 QSERV_BASE_DIR="/qserv/qserv-prod"
 QSERV_CZAR_DB_PORT=3366
@@ -33,7 +34,12 @@ REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2021.10.1-lite-rc2"
 
 # DM-32810: Replication system's workers should learn their identity
 #           from the Qserv worker databases.
-REPL_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-83-geb1646869"
+# REPL_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-83-geb1646869"
+# DM-32885: Worker-side CMSD should learn their identity
+#           from the Qserv worker databases. Also includes
+#           a fix in QHTTP to prevent crashes caused by the security
+#           scanner.
+REPL_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-115-ga4fea21d6"
 
 REPL_BASE_DIR="${QSERV_BASE_DIR}/replication"
 REPL_DB_PORT=23366
