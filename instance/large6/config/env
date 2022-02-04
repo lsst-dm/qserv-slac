@@ -20,7 +20,15 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2021.10.1-lite-rc2"
 
 # Same as above. Plus FIFO at "czar".
 #QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-85-gf2b3b0f11"
-QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-87-gc51a5a3cc-dirty"
+#Not rebased
+#QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-91-g2ada1c49d"
+#rebased off main
+#QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-162-ge6bb9589d-dirty"
+#rebase off main with limit n fix.
+QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-163-g67cac7a8a-dirty"
+#rebase off main with limit n fix and wroker doesn't allow nn to be interactive
+QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-164-g2285eb430-dirty"
+
 
 QSERV_BASE_DIR="/qserv/qserv-dev"
 QSERV_CZAR_DB_PORT=3306

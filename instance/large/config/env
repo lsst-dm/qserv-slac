@@ -20,7 +20,13 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2021.10.1-lite-rc2"
 
 # Same as above. Plus FIFO at "czar".
 # QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-85-gf2b3b0f11"
-QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-87-gc51a5a3cc-dirty"
+# QSERV_IMAGE_TAG="qserv/l`ite-qserv:2021.10.1-rc1-87-gc51a5a3cc-dirty"
+
+# Same as above, plus the "LIMIT N" is put back for real.
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-163-g67cac7a8a-dirty"
+
+# Improved version of the one mentioned above
+QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-164-g2285eb430-dirty"
 
 QSERV_BASE_DIR="/qserv/qserv-prod"
 QSERV_CZAR_DB_PORT=3366
@@ -35,17 +41,22 @@ REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2021.10.1-lite-rc2"
 # DM-32810: Replication system's workers should learn their identity
 #           from the Qserv worker databases.
 # REPL_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-83-geb1646869"
+
 # DM-32885: Worker-side CMSD should learn their identity
 #           from the Qserv worker databases. Also includes
 #           a fix in QHTTP to prevent crashes caused by the security
 #           scanner.
-REPL_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-115-ga4fea21d6"
+# REPL_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-115-ga4fea21d6"
+
+# DM-DM-33145: An option to wait for table schema initialization in
+#              the Qserv Replication/Ingest system's services
+REPL_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-127-g933990ea0"
 
 REPL_BASE_DIR="${QSERV_BASE_DIR}/replication"
 REPL_DB_PORT=23366
 REPL_INSTANCE_ID="large:qserv-prod"
 REPL_CONTR_PARAMETERS="--worker-evict-timeout=600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --debug"
-REPL_WORKER_PARAMETERS="--do-not-create-folders --debug"
+REPL_WORKER_PARAMETERS="--schema-upgrade-wait=1 --schema-upgrade-wait-timeout=600 --do-not-create-folders --debug"
 REPL_LSST_LOG_CONFIG="log4cxx.replication.properties"
 REPL_HTTP_ROOT_DIR="/qserv/qserv-prod/management/qserv_web/www"
 
