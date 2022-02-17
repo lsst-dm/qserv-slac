@@ -24,7 +24,7 @@ fi
 if [ -n "${WORKER_XROOTD}" ]; then
     update_config ${QSERV_BASE_DIR}/config-etc/log/xrootd.cfg
 fi
-if [ -n "${REPL_CONTR}" ]; then
+if [ -n "${REPL_REG}${REPL_CONTR}" ]; then
     update_config_master ${REPL_BASE_DIR}/config/log4cxx.replication.properties
 fi
 if [ -n "${REPL_WORKER}" ]; then

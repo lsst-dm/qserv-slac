@@ -69,6 +69,7 @@ WORKER_XROOTD_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}worker-xrootd"
 WORKER_DEBUG_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}worker-debug"
 
 REPL_DB_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-mariadb"
+REPL_REG_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-reg"
 REPL_CONTR_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-contr"
 REPL_DEBUG_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-debug"
 REPL_WORKER_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-worker"
@@ -181,6 +182,9 @@ Selectors for the Replication/Ingest system services:
         include the special debug containers. For the latter use options:
         --all-debug, --repl-debug or --repl-worker-debug.
 
+    --repl-reg
+        Worker registration (Registry) service.
+
     --repl-contr
         Master Controller.
 
@@ -219,6 +223,7 @@ WORKER_DEBUG=
 
 REPL_ALL_SERVICES=
 REPL_DB=
+REPL_REG=
 REPL_CONTR=
 REPL_DEBUG=
 REPL_WORKER=
@@ -235,6 +240,7 @@ for i in "$@"; do
         WORKER_CMSD=1
         WORKER_XROOTD=1
         REPL_DB=1
+        REPL_REG=1
         REPL_CONTR=1
         REPL_WORKER=1
         ;;
@@ -291,11 +297,15 @@ for i in "$@"; do
         ;;
     --repl-all)
         REPL_DB=1
+        REPL_REG=1
         REPL_CONTR=1
         REPL_WORKER=1
         ;;
     --repl-db)
         REPL_DB=1
+        ;;
+    --repl-reg)
+        REPL_REG=1
         ;;
     --repl-contr)
         REPL_CONTR=1
@@ -319,7 +329,7 @@ for i in "$@"; do
         ;;
     esac
 done
-if [ -z "${CZAR_DB}${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}${CZAR_DEBUG}${WORKER_DB}${WORKER_CMSD}${WORKER_XROOTD}${WORKER_DEBUG}${REPL_DB}${REPL_CONTR}${REPL_DEBUG}${REPL_WORKER}${REPL_WORKER_DEBUG}" ]; then
+if [ -z "${CZAR_DB}${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}${CZAR_DEBUG}${WORKER_DB}${WORKER_CMSD}${WORKER_XROOTD}${WORKER_DEBUG}${REPL_DB}${REPL_REG}${REPL_CONTR}${REPL_DEBUG}${REPL_WORKER}${REPL_WORKER_DEBUG}" ]; then
     >&2
 echo "error: please, select services to be affected by the operation, or use -a|--all
        for all services

@@ -40,6 +40,9 @@ fi
 if [ -n "${REPL_DB}" ]; then
     sudo -u qserv rm -vf ${LOG_DIR}/${REPL_DB_CONTAINER_NAME}.*.log&
 fi
+if [ -n "${REPL_REG}" ]; then
+    sudo -u qserv rm -vf ${LOG_DIR}/${REPL_REG_CONTAINER_NAME}.log&
+fi
 if [ -n "${REPL_CONTR}" ]; then
     sudo -u qserv rm -vf ${LOG_DIR}/${REPL_CONTR_CONTAINER_NAME}.log&
 fi

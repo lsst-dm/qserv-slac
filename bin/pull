@@ -26,7 +26,7 @@ done
 if [ -n "${REPL_DB}" ]; then
   ssh -n $MASTER docker pull $REPL_DB_IMAGE_TAG&
 fi
-if [ -n "${REPL_CONTR}${REPL_DEBUG}" ]; then
+if [ -n "${REPL_REG}${REPL_CONTR}${REPL_DEBUG}" ]; then
   ssh -n $MASTER docker pull $REPL_IMAGE_TAG&
 fi
 for WORKER in $WORKERS; do

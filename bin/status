@@ -41,6 +41,9 @@ done
 if [ -n "${REPL_DB}" ]; then
   ssh -n $MASTER 'echo "["'$MASTER'"] repl mariadb: "$(docker ps -a | grep '$REPL_DB_CONTAINER_NAME')'
 fi
+if [ -n "${REPL_REG}" ]; then
+  ssh -n $MASTER 'echo "["'$MASTER'"] repl reg:     "$(docker ps -a | grep '$REPL_REG_CONTAINER_NAME')'
+fi
 if [ -n "${REPL_CONTR}" ]; then
   ssh -n $MASTER 'echo "["'$MASTER'"] repl contr:   "$(docker ps -a | grep '$REPL_CONTR_CONTAINER_NAME')'
 fi

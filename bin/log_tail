@@ -66,6 +66,9 @@ function get_logfile {
 if [ -n "${CZAR_PROXY}" ]; then
   get_logfile $MASTER $CZAR_PROXY_CONTAINER_NAME
 fi
+if [ -n "${REPL_REG}" ]; then
+  get_logfile $MASTER $REPL_REG_CONTAINER_NAME
+fi
 if [ -n "${REPL_CONTR}" ]; then
   get_logfile $MASTER $REPL_CONTR_CONTAINER_NAME
 fi

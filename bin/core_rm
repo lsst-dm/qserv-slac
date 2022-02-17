@@ -27,6 +27,9 @@ fi
 if [ -n "${CZAR_PROXY}" ]; then
   core_files_rm ${MASTER} ${CZAR_PROXY_CONTAINER_NAME} "qserv czar proxy"
 fi
+if [ -n "${REPL_REG}" ]; then
+  core_files_rm ${MASTER} ${REPL_REG_CONTAINER_NAME} "repl contr"
+fi
 if [ -n "${REPL_CONTR}" ]; then
   core_files_rm ${MASTER} ${REPL_CONTR_CONTAINER_NAME} "repl contr"
 fi

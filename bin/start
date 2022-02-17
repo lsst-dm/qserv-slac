@@ -277,6 +277,33 @@ if [ -n "${REPL_DB}" ]; then
     --pid-file="${LOG_DIR}/${REPL_DB_CONTAINER_NAME}.pid"&
 fi
 
+if [ -n "${REPL_REG}" ]; then
+  echo "[${MASTER}] starting repl reg"
+  CORE_FILES_DIR=${CORE_FILES_BASE_DIR}/${REPL_REG_CONTAINER_NAME}
+  ssh -n $MASTER '\sudo -u qserv mkdir -p '${CORE_FILES_DIR}
+  ssh -n $MASTER docker run \
+    --privileged \
+    --cap-add=SYS_PTRACE \
+    --detach=true \
+    --network=host \
+    --memory=${REPL_MEMORY_LIMIT} \
+    --name="${REPL_REG_CONTAINER_NAME}" \
+    -u ${CONTAINER_UID}:${CONTAINER_GID} \
+    -v "/etc/passwd:/etc/passwd:ro" \
+    -v "${REPL_BASE_DIR}/config:/qserv/replication/config:ro" \
+    -v "${LOG_DIR}:/qserv/log" \
+    -v "${CORE_FILES_DIR}:/tmp/core-files" \
+    -e "'REPL_REG_CONTAINER_NAME=${REPL_REG_CONTAINER_NAME}'" \
+    -e "'LSST_LOG_CONFIG=/qserv/replication/config/${REPL_LSST_LOG_CONFIG}'" \
+    -e "'REPL_REG_PARAMETERS=${REPL_REG_PARAMETERS}'" \
+    -e "'REPL_DB_CONN=${REPL_DB_CONN}'" \
+    -e "'REPL_INSTANCE_ID=${REPL_INSTANCE_ID}'" \
+    -e "'REPL_AUTH_KEY=${REPL_AUTH_KEY}'" \
+    -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
+    "${REPL_IMAGE_TAG}" \
+    bash -c \''qserv-replica-registry ${REPL_REG_PARAMETERS} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" >& /qserv/log/${REPL_REG_CONTAINER_NAME}.log'\'&
+fi
+
 if [ -n "${REPL_CONTR}" ]; then
   echo "[${MASTER}] starting repl contr"
   CORE_FILES_DIR=${CORE_FILES_BASE_DIR}/${REPL_CONTR_CONTAINER_NAME}
@@ -296,7 +323,6 @@ if [ -n "${REPL_CONTR}" ]; then
     -v "${REPL_BASE_DIR}/config:/qserv/replication/config:ro" \
     -v "${LOG_DIR}:/qserv/log" \
     -v "${CORE_FILES_DIR}:/tmp/core-files" \
-    -v "${REPL_HTTP_ROOT_DIR}:/usr/local/qserv/www/" \
     -e "'REPL_CONTR_CONTAINER_NAME=${REPL_CONTR_CONTAINER_NAME}'" \
     -e "'REPL_CONTR_PARAMETERS=${REPL_CONTR_PARAMETERS}'" \
     -e "'LSST_LOG_CONFIG=/qserv/replication/config/${REPL_LSST_LOG_CONFIG}'" \
@@ -305,8 +331,9 @@ if [ -n "${REPL_CONTR}" ]; then
     -e "'QSERV_CZAR_DB_CONN=${QSERV_CZAR_DB_CONN}'" \
     -e "'REPL_AUTH_KEY=${REPL_AUTH_KEY}'" \
     -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
+    -e "'REPL_REG_HOST=${MASTER}'" \
     "${REPL_IMAGE_TAG}" \
-    bash -c \''qserv-replica-master-http ${REPL_CONTR_PARAMETERS} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-czar-db="${QSERV_CZAR_DB_CONN}" --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" --http-root=/usr/local/qserv/www/ >& /qserv/log/${REPL_CONTR_CONTAINER_NAME}.log'\'&
+    bash -c \''qserv-replica-master-http ${REPL_CONTR_PARAMETERS} --registry-host=${REPL_REG_HOST} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-czar-db="${QSERV_CZAR_DB_CONN}" --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" >& /qserv/log/${REPL_CONTR_CONTAINER_NAME}.log'\'&
 fi
 
 if [ -n "${REPL_DEBUG}" ]; then
@@ -333,6 +360,7 @@ if [ -n "${REPL_DEBUG}" ]; then
     -e "'QSERV_CZAR_DB_CONN=${QSERV_CZAR_DB_CONN}'" \
     -e "'REPL_AUTH_KEY=${REPL_AUTH_KEY}'" \
     -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
+    -e "'REPL_REG_HOST=${MASTER}'" \
     "${REPL_IMAGE_TAG}" \
     bash -c \''yum -y install gdb && tail -f /dev/null'\'&
 fi
@@ -365,8 +393,9 @@ if [ -n "${REPL_WORKER}" ]; then
       -e "'QSERV_WORKER_DB_CONN=${QSERV_WORKER_DB_CONN}'" \
       -e "'REPL_AUTH_KEY=${REPL_AUTH_KEY}'" \
       -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
+      -e "'REPL_REG_HOST=${MASTER}'" \
      "${REPL_IMAGE_TAG}" \
-      bash -c \''qserv-replica-worker ${REPL_WORKER_PARAMETERS} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-worker-db="${QSERV_WORKER_DB_CONN}" --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" >& /qserv/log/${REPL_WORKER_CONTAINER_NAME}.log'\' &
+      bash -c \''qserv-replica-worker ${REPL_WORKER_PARAMETERS} --registry-host=${REPL_REG_HOST} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-worker-db="${QSERV_WORKER_DB_CONN}" --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" >& /qserv/log/${REPL_WORKER_CONTAINER_NAME}.log'\' &
   done
 fi
 if [ -n "${REPL_WORKER_DEBUG}" ]; then
@@ -394,6 +423,7 @@ if [ -n "${REPL_WORKER_DEBUG}" ]; then
       -e "'QSERV_CZAR_DB_CONN=${QSERV_CZAR_DB_CONN}'" \
       -e "'REPL_AUTH_KEY=${REPL_AUTH_KEY}'" \
       -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
+      -e "'REPL_REG_HOST=${MASTER}'" \
       "${REPL_IMAGE_TAG}" \
       bash -c \''yum -y install gdb && tail -f /dev/null'\'&
   done
