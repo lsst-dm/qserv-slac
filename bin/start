@@ -63,7 +63,7 @@ if [ -n "${CZAR_CMSD}" ]; then
     -e "LSST_LOG_CONFIG=/config-etc/log/cmsd.cfg" \
     -e "CONTAINER_NAME=${CZAR_CMSD_CONTAINER_NAME}" \
     "${QSERV_IMAGE_TAG}" \
-    bash -c \''cmsd -c /config-etc/cmsd.cnf -n manager -I v4 2>&1 >> /qserv/log/${CONTAINER_NAME}.log'\'
+    bash -c \''cmsd -c /config-etc/cmsd.cnf -n manager -I v4 -l @libXrdSsiLog.so >& /qserv/log/${CONTAINER_NAME}.log'\'
 fi
 
 if [ -n "${CZAR_XROOTD}" ]; then
@@ -87,7 +87,7 @@ if [ -n "${CZAR_XROOTD}" ]; then
     -e "LSST_LOG_CONFIG=/config-etc/log/xrootd.cfg" \
     -e "CONTAINER_NAME=${CZAR_XROOTD_CONTAINER_NAME}" \
     "${QSERV_IMAGE_TAG}" \
-    bash -c \''xrootd -c /config-etc/xrootd.cnf -n manager -I v4 2>&1 >> /qserv/log/${CONTAINER_NAME}.log'\'
+    bash -c \''xrootd -c /config-etc/xrootd.cnf -n manager -I v4 -l @libXrdSsiLog.so >& /qserv/log/${CONTAINER_NAME}.log'\'
 fi
 
 if [ -n "${CZAR_PROXY}" ]; then
@@ -115,7 +115,7 @@ if [ -n "${CZAR_PROXY}" ]; then
     -e "CONTAINER_NAME=${CZAR_PROXY_CONTAINER_NAME}" \
     --ulimit=memlock=${ULIMIT_MEMLOCK} \
     "${QSERV_IMAGE_TAG}" \
-    bash -c \''mysql-proxy --proxy-lua-script=/usr/local/lua/qserv/scripts/mysqlProxy.lua --lua-cpath=/usr/local/lua/qserv/lib/czarProxy.so --defaults-file=/config-etc/my-proxy.cnf --log-file=/qserv/log/${CONTAINER_NAME}.mysql-proxy.log 1>&2 >> /qserv/log/${CONTAINER_NAME}.log'\'
+    bash -c \''mysql-proxy --proxy-lua-script=/usr/local/lua/qserv/scripts/mysqlProxy.lua --lua-cpath=/usr/local/lua/qserv/lib/czarProxy.so --defaults-file=/config-etc/my-proxy.cnf --log-file=/qserv/log/${CONTAINER_NAME}.mysql-proxy.log >& /qserv/log/${CONTAINER_NAME}.log'\'
 fi
 
 if [ -n "${CZAR_DEBUG}" ]; then
@@ -144,6 +144,7 @@ if [ -n "${WORKER_DB}" ]; then
       --name="${WORKER_DB_CONTAINER_NAME}" \
       -u ${CONTAINER_UID}:${CONTAINER_GID} \
       -v /etc/passwd:/etc/passwd:ro \
+      -v "${QSERV_BASE_DIR}/data:/qserv/data" \
       -v "${QSERV_BASE_DIR}/data/mysql:/var/lib/mysql" \
       -v "${LOG_DIR}:${LOG_DIR}" \
       -v "${QSERV_BASE_DIR}/qserv:/home/qserv" \
@@ -192,7 +193,7 @@ if [ -n "${WORKER_CMSD}" ]; then
       -e "LSST_LOG_CONFIG=/config-etc/log/cmsd.cfg" \
       -e "CONTAINER_NAME=${WORKER_CMSD_CONTAINER_NAME}" \
       "${QSERV_IMAGE_TAG}" \
-      bash -c \''cmsd -c /config-etc/cmsd.cfg -n worker -I v4 -l @libXrdSsiLog.so -+xrdssi /config-etc/xrdssi.cfg 2>&1 >> /qserv/log/${CONTAINER_NAME}.log'\'&
+      bash -c \''cmsd -c /config-etc/cmsd.cfg -n worker -I v4 -l @libXrdSsiLog.so -+xrdssi /config-etc/xrdssi.cfg >& /qserv/log/${CONTAINER_NAME}.log'\'&
   done
   wait
 fi
@@ -222,7 +223,7 @@ if [ -n "${WORKER_XROOTD}" ]; then
       -e "CONTAINER_NAME=${WORKER_XROOTD_CONTAINER_NAME}" \
       --ulimit memlock=${ULIMIT_MEMLOCK} \
       "${QSERV_IMAGE_TAG}" \
-      bash -c \''xrootd -c /config-etc/cmsd.cfg -n worker -I v4 -l @libXrdSsiLog.so -+xrdssi /config-etc/xrdssi.cfg 2>&1 >> /qserv/log/${CONTAINER_NAME}.log'\'&
+      bash -c \''xrootd -c /config-etc/cmsd.cfg -n worker -I v4 -l @libXrdSsiLog.so -+xrdssi /config-etc/xrdssi.cfg >& /qserv/log/${CONTAINER_NAME}.log'\'&
   done
   wait
 fi
@@ -307,6 +308,10 @@ fi
 if [ -n "${REPL_CONTR}" ]; then
   echo "[${MASTER}] starting repl contr"
   CORE_FILES_DIR=${CORE_FILES_BASE_DIR}/${REPL_CONTR_CONTAINER_NAME}
+  REPL_HTTP_ROOT_VOL=
+  if [ -n "${REPL_HTTP_ROOT}" ]; then
+    REPL_HTTP_ROOT_VOL='-v "'${REPL_HTTP_ROOT}':/usr/local/qserv/www:ro"'
+  fi
   ssh -n $MASTER '\sudo -u qserv mkdir -p '${CORE_FILES_DIR}
   ssh -n $MASTER docker run \
     --privileged \
@@ -319,6 +324,7 @@ if [ -n "${REPL_CONTR}" ]; then
     -v "/etc/passwd:/etc/passwd:ro" \
     -v "${QSERV_BASE_DIR}/qserv:/qserv/data/qserv" \
     -v "${QSERV_BASE_DIR}/data/ingest:/qserv/data/ingest" \
+    ${REPL_HTTP_ROOT_VOL} \
     -v "${REPL_BASE_DIR}/work:/qserv/replication/work" \
     -v "${REPL_BASE_DIR}/config:/qserv/replication/config:ro" \
     -v "${LOG_DIR}:/qserv/log" \
