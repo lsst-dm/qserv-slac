@@ -29,7 +29,11 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2021.10.1-lite-rc2"
 # QSERV_IMAGE_TAG="qserv/lite-qserv:2021.10.1-rc1-164-g2285eb430-dirty"
 
 # The latest version of Qserv that includes what's mentioned above
-QSERV_IMAGE_TAG="qserv/lite-qserv:2022.1.1-rc1-60-g9784d9d0b"
+#QSERV_IMAGE_TAG="qserv/lite-qserv:2022.1.1-rc1-60-g9784d9d0b"
+
+# DM-33346: near neighbor optimization test
+#QSERV_IMAGE_TAG="qserv/lite-qserv:2022.2.1-rc1-42-gf5195a92a"
+QSERV_IMAGE_TAG="qserv/lite-qserv:2022.2.1-rc1-43-gdc9e98064"
 
 QSERV_BASE_DIR="/qserv/qserv-prod"
 QSERV_CZAR_DB_PORT=3366
@@ -58,7 +62,20 @@ REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2021.10.1-lite-rc2"
 
 # DM-33376: Registry-based Controller-workers protocol in the Qserv
 #           Replication/Ingest system
-REPL_IMAGE_TAG="qserv/lite-qserv:2022.1.1-rc1-83-gb68ecf8b2"
+# REPL_IMAGE_TAG="qserv/lite-qserv:2022.1.1-rc1-83-gb68ecf8b2"
+
+# DM-33815: Although, this particular ticket captures some new development
+#           that doesn't affect yet the functionality of the R-I system,
+#           the branch also carries a more robus implementation of the
+#           qhttp server from the main branch. This should prevent crashes
+#           of the R-I services due to NCSA security scanner.
+# REPL_IMAGE_TAG="qserv/lite-qserv:2022.2.1-rc1-28-g80de6f7cc"
+
+# DM-34404: Added metadata service 'GET /meta/version' to the worker
+#           Registry. 
+#REPL_IMAGE_TAG="qserv/lite-qserv:2022.2.1-rc1-57-gd59a1899d"
+REPL_IMAGE_TAG="qserv/lite-qserv:2022.4.2-rc1"
+
 
 REPL_INSTANCE_ID="large:qserv-prod"
 REPL_BASE_DIR="${QSERV_BASE_DIR}/replication"
@@ -74,6 +91,9 @@ REPL_WORKER_EXPORTER_PORT=25603
 REPL_WORKER_HTTP_LOADER_PORT=25604
 REPL_WORKER_PARAMETERS="--registry-port=${REPL_REG_PORT} --worker-svc-port=${REPL_WORKER_SVC_PORT} --worker-fs-port=${REPL_WORKER_FS_PORT} --worker-loader-port=${REPL_WORKER_LOADER_PORT} --worker-exporter-port=${REPL_WORKER_EXPORTER_PORT} --worker-http-loader-port=${REPL_WORKER_HTTP_LOADER_PORT} --schema-upgrade-wait=1 --schema-upgrade-wait-timeout=600 --do-not-create-folders --debug"
 REPL_LSST_LOG_CONFIG="log4cxx.replication.properties"
+# To mount the local (ouside the container) version of the Web dashboard
+# and other Web apps served by the HTTP server of the Master Conbtroller 
+REPL_HTTP_ROOT="${QSERV_BASE_DIR}/dashboard/qserv/src/www"
 
 # Limit size of the replication containers by 40 GB
 REPL_MEMORY_LIMIT=42949672960
