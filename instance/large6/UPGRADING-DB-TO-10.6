@@ -1,0 +1,339 @@
+\sudo -u qserv du -hs /qserv/qserv-dev/replication/mysql/
+19G	/qserv/qserv-dev/replication/mysql/
+
+./stop --repl-db
+[qserv-master01] repl mariadb: qserv-6-repl-mariadb qserv-6-repl-mariadb
+
+\sudo -u qserv cp -arvf /qserv/qserv-dev/replication/mysql/ /qserv/qserv-dev/replication/mysql.10.4
+
+\sudo -u qserv du -hs /qserv/qserv-dev/replication/mysql.10.4/
+19G	/qserv/qserv-dev/replication/mysql.10.4/
+
+
+# This was suggested in:
+#
+# ..The slow shutdown can take minutes, or even hours in extreme cases where
+# substantial amounts of data are still buffered. Use the slow shutdown technique
+# before upgrading or downgrading between MySQL major releases, so that all data
+# files are fully prepared in case the upgrade process updates the file format.
+
+MariaDB [qservReplica]> SET GLOBAL innodb_fast_shutdown = 0;
+MariaDB [qservReplica]> SHOW VARIABLES LIKE 'innodb_fast_shutdown';
++----------------------+-------+
+| Variable_name        | Value |
++----------------------+-------+
+| innodb_fast_shutdown | 0     |
++----------------------+-------+
+
+# The log file before the shutdown
+\sudo tail -100 /qserv/qserv-dev/log/qserv-6-repl-mariadb.error.log
+..
+2022-03-30 22:10:32 0 [Note] InnoDB: Using Linux native AIO
+2022-03-30 22:10:32 0 [Note] InnoDB: Mutexes and rw_locks use GCC atomic builtins
+2022-03-30 22:10:32 0 [Note] InnoDB: Uses event mutexes
+2022-03-30 22:10:32 0 [Note] InnoDB: Compressed tables use zlib 1.2.11
+2022-03-30 22:10:32 0 [Note] InnoDB: Number of pools: 1
+2022-03-30 22:10:32 0 [Note] InnoDB: Using SSE2 crc32 instructions
+2022-03-30 22:10:32 0 [Note] mysqld: O_TMPFILE is not supported on /tmp (disabling future attempts)
+2022-03-30 22:10:32 0 [Note] InnoDB: Initializing buffer pool, total size = 256M, instances = 1, chunk size = 128M
+2022-03-30 22:10:32 0 [Note] InnoDB: Completed initialization of buffer pool
+2022-03-30 22:10:32 0 [Note] InnoDB: If the mysqld execution user is authorized, page cleaner thread priority can be changed. See the man page of setpriority().
+2022-03-30 22:10:32 0 [Note] InnoDB: 128 out of 128 rollback segments are active.
+2022-03-30 22:10:32 0 [Note] InnoDB: Creating shared tablespace for temporary tables
+2022-03-30 22:10:32 0 [Note] InnoDB: Setting file './ibtmp1' size to 12 MB. Physically writing the file full; Please wait ...
+2022-03-30 22:10:32 0 [Note] InnoDB: File './ibtmp1' size is now 12 MB.
+2022-03-30 22:10:32 0 [Note] InnoDB: Waiting for purge to start
+2022-03-30 22:10:33 0 [Note] InnoDB: 10.4.21 started; log sequence number 69229595745; transaction id 124379166
+2022-03-30 22:10:33 0 [Note] InnoDB: Loading buffer pool(s) from /var/lib/mysql/ib_buffer_pool
+2022-03-30 22:10:33 0 [Note] Plugin 'FEEDBACK' is disabled.
+2022-03-30 22:10:33 0 [Note] Server socket created on IP: '::'.
+2022-03-30 22:10:33 0 [Warning] 'proxies_priv' entry '@% root@a9003af066e0' ignored in --skip-name-resolve mode.
+2022-03-30 22:10:33 0 [Note] Reading of all Master_info entries succeeded
+2022-03-30 22:10:33 0 [Note] Added new Master_info '' to hash table
+2022-03-30 22:10:33 0 [Note] mysqld: ready for connections.
+Version: '10.4.21-MariaDB-1:10.4.21+maria~focal-log'  socket: '/var/run/mysqld/mysqld.sock'  port: 23306  mariadb.org binary distribution
+2022-03-30 22:10:36 0 [Note] InnoDB: Buffer pool(s) load completed at 220330 22:10:36
+
+
+docker exec -it qserv-6-repl-mariadb ps -ef
+UID          PID    PPID  C STIME TTY          TIME CMD
+qserv          1       0 48 22:10 ?        00:02:36 mysqld --port=23306 --max-co
+qserv        167       0  0 22:15 pts/0    00:00:00 ps -ef
+
+docker exec -it qserv-6-repl-mariadb kill -9 1
+
+# That didn't help to shut down the server. Try another way. Apparently signal 9 gets
+# intercepted and refused by the service.
+
+docker exec -it qserv-6-repl-mariadb kill 1
+..
+docker exec -it qserv-6-repl-mariadb kill 1
+OCI runtime exec failed: exec failed: container_linux.go:380: starting container process caused: process_linux.go:130: executing setns process caused: exit status 1: unknown
+
+# That workerd. Looking at the log file.
+
+\sudo tail -12 /qserv/qserv-dev/log/qserv-6-repl-mariadb.error.log
+2022-03-30 22:19:53 0 [Note] mysqld (initiated by: unknown): Normal shutdown
+2022-03-30 22:19:53 0 [Note] Event Scheduler: Purging the queue. 0 events
+2022-03-30 22:19:53 0 [Note] InnoDB: FTS optimize thread exiting.
+2022-03-30 22:19:53 1 [Note] InnoDB: to purge 2 transactions
+2022-03-30 22:19:53 0 [Note] InnoDB: Starting shutdown...
+2022-03-30 22:19:53 0 [Note] InnoDB: Dumping buffer pool(s) to /var/lib/mysql/ib_buffer_pool
+2022-03-30 22:19:53 0 [Note] InnoDB: Instance 0, restricted to 4013 pages due to innodb_buf_pool_dump_pct=25
+2022-03-30 22:19:53 0 [Note] InnoDB: Buffer pool(s) dump completed at 220330 22:19:53
+2022-03-30 22:19:55 0 [Note] InnoDB: Removed temporary tablespace data file: "ibtmp1"
+2022-03-30 22:19:55 0 [Note] InnoDB: Shutdown completed; log sequence number 69230264246; transaction id 124380824
+2022-03-30 22:19:55 0 [Note] mysqld: Shutdown complete
+
+# Upgrading config to version: 10.6
+
+sudo -u qserv ls -al /qserv/qserv-dev/replication/mysql/
+total 635876
+drwxr-srwx 6 qserv qserv       303 Mar 30 17:19 .
+drwxr-sr-x 8 qserv qserv       120 Mar 30 16:47 ..
+-rw-rw-r-x 1 qserv qserv    958464 Mar 30 17:19 aria_log.00000001
+-rw-rw-r-x 1 qserv qserv        52 Mar 30 17:19 aria_log_control
+-rw-rw---- 1 qserv qserv     35161 Mar 30 17:19 ib_buffer_pool
+-rw-rw-r-x 1 qserv qserv 549453824 Mar 30 17:19 ibdata1
+-rw-rw---- 1 qserv qserv  50331648 Mar 30 17:19 ib_logfile0
+-rw-rw---- 1 qserv qserv  50331648 Mar 30 17:19 ib_logfile1
+-rw-rw-r-x 1 qserv qserv         0 Aug  7  2020 multi-master.info
+drwx---r-x 2 qserv qserv      4096 Nov  3 12:48 mysql
+-rw-r--r-- 1 qserv qserv        16 Nov  3 12:48 mysql_upgrade_info
+drwx--S--- 2 qserv qserv        28 Nov  3 12:48 performance_schema
+drwx---r-x 2 qserv qserv      4096 Mar 25 19:38 qservReplica
+drwx--S--- 2 qserv qserv      4096 Oct 18 17:11 ttt
+
+\sudo -u qserv mv /qserv/qserv-dev/replication/mysql/ib_logfile0 /qserv/qserv-dev/replication/mysql/ib_logfile0.backup
+\sudo -u qserv mv /qserv/qserv-dev/replication/mysql/ib_logfile1 /qserv/qserv-dev/replication/mysql/ib_logfile1.backup
+
+# Stop all services to prevent them from connecting to the database
+# during the upgrade
+
+./stop --repl-all
+./log_rm --repl-all
+
+./start --repl-db
+./log_ls --repl-db | grep repl-mariadb
+  -rw-rw---- 1 qserv qserv  2421 Mar 30 17:55 /qserv/qserv-dev/log/qserv-6-repl-mariadb.error.log
+  -rw-rw---- 1 qserv qserv   190 Mar 30 17:55 /qserv/qserv-dev/log/qserv-6-repl-mariadb.slow-query.log
+
+# The log file has
+
+\sudo -u qserv cat /qserv/qserv-dev/log/qserv-6-repl-mariadb.error.log
+2022-03-30 22:55:01 0 [Note] InnoDB: Compressed tables use zlib 1.2.11
+2022-03-30 22:55:01 0 [Note] InnoDB: Using transactional memory
+2022-03-30 22:55:01 0 [Note] InnoDB: Number of pools: 1
+2022-03-30 22:55:01 0 [Note] InnoDB: Using crc32 + pclmulqdq instructions
+2022-03-30 22:55:01 0 [Note] mysqld: O_TMPFILE is not supported on /tmp (disabling future attempts)
+2022-03-30 22:55:01 0 [Note] InnoDB: Using Linux native AIO
+2022-03-30 22:55:01 0 [Note] InnoDB: Initializing buffer pool, total size = 134217728, chunk size = 134217728
+2022-03-30 22:55:01 0 [Note] InnoDB: Completed initialization of buffer pool
+2022-03-30 22:55:01 0 [Note] InnoDB: Setting log file ./ib_logfile101 size to 100663296 bytes
+2022-03-30 22:55:01 0 [Note] InnoDB: Renaming log file ./ib_logfile101 to ./ib_logfile0
+2022-03-30 22:55:01 0 [Note] InnoDB: New log file created, LSN=69230264246
+2022-03-30 22:55:01 0 [Note] InnoDB: 128 rollback segments are active.
+2022-03-30 22:55:01 0 [Note] InnoDB: Creating shared tablespace for temporary tables
+2022-03-30 22:55:01 0 [Note] InnoDB: Setting file './ibtmp1' size to 12 MB. Physically writing the file full; Please wait ...
+2022-03-30 22:55:01 0 [Note] InnoDB: File './ibtmp1' size is now 12 MB.
+2022-03-30 22:55:01 0 [Note] InnoDB: 10.6.5 started; log sequence number 0; transaction id 124380825
+2022-03-30 22:55:01 0 [Note] InnoDB: Loading buffer pool(s) from /var/lib/mysql/ib_buffer_pool
+2022-03-30 22:55:01 0 [Note] Plugin 'FEEDBACK' is disabled.
+2022-03-30 22:55:01 0 [Warning] You need to use --log-bin to make --expire-logs-days or --binlog-expire-logs-seconds work.
+2022-03-30 22:55:01 0 [Note] Server socket created on IP: '0.0.0.0'.
+2022-03-30 22:55:01 0 [Note] Server socket created on IP: '::'.
+2022-03-30 22:55:01 0 [Warning] 'proxies_priv' entry '@% root@a9003af066e0' ignored in --skip-name-resolve mode.
+2022-03-30 22:55:01 0 [ERROR] Incorrect definition of table mysql.event: expected column 'definer' at position 3 to have type varchar(, found type char(141).
+2022-03-30 22:55:01 0 [ERROR] mysqld: Event Scheduler: An error occurred when initializing system tables. Disabling the Event Scheduler.
+2022-03-30 22:55:01 0 [Note] mysqld: ready for connections.
+Version: '10.6.5-MariaDB-1:10.6.5+maria~focal-log'  socket: '/run/mysqld/mysqld.sock'  port: 23306  mariadb.org binary distribution
+2022-03-30 22:55:01 0 [Note] InnoDB: Buffer pool(s) load completed at 220330 22:55:01
+
+
+# Running the upgrade
+
+docker exec -it qserv-6-repl-mariadb mysql_upgrade -uroot -pCHANGEME
+Phase 1/7: Checking and upgrading mysql database
+Processing databases
+mysql
+mysql.column_stats                                 OK
+mysql.columns_priv                                 OK
+mysql.db                                           OK
+mysql.event                                        OK
+mysql.func                                         OK
+mysql.global_priv                                  OK
+mysql.gtid_slave_pos                               OK
+mysql.help_category                                OK
+mysql.help_keyword                                 OK
+mysql.help_relation                                OK
+mysql.help_topic                                   OK
+mysql.index_stats                                  OK
+mysql.innodb_index_stats                           OK
+mysql.innodb_table_stats                           OK
+mysql.plugin                                       OK
+mysql.proc                                         OK
+mysql.procs_priv                                   OK
+mysql.proxies_priv                                 OK
+mysql.roles_mapping                                OK
+mysql.servers                                      OK
+mysql.table_stats                                  OK
+mysql.tables_priv                                  OK
+mysql.time_zone                                    OK
+mysql.time_zone_leap_second                        OK
+mysql.time_zone_name                               OK
+mysql.time_zone_transition                         OK
+mysql.time_zone_transition_type                    OK
+mysql.transaction_registry                         OK
+Phase 2/7: Installing used storage engines... Skipped
+Phase 3/7: Fixing views
+mysql.user                                         OK
+Phase 4/7: Running 'mysql_fix_privilege_tables'
+Phase 5/7: Fixing table and database names
+Phase 6/7: Checking and upgrading tables
+Processing databases
+information_schema
+performance_schema
+qservReplica
+qservReplica.QMetadata                             OK
+qservReplica.config                                OK
+qservReplica.config_database                       OK
+qservReplica.config_database_family                OK
+qservReplica.config_database_table                 OK
+qservReplica.config_database_table_schema          OK
+qservReplica.config_worker                         OK
+qservReplica.config_worker_ext                     OK
+qservReplica.controller                            OK
+qservReplica.controller_log                        OK
+qservReplica.controller_log_ext                    OK
+qservReplica.database_ingest                       OK
+qservReplica.job                                   OK
+qservReplica.job_ext                               OK
+qservReplica.replica                               OK
+qservReplica.replica_file                          OK
+qservReplica.request                               OK
+qservReplica.request_ext                           OK
+qservReplica.stats_table_rows                      OK
+qservReplica.transaction                           OK
+qservReplica.transaction_contrib                   OK
+qservReplica.transaction_contrib_ext               OK
+qservReplica.transaction_log                       OK
+sys
+sys.sys_config                                     OK
+ttt
+ttt.QMetadata                                      OK
+ttt.config                                         OK
+ttt.config_database                                OK
+ttt.config_database_family                         OK
+ttt.config_database_table                          OK
+ttt.config_database_table_schema                   OK
+ttt.config_worker                                  OK
+ttt.config_worker_ext                              OK
+ttt.controller                                     OK
+ttt.controller_log                                 OK
+ttt.controller_log_ext                             OK
+ttt.database_ingest                                OK
+ttt.job                                            OK
+ttt.job_ext                                        OK
+ttt.replica                                        OK
+ttt.replica_file                                   OK
+ttt.request                                        OK
+ttt.request_ext                                    OK
+ttt.transaction                                    OK
+ttt.transaction_contrib                            OK
+ttt.transaction_contrib_ext                        OK
+Phase 7/7: Running 'FLUSH PRIVILEGES'
+OK
+
+
+\sudo -u qserv ls -al /qserv/qserv-dev/replication/mysql/
+total 748108
+drwxr-srwx 7 qserv qserv      4096 Mar 30 17:58 .
+drwxr-sr-x 8 qserv qserv       120 Mar 30 16:47 ..
+-rw-rw-r-x 1 qserv qserv   1392640 Mar 30 17:58 aria_log.00000001
+-rw-rw-r-x 1 qserv qserv        52 Mar 30 17:19 aria_log_control
+-rw-rw---- 1 qserv qserv    348160 Mar 30 17:58 ddl_recovery.log
+-rw-rw---- 1 qserv qserv     35161 Mar 30 17:19 ib_buffer_pool
+-rw-rw-r-x 1 qserv qserv 549453824 Mar 30 17:19 ibdata1
+-rw-rw---- 1 qserv qserv 100663296 Mar 30 17:58 ib_logfile0
+-rw-rw---- 1 qserv qserv  50331648 Mar 30 17:19 ib_logfile0.backup
+-rw-rw---- 1 qserv qserv  50331648 Mar 30 17:19 ib_logfile1.backup
+-rw-rw---- 1 qserv qserv  12582912 Mar 30 17:55 ibtmp1
+-rw-rw-r-x 1 qserv qserv         0 Aug  7  2020 multi-master.info
+drwx---r-x 2 qserv qserv      4096 Mar 30 17:58 mysql
+-rw-r--r-- 1 qserv qserv        15 Mar 30 17:58 mysql_upgrade_info
+drwx--S--- 2 qserv qserv        20 Mar 30 17:58 performance_schema
+drwx---r-x 2 qserv qserv      4096 Mar 25 19:38 qservReplica
+drwx--S--- 2 qserv qserv      8192 Mar 30 17:58 sys
+drwx--S--- 2 qserv qserv      4096 Oct 18 17:11 ttt
+
+
+# Nothing spectacular after the upgarde as found in the lof file
+# as shown below.
+
+./log_ls --repl-db | grep repl-mariadb
+  -rw-rw---- 1 qserv qserv  2535 Mar 30 17:58 /qserv/qserv-dev/log/qserv-6-repl-mariadb.error.log
+  -rw-rw---- 1 qserv qserv   380 Mar 30 17:58 /qserv/qserv-dev/log/qserv-6-repl-mariadb.slow-query.log
+
+\sudo -u qserv tail -4 /qserv/qserv-dev/log/qserv-6-repl-mariadb.error.log
+2022-03-30 22:55:01 0 [Note] mysqld: ready for connections.
+Version: '10.6.5-MariaDB-1:10.6.5+maria~focal-log'  socket: '/run/mysqld/mysqld.sock'  port: 23306  mariadb.org binary distribution
+2022-03-30 22:55:01 0 [Note] InnoDB: Buffer pool(s) load completed at 220330 22:55:01
+2022-03-30 22:58:33 14 [Warning] 'proxies_priv' entry '@% root@a9003af066e0' ignored in --skip-name-resolve mode.
+
+
+# Restart the service and inspect the log files
+
+./stop --repl-db
+./log_rm --repl-db
+./start --repl-db
+
+\sudo -u qserv cat /qserv/qserv-dev/log/qserv-6-repl-mariadb.error.log
+2022-03-30 23:02:23 0 [Note] InnoDB: Compressed tables use zlib 1.2.11
+2022-03-30 23:02:23 0 [Note] InnoDB: Using transactional memory
+2022-03-30 23:02:23 0 [Note] InnoDB: Number of pools: 1
+2022-03-30 23:02:23 0 [Note] InnoDB: Using crc32 + pclmulqdq instructions
+2022-03-30 23:02:23 0 [Note] mysqld: O_TMPFILE is not supported on /tmp (disabling future attempts)
+2022-03-30 23:02:23 0 [Note] InnoDB: Using Linux native AIO
+2022-03-30 23:02:23 0 [Note] InnoDB: Initializing buffer pool, total size = 134217728, chunk size = 134217728
+2022-03-30 23:02:23 0 [Note] InnoDB: Completed initialization of buffer pool
+2022-03-30 23:02:23 0 [Note] InnoDB: 128 rollback segments are active.
+2022-03-30 23:02:23 0 [Note] InnoDB: Creating shared tablespace for temporary tables
+2022-03-30 23:02:23 0 [Note] InnoDB: Setting file './ibtmp1' size to 12 MB. Physically writing the file full; Please wait ...
+2022-03-30 23:02:23 0 [Note] InnoDB: File './ibtmp1' size is now 12 MB.
+2022-03-30 23:02:23 0 [Note] InnoDB: 10.6.5 started; log sequence number 69230318959; transaction id 124380839
+2022-03-30 23:02:23 0 [Note] InnoDB: Loading buffer pool(s) from /var/lib/mysql/ib_buffer_pool
+2022-03-30 23:02:23 0 [Note] Plugin 'FEEDBACK' is disabled.
+2022-03-30 23:02:23 0 [Warning] You need to use --log-bin to make --expire-logs-days or --binlog-expire-logs-seconds work.
+2022-03-30 23:02:23 0 [Note] Server socket created on IP: '0.0.0.0'.
+2022-03-30 23:02:23 0 [Note] Server socket created on IP: '::'.
+2022-03-30 23:02:23 0 [Warning] 'proxies_priv' entry '@% root@a9003af066e0' ignored in --skip-name-resolve mode.
+2022-03-30 23:02:23 0 [Note] mysqld: ready for connections.
+Version: '10.6.5-MariaDB-1:10.6.5+maria~focal-log'  socket: '/run/mysqld/mysqld.sock'  port: 23306  mariadb.org binary distribution
+2022-03-30 23:02:23 0 [Note] InnoDB: Buffer pool(s) load completed at 220330 23:02:23
+
+# Start the rest of the Replication/Ingest system and inspect
+# the status of teh system to see if it all works correctly.
+
+./start --repl-reg --repl-contr --repl-worker
+./status --repl-all
+[qserv-master01] repl mariadb: a244b14334be qserv/lite-mariadb:2022.2.1-rc1 "docker-entrypoint.s…" 3 minutes ago Up 3 minutes qserv-6-repl-mariadb
+[qserv-master01] repl reg:     2a1bbb968841 qserv/lite-qserv:2022.2.1-rc1-39-g899266296 "bash -c 'qserv-repl…" About a minute ago Up About a minute qserv-6-repl-reg
+[qserv-master01] repl contr:   0b9ae928cfc1 qserv/lite-qserv:2022.2.1-rc1-39-g899266296 "bash -c 'qserv-repl…" About a minute ago Up About a minute qserv-6-repl-contr
+[qserv-db01] repl worker:       41be4457601e qserv/lite-qserv:2022.2.1-rc1-39-g899266296 "bash -c 'qserv-repl…" About a minute ago Up About a minute qserv-6-repl-worker
+[qserv-db02] repl worker:       85e4078575cc qserv/lite-qserv:2022.2.1-rc1-39-g899266296 "bash -c 'qserv-repl…" About a minute ago Up About a minute qserv-6-repl-worker
+[qserv-db03] repl worker:       d123a62cc69d qserv/lite-qserv:2022.2.1-rc1-39-g899266296 "bash -c 'qserv-repl…" About a minute ago Up About a minute qserv-6-repl-worker
+[qserv-db04] repl worker:       34586e54656b qserv/lite-qserv:2022.2.1-rc1-39-g899266296 "bash -c 'qserv-repl…" About a minute ago Up About a minute qserv-6-repl-worker
+[qserv-db05] repl worker:       890060d5b3b0 qserv/lite-qserv:2022.2.1-rc1-39-g899266296 "bash -c 'qserv-repl…" About a minute ago Up About a minute qserv-6-repl-worker
+[qserv-db06] repl worker:       416f73203a1f qserv/lite-qserv:2022.2.1-rc1-39-g899266296 "bash -c 'qserv-repl…" About a minute ago Up About a minute qserv-6-repl-worker
+
+
+# MySQL seems to work fine.
+
+mysql -h127.0.0.1 -P23306 -uroot -pCHANGEME qservReplica
+
+> Welcome to the MariaDB monitor.  Commands end with ; or \g.
+> Your MariaDB connection id is 411
+> Server version: 10.6.5-MariaDB-1:10.6.5+maria~focal-log mariadb.org binary distribution
+
+
+
