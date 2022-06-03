@@ -337,7 +337,7 @@ if [ -n "${REPL_CONTR}" ]; then
     -e "'QSERV_CZAR_DB_CONN=${QSERV_CZAR_DB_CONN}'" \
     -e "'REPL_AUTH_KEY=${REPL_AUTH_KEY}'" \
     -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
-    -e "'REPL_REG_HOST=${MASTER}'" \
+    -e "'REPL_REG_HOST=lsst-${MASTER}'" \
     "${REPL_IMAGE_TAG}" \
     bash -c \''qserv-replica-master-http ${REPL_CONTR_PARAMETERS} --registry-host=${REPL_REG_HOST} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-czar-db="${QSERV_CZAR_DB_CONN}" --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" >& /qserv/log/${REPL_CONTR_CONTAINER_NAME}.log'\'&
 fi
@@ -366,7 +366,7 @@ if [ -n "${REPL_DEBUG}" ]; then
     -e "'QSERV_CZAR_DB_CONN=${QSERV_CZAR_DB_CONN}'" \
     -e "'REPL_AUTH_KEY=${REPL_AUTH_KEY}'" \
     -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
-    -e "'REPL_REG_HOST=${MASTER}'" \
+    -e "'REPL_REG_HOST=lsst-${MASTER}'" \
     "${REPL_IMAGE_TAG}" \
     bash -c \''yum -y install gdb && tail -f /dev/null'\'&
 fi
@@ -399,7 +399,7 @@ if [ -n "${REPL_WORKER}" ]; then
       -e "'QSERV_WORKER_DB_CONN=${QSERV_WORKER_DB_CONN}'" \
       -e "'REPL_AUTH_KEY=${REPL_AUTH_KEY}'" \
       -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
-      -e "'REPL_REG_HOST=${MASTER}'" \
+      -e "'REPL_REG_HOST=lsst-${MASTER}'" \
      "${REPL_IMAGE_TAG}" \
       bash -c \''qserv-replica-worker ${REPL_WORKER_PARAMETERS} --registry-host=${REPL_REG_HOST} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-worker-db="${QSERV_WORKER_DB_CONN}" --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" >& /qserv/log/${REPL_WORKER_CONTAINER_NAME}.log'\' &
   done
@@ -429,7 +429,7 @@ if [ -n "${REPL_WORKER_DEBUG}" ]; then
       -e "'QSERV_CZAR_DB_CONN=${QSERV_CZAR_DB_CONN}'" \
       -e "'REPL_AUTH_KEY=${REPL_AUTH_KEY}'" \
       -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
-      -e "'REPL_REG_HOST=${MASTER}'" \
+      -e "'REPL_REG_HOST=lsst-${MASTER}'" \
       "${REPL_IMAGE_TAG}" \
       bash -c \''yum -y install gdb && tail -f /dev/null'\'&
   done
