@@ -113,7 +113,11 @@ REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.2.1-rc1"
 # REPL_IMAGE_TAG="qserv/lite-qserv:2022.4.2-rc1-15-ga6f7cb392"
 
 # DM-30885: fixes to the Web Dashboard. Includes previous tags.
-REPL_IMAGE_TAG="qserv/lite-qserv:2022.5.1-rc1-13-gedd0c4848-dirty"
+# REPL_IMAGE_TAG="qserv/lite-qserv:2022.5.1-rc1-13-gedd0c4848-dirty"
+
+# DM-28626: Allow adding tables to published catalogs.
+#           ATTENTION: schema change to version 10 is required.
+REPL_IMAGE_TAG="qserv/lite-qserv:2022.5.2-rc1-29-g1c42476c7"
 
 REPL_INSTANCE_ID="large6:qserv-dev"
 REPL_BASE_DIR="${QSERV_BASE_DIR}/replication"
@@ -131,7 +135,7 @@ REPL_WORKER_PARAMETERS="--registry-port=${REPL_REG_PORT} --worker-svc-port=${REP
 REPL_LSST_LOG_CONFIG="log4cxx.replication.properties"
 # To mount the local (ouside the container) version of the Web dashboard
 # and other Web apps served by the HTTP server of the Master Conbtroller 
-REPL_HTTP_ROOT="${QSERV_BASE_DIR}/dashboard/qserv/src/www"
+# REPL_HTTP_ROOT="${QSERV_BASE_DIR}/dashboard/qserv/src/www"
 
 # Limit size of the replication containers by 40 GB
 REPL_MEMORY_LIMIT=42949672960
