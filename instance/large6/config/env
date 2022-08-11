@@ -117,7 +117,24 @@ REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.2.1-rc1"
 
 # DM-28626: Allow adding tables to published catalogs.
 #           ATTENTION: schema change to version 10 is required.
-REPL_IMAGE_TAG="qserv/lite-qserv:2022.5.2-rc1-29-g1c42476c7"
+# REPL_IMAGE_TAG="qserv/lite-qserv:2022.5.2-rc1-29-g1c42476c7"
+
+# DM-35188: Performance improvements to the Web Dashboard (user query
+#           monitoring)
+# REPL_IMAGE_TAG="qserv/lite-qserv:2022.6.2-rc1-11-g7adb70d98"
+
+# DM-35189: Display Qserv CSS parameters on the Web Dashboard.
+#           The branch includes the previous one.
+# REPL_IMAGE_TAG="qserv/lite-qserv:2022.6.2-rc1-15-g23c936106"
+
+# DM-35456: Add version numbers to the JSON-based objects passed to
+#           the Qserv Ingest system.
+#           ATTENTION: Repl API version 9.
+# REPL_IMAGE_TAG="qserv/lite-qserv:2022.6.3-rc1-11-gc43e699b2"
+
+# DM-35726: Qserv worker services allow ingesting contributions into
+#           the published tables.
+REPL_IMAGE_TAG="qserv/lite-qserv:2022.6.3-rc1-11-ga5aaaf74a"
 
 REPL_INSTANCE_ID="large6:qserv-dev"
 REPL_BASE_DIR="${QSERV_BASE_DIR}/replication"
@@ -135,7 +152,7 @@ REPL_WORKER_PARAMETERS="--registry-port=${REPL_REG_PORT} --worker-svc-port=${REP
 REPL_LSST_LOG_CONFIG="log4cxx.replication.properties"
 # To mount the local (ouside the container) version of the Web dashboard
 # and other Web apps served by the HTTP server of the Master Conbtroller 
-# REPL_HTTP_ROOT="${QSERV_BASE_DIR}/dashboard/qserv/src/www"
+REPL_HTTP_ROOT="${QSERV_BASE_DIR}/dashboard/qserv/src/www"
 
 # Limit size of the replication containers by 40 GB
 REPL_MEMORY_LIMIT=42949672960
