@@ -18,6 +18,7 @@ if [ -n "${CZAR_DB}" ]; then
     --name="${CZAR_DB_CONTAINER_NAME}" \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
     -v /etc/passwd:/etc/passwd:ro \
+    -v "${QSERV_BASE_DIR}/master/tmp:/tmp" \
     -v "${QSERV_BASE_DIR}/master/data/mysql:/var/lib/mysql" \
     -v "${LOG_DIR}:${LOG_DIR}" \
     -v "${QSERV_BASE_DIR}/master/qserv:/home/qserv" \
@@ -144,6 +145,7 @@ if [ -n "${WORKER_DB}" ]; then
       --name="${WORKER_DB_CONTAINER_NAME}" \
       -u ${CONTAINER_UID}:${CONTAINER_GID} \
       -v /etc/passwd:/etc/passwd:ro \
+      -v "${QSERV_BASE_DIR}/worker/tmp:/tmp" \
       -v "${QSERV_BASE_DIR}/worker/data:/qserv/data" \
       -v "${QSERV_BASE_DIR}/worker/data/mysql:/var/lib/mysql" \
       -v "${LOG_DIR}:${LOG_DIR}" \
@@ -159,6 +161,8 @@ if [ -n "${WORKER_DB}" ]; then
       --symbolic-links=0 \
       --tmp_table_size=4G \
       --max_heap_table_size=4G \
+      --myisam_sort_buffer_size=4G \
+      --myisam_repair_threads=2 \
       --use_stat_tables=PREFERABLY \
       --optimizer_use_condition_selectivity=3 \
       --query-cache-size=0 \
@@ -254,6 +258,7 @@ if [ -n "${REPL_DB}" ]; then
     --name="${REPL_DB_CONTAINER_NAME}" \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
     -v /etc/passwd:/etc/passwd:ro \
+    -v "${QSERV_BASE_DIR}/master/tmp:/tmp" \
     -v "${QSERV_BASE_DIR}/master/replication/mysql:/var/lib/mysql" \
     -v "${LOG_DIR}:${LOG_DIR}" \
     -v "${QSERV_BASE_DIR}/master/replication/config/docker/etc/mysql/conf.d/docker.cnf:/etc/mysql/conf.d/docker.cnf:ro" \
@@ -269,6 +274,8 @@ if [ -n "${REPL_DB}" ]; then
     --symbolic-links=0 \
     --tmp_table_size=4G \
     --max_heap_table_size=4G \
+    --myisam_sort_buffer_size=4G \
+    --myisam_repair_threads=2 \
     --query-cache-size=0 \
     --log-error="${LOG_DIR}/${REPL_DB_CONTAINER_NAME}.error.log" \
     --slow-query-log --slow-query-log-file="${LOG_DIR}/${REPL_DB_CONTAINER_NAME}.slow-query.log" \
@@ -399,6 +406,8 @@ if [ -n "${REPL_WORKER}" ]; then
       -e "'REPL_AUTH_KEY=${REPL_AUTH_KEY}'" \
       -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
       -e "'REPL_REG_HOST=${MASTER}'" \
+      -e "'HTTP_PROXY=http://squid.slac.stanford.edu:3128/'" \
+      -e "'HTTPS_PROXY=http://squid.slac.stanford.edu:3128/'" \
      "${REPL_IMAGE_TAG}" \
       bash -c \''qserv-replica-worker ${REPL_WORKER_PARAMETERS} --registry-host=${REPL_REG_HOST} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-worker-db="${QSERV_WORKER_DB_CONN}" --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" >& /qserv/log/${REPL_WORKER_CONTAINER_NAME}.log'\' &
   done
