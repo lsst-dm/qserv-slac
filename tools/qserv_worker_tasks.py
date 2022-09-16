@@ -1,5 +1,5 @@
 import requests
-url = "http://lsst-qserv-master01:25681/replication/qserv/worker/status"
+url = "http://127.0.0.1:25081/replication/qserv/worker/status"
 data = requests.get(url).json()
 for item in data["status"].items():
     worker = item[0]

@@ -81,7 +81,6 @@ REPL_WORKER_LOADER_PORT=25002
 REPL_WORKER_EXPORTER_PORT=25003
 REPL_WORKER_HTTP_LOADER_PORT=25004
 REPL_WORKER_PARAMETERS="--registry-port=${REPL_REG_PORT} --worker-svc-port=${REPL_WORKER_SVC_PORT} --worker-fs-port=${REPL_WORKER_FS_PORT} --worker-loader-port=${REPL_WORKER_LOADER_PORT} --worker-exporter-port=${REPL_WORKER_EXPORTER_PORT} --worker-http-loader-port=${REPL_WORKER_HTTP_LOADER_PORT} --schema-upgrade-wait=1 --schema-upgrade-wait-timeout=600 --do-not-create-folders --debug"
-REPL_LSST_LOG_CONFIG="log4cxx.replication.properties"
 
 # To mount the local (ouside the container) version of the Web dashboard
 # and other Web apps served by the HTTP server of the Master Conbtroller 
