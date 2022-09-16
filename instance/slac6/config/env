@@ -23,7 +23,13 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 # 2022-09-09: Built of the main branch
 #             NOTE: updated QMeta schema version to 6 to support
 #                   full text search on the queries.
-QSERV_IMAGE_TAG="qserv/lite-qserv:2022.7.1-rc1-32-gcbe5a5e48"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2022.7.1-rc1-32-gcbe5a5e48"
+
+# 2022-09-13: Based on the bug fix branch DM-36223.
+#             NOTE: updated QMeta schema version to 8 for extended
+#                   bytes/rowsd counters and a bug fix in the table
+#                   schema of QInfo.
+QSERV_IMAGE_TAG="qserv/lite-qserv:2022.7.1-rc1-39-g572903551"
 
 QSERV_BASE_DIR="/zfspool/qserv-dev"
 QSERV_CZAR_DB_PORT=3306
@@ -50,7 +56,14 @@ REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
 #             ATTENTION: updated replication database version to 11 to support
 #                        RefMatch tables. There have been a bunch of other
 #                        improvements as well.
-REPL_IMAGE_TAG="qserv/lite-qserv:2022.7.1-rc1-32-gcbe5a5e48"
+# REPL_IMAGE_TAG="qserv/lite-qserv:2022.7.1-rc1-32-gcbe5a5e48"
+
+# 2022-09-13: Based on the bug fix branch DM-36223.
+#             NOTE: updated QMeta schema version to 8 for extended
+#                   bytes/rowsd counters and a bug fix in the table
+#                   schema of QInfo. The R-I system's REST API was
+#                   also nodified to follow changes in the schema.
+REPL_IMAGE_TAG="qserv/lite-qserv:2022.7.1-rc1-39-g572903551"
 
 REPL_INSTANCE_ID="slac6:qserv-dev"
 REPL_DB_PORT=23306
