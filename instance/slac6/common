@@ -37,8 +37,8 @@ function update_config {
         vim $infile > /dev/tty
         for WORKER in $WORKERS; do
             echo "[${WORKER}] updating configuration at ${outfile}" > /dev/tty
-            scp $infile ${WORKER}:${infile} >& /dev/null
-            ssh -n $WORKER "sudo -u qserv cp $infile $outfile; rm $infile"
+            scp $infile ${WORKER}:${infile}.copy >& /dev/null
+            ssh -n $WORKER "sudo -u qserv cp ${infile}.copy $outfile; rm ${infile}.copy"
         done
         rm $infile
     else
