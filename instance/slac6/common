@@ -33,7 +33,7 @@ function update_config {
     if [ ! -z "${WORKER}" ]; then
         outfile="${1}"
         infile="/tmp/${config}.$(date +'%s')"
-        scp ${WORKER}:${outfile} $infile >& /dev/null
+        scp ${WORKER}:${outfile} ${infile} >& /dev/null
         vim $infile > /dev/tty
         for WORKER in $WORKERS; do
             echo "[${WORKER}] updating configuration at ${outfile}" > /dev/tty
@@ -58,8 +58,8 @@ function update_config_master {
     scp ${MASTER}:${outfile} $infile >& /dev/null
     vim $infile > /dev/tty
     echo "[${MASTER}] updating configuration at ${outfile}" > /dev/tty
-    scp $infile ${MASTER}:${infile} >& /dev/null
-    ssh -n $MASTER "sudo -u qserv cp $infile $outfile; rm $infile"
+    scp $infile ${MASTER}:${infile}.copy >& /dev/null
+    ssh -n $MASTER "sudo -u qserv cp ${infile}.copy $outfile; rm ${infile}.copy"
     rm $infile
 }
 
@@ -81,9 +81,9 @@ WORKER_DEBUG_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}worker-debug"
 REPL_DB_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-mariadb"
 REPL_REG_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-reg"
 REPL_CONTR_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-contr"
-REPL_DEBUG_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-debug"
+REPL_CONTR_DEBUG_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-contr-debug"
 REPL_WORKER_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-worker"
-REPL_WORKER_DEBUG_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-debug"
+REPL_WORKER_DEBUG_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-worker-debug"
 
 QSERV_CZAR_DB_PASSWORD="$(get_param config/secrets/qserv_czar_db_root_password)"
 QSERV_WORKER_DB_PASSWORD="$(get_param config/secrets/qserv_worker_db_root_password)"
@@ -122,7 +122,7 @@ Options restricting a scope of the operation:
         Affects all serices of czar and the select workers. Note that
         this option won't include the special debug containers. The latter
         need to be managed using options: --all-debug, --czar-debug, 
-        --worker-debug, --replica-debug, or --replica-worker-debug.
+        --worker-debug, --repl-contr-debug, or --repl-worker-debug.
 
     --all-debug
         Affects side-cart containers for debugging services. These include
@@ -190,7 +190,7 @@ Selectors for the Replication/Ingest system services:
     --repl-all
         Affects all services of the system. Note that this option won't
         include the special debug containers. For the latter use options:
-        --all-debug, --repl-debug or --repl-worker-debug.
+        --all-debug, --repl-contr-debug or --repl-worker-debug.
 
     --repl-reg
         Worker registration (Registry) service.
@@ -201,7 +201,7 @@ Selectors for the Replication/Ingest system services:
     --repl-db
         MariaDB service.
 
-    --repl-debug
+    --repl-contr-debug
         The side-cart container with GDB and other tools needed to debug
         problems in the Replication/Ingest system (inspecting core files, etc.)
         on the master node of the setup.
@@ -235,7 +235,7 @@ REPL_ALL_SERVICES=
 REPL_DB=
 REPL_REG=
 REPL_CONTR=
-REPL_DEBUG=
+REPL_CONTR_DEBUG=
 REPL_WORKER=
 REPL_WORKER_DEBUG=
 
@@ -257,7 +257,7 @@ for i in "$@"; do
     --all-debug)
         CZAR_DEBUG=1
         WORKER_DEBUG=1
-        REPL_DEBUG=1
+        REPL_CONTR_DEBUG=1
         REPL_WORKER_DEBUG=1
         ;;
     --worker=*)
@@ -320,8 +320,8 @@ for i in "$@"; do
     --repl-contr)
         REPL_CONTR=1
         ;;
-    --repl-debug)
-        REPL_DEBUG=1
+    --repl-contr-debug)
+        REPL_CONTR_DEBUG=1
         ;;
     --repl-worker)
         REPL_WORKER=1
@@ -339,7 +339,7 @@ for i in "$@"; do
         ;;
     esac
 done
-if [ -z "${CZAR_DB}${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}${CZAR_DEBUG}${WORKER_DB}${WORKER_CMSD}${WORKER_XROOTD}${WORKER_DEBUG}${REPL_DB}${REPL_REG}${REPL_CONTR}${REPL_DEBUG}${REPL_WORKER}${REPL_WORKER_DEBUG}" ]; then
+if [ -z "${CZAR_DB}${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}${CZAR_DEBUG}${WORKER_DB}${WORKER_CMSD}${WORKER_XROOTD}${WORKER_DEBUG}${REPL_DB}${REPL_REG}${REPL_CONTR}${REPL_CONTR_DEBUG}${REPL_WORKER}${REPL_WORKER_DEBUG}" ]; then
     >&2
 echo "error: please, select services to be affected by the operation, or use -a|--all
        for all services

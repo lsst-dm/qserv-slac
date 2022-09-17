@@ -47,8 +47,8 @@ fi
 if [ -n "${REPL_CONTR}" ]; then
   ssh -n $MASTER 'echo "["'$MASTER'"] repl contr:   "$(docker stop '$REPL_CONTR_CONTAINER_NAME')" "$(docker rm '$REPL_CONTR_CONTAINER_NAME')'&
 fi
-if [ -n "${REPL_DEBUG}" ]; then
-  ssh -n $MASTER 'echo "["'$MASTER'"] repl debug:   "$(docker stop '$REPL_DEBUG_CONTAINER_NAME')" "$(docker rm '$REPL_DEBUG_CONTAINER_NAME')'&
+if [ -n "${REPL_CONTR_DEBUG}" ]; then
+  ssh -n $MASTER 'echo "["'$MASTER'"] repl debug:   "$(docker stop '$REPL_CONTR_DEBUG_CONTAINER_NAME')" "$(docker rm '$REPL_CONTR_DEBUG_CONTAINER_NAME')'&
 fi
 for WORKER in $WORKERS; do
     if [ -n "${REPL_WORKER}" ]; then

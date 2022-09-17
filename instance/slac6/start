@@ -349,7 +349,7 @@ if [ -n "${REPL_CONTR}" ]; then
     bash -c \''qserv-replica-master-http ${REPL_CONTR_PARAMETERS} --registry-host=${REPL_REG_HOST} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-czar-db="${QSERV_CZAR_DB_CONN}" --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" >& /qserv/log/${REPL_CONTR_CONTAINER_NAME}.log'\'&
 fi
 
-if [ -n "${REPL_DEBUG}" ]; then
+if [ -n "${REPL_CONTR_DEBUG}" ]; then
   echo "[${MASTER}] starting repl debug"
   LOG_DIR=${QSERV_BASE_DIR}/master/log
   ssh -n $MASTER docker run \
@@ -358,7 +358,7 @@ if [ -n "${REPL_DEBUG}" ]; then
     --detach=true \
     --network=host \
     --memory=${REPL_MEMORY_LIMIT} \
-    --name="${REPL_DEBUG_CONTAINER_NAME}" \
+    --name="${REPL_CONTR_DEBUG_CONTAINER_NAME}" \
     -u root \
     -v "/etc/passwd:/etc/passwd:ro" \
     -v "${QSERV_BASE_DIR}/master/qserv:/qserv/data/qserv" \
