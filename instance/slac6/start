@@ -378,6 +378,12 @@ if [ -n "${REPL_CONTR_DEBUG}" ]; then
     bash -c \''yum -y install gdb && tail -f /dev/null'\'&
 fi
 
+# The proxies should be now set by the ingest workflows on per catalog
+# basic rather than globally
+#
+# -e "'HTTP_PROXY=http://squid.slac.stanford.edu:3128/'" \
+# -e "'HTTPS_PROXY=http://squid.slac.stanford.edu:3128/'" \
+
 if [ -n "${REPL_WORKER}" ]; then
   for WORKER in $WORKERS; do
     echo "[${WORKER}] starting repl worker"
@@ -406,8 +412,6 @@ if [ -n "${REPL_WORKER}" ]; then
       -e "'REPL_AUTH_KEY=${REPL_AUTH_KEY}'" \
       -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
       -e "'REPL_REG_HOST=${MASTER}'" \
-      -e "'HTTP_PROXY=http://squid.slac.stanford.edu:3128/'" \
-      -e "'HTTPS_PROXY=http://squid.slac.stanford.edu:3128/'" \
      "${REPL_IMAGE_TAG}" \
       bash -c \''qserv-replica-worker ${REPL_WORKER_PARAMETERS} --registry-host=${REPL_REG_HOST} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-worker-db="${QSERV_WORKER_DB_CONN}" --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" >& /qserv/log/${REPL_WORKER_CONTAINER_NAME}.log'\' &
   done
