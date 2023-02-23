@@ -38,7 +38,7 @@ function update_config {
         for WORKER in $WORKERS; do
             echo "[${WORKER}] updating configuration at ${outfile}" > /dev/tty
             scp $infile ${WORKER}:${infile}.copy >& /dev/null
-            ssh -n $WORKER "cp ${infile}.copy $outfile; rm ${infile}.copy"
+            ssh -n $WORKER "sudo -u qserv cp ${infile}.copy $outfile; rm ${infile}.copy"
         done
         rm $infile
     else
@@ -59,7 +59,7 @@ function update_config_master {
     vim $infile > /dev/tty
     echo "[${MASTER}] updating configuration at ${outfile}" > /dev/tty
     scp $infile ${MASTER}:${infile}.copy >& /dev/null
-    ssh -n $MASTER "cp ${infile}.copy $outfile; rm ${infile}.copy"
+    ssh -n $MASTER "sudo -u qserv cp ${infile}.copy $outfile; rm ${infile}.copy"
     rm $infile
 }
 

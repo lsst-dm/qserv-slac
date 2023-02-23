@@ -16,7 +16,7 @@ function core_files_rm {
     local MSG=$4
     local CORE_FILES_DIR=${QSERV_BASE_DIR}/${SERVER}/core-files/${CONTAINER_NAME}
     echo "[${HOST}]: ${MSG}" > /dev/tty
-    ssh -n $HOST 'rm -vf '"${CORE_FILES_DIR}/core.*" 2>/dev/null | awk '{print "  "$0}' > /dev/tty
+    ssh -n $HOST 'sudo -u qserv rm -vf '"${CORE_FILES_DIR}/core.*" 2>/dev/null | awk '{print "  "$0}' > /dev/tty
 }
 
 if [ -n "${CZAR_CMSD}" ]; then

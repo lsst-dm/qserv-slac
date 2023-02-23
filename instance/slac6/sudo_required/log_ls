@@ -13,14 +13,14 @@ if [ -n "${CZAR_DB}${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}${REPL_DB}${REPL_REG}$
   echo
   echo "[${MASTER}]"
   echo
-  ssh -n $MASTER 'ls -l '"${QSERV_BASE_DIR}/master/log/*.log" 2>/dev/null | awk '{print "  "$0}'
+  ssh -n $MASTER 'sudo -u qserv ls -l '"${QSERV_BASE_DIR}/master/log/*.log" 2>/dev/null | awk '{print "  "$0}'
 fi
 if [ -n "${WORKER_DB}${WORKER_CMSD}${WORKER_XROOTD}${REPL_WORKER}" ]; then
   for WORKER in $WORKERS; do
     echo
     echo "[${WORKER}]"
     echo
-    ssh -n $WORKER 'ls -l '"${QSERV_BASE_DIR}/worker/log/*.log" 2>/dev/null | awk '{print "  "$0}'
+    ssh -n $WORKER 'sudo -u qserv ls -l '"${QSERV_BASE_DIR}/worker/log/*.log" 2>/dev/null | awk '{print "  "$0}'
   done
 fi
 echo

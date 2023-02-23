@@ -61,7 +61,7 @@ function get_logfile {
   local CONTAINER="$3"
   local INFILE="${QSERV_BASE_DIR}/${SERVER}/log/${CONTAINER}.log"
   local OUTFILE="/tmp/${PREFIX}.${HOST}.${CONTAINER}.log"
-  ssh -n $HOST -- "tail -q -n ${LINES} ${INFILE}" | egrep "${REGEXP}" | awk '{print $1"  '${HOST}'"substr($0,length($1)+1)}' > ${OUTFILE}&
+  ssh -n $HOST -- "\sudo -u qserv tail -q -n ${LINES} ${INFILE}" | egrep "${REGEXP}" | awk '{print $1"  '${HOST}'"substr($0,length($1)+1)}' > ${OUTFILE}&
 }
 
 if [ -n "${CZAR_PROXY}" ]; then
