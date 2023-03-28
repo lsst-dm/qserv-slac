@@ -78,11 +78,11 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 #             Plus it inludes DM-37854 for monitoring extended
 #             task states.
 #
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc1-8-gc28fa47d8"
+QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc1-8-gc28fa47d8"
 #
 # A fix to SsiProvider to recognize   resources starting with "/tmp".
 # This is just a temporary hack.
-QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc1-8-gc28fa47d8-dirty"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc1-8-gc28fa47d8-dirty"
 
 
 
@@ -283,6 +283,7 @@ REPL_REG_PARAMETERS="--registry-port=${REPL_REG_PORT} --debug"
 #   request timeout: 8 hours
 #   job timeout: 24 hours
 # --controller-num-director-index-connections=4
+QSERV_XROOTD_PORT=1094
 REPL_CONTR_PARAMETERS="--registry-port=${REPL_REG_PORT} --xrootd-port=${QSERV_XROOTD_PORT} --controller-http-server-port=${REPL_CONTR_HTTP_PORT} --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --debug"
 REPL_WORKER_SVC_PORT=25000
 REPL_WORKER_FS_PORT=25001
@@ -301,6 +302,14 @@ REPL_MEMORY_LIMIT=107374182400
 
 # ----- Common parameters
 
+# User account under which the containers will be run.
+# Note that this user should be replaced with some service account.
+#
+# % id gapon
+# uid=4367(gapon) gid=1013(ec)
+
+CONTAINER_UID=4367
+CONTAINER_GID=1013
 CONTAINER_NAME_PREFIX="qserv-"
 
 # 10 GB

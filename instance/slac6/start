@@ -17,7 +17,8 @@ if [ -n "${CZAR_DB}" ]; then
     --detach=true \
     --name="${CZAR_DB_CONTAINER_NAME}" \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
-    -v /etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
     -v "${QSERV_BASE_DIR}/master/tmp:/tmp" \
     -v "${QSERV_BASE_DIR}/master/data/mysql:/var/lib/mysql" \
     -v "${LOG_DIR}:${LOG_DIR}" \
@@ -56,7 +57,8 @@ if [ -n "${CZAR_CMSD}" ]; then
     --detach=true \
     --name="${CZAR_CMSD_CONTAINER_NAME}" \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
-    -v /etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
     -v "${QSERV_BASE_DIR}/master/config:/config-etc:ro" \
     -v "${QSERV_BASE_DIR}/master/var-run-xrootd:/var/run/xrootd" \
     -v "${LOG_DIR}:/qserv/log" \
@@ -80,7 +82,8 @@ if [ -n "${CZAR_XROOTD}" ]; then
     --detach=true \
     --name="${CZAR_XROOTD_CONTAINER_NAME}" \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
-    -v /etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
     -v "${QSERV_BASE_DIR}/master/config:/config-etc:ro" \
     -v "${QSERV_BASE_DIR}/master/var-run-xrootd:/var/run/xrootd" \
     -v "${LOG_DIR}:/qserv/log" \
@@ -104,7 +107,8 @@ if [ -n "${CZAR_PROXY}" ]; then
     --detach=true \
     --name="${CZAR_PROXY_CONTAINER_NAME}" \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
-    -v /etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
     -v "${QSERV_BASE_DIR}/master/config:/config-etc:ro" \
     -v "${QSERV_BASE_DIR}/master/var-run-mysqld:/var/run/mysqld:ro" \
     -v "${QSERV_BASE_DIR}/master/data/qserv:/qserv/data/qserv:ro" \
@@ -128,7 +132,8 @@ if [ -n "${CZAR_DEBUG}" ]; then
     --detach=true \
     --name="${CZAR_DEBUG_CONTAINER_NAME}" \
     -u root \
-    -v /etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
     -v "${QSERV_BASE_DIR}/master/core-files:/tmp/core-files" \
     -v "${QSERV_BASE_DIR}/master/qserv:/home/qserv" \
     "${QSERV_IMAGE_TAG}" \
@@ -144,7 +149,8 @@ if [ -n "${WORKER_DB}" ]; then
       --detach=true \
       --name="${WORKER_DB_CONTAINER_NAME}" \
       -u ${CONTAINER_UID}:${CONTAINER_GID} \
-      -v /etc/passwd:/etc/passwd:ro \
+      -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
+      -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
       -v "${QSERV_BASE_DIR}/worker/tmp:/tmp" \
       -v "${QSERV_BASE_DIR}/worker/data:/qserv/data" \
       -v "${QSERV_BASE_DIR}/worker/data/mysql:/var/lib/mysql" \
@@ -186,7 +192,8 @@ if [ -n "${WORKER_CMSD}" ]; then
       --detach=true \
       --name="${WORKER_CMSD_CONTAINER_NAME}" \
       -u ${CONTAINER_UID}:${CONTAINER_GID} \
-      -v /etc/passwd:/etc/passwd:ro \
+      -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
+      -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
       -v "${QSERV_BASE_DIR}/worker/config:/config-etc:ro" \
       -v "${QSERV_BASE_DIR}/worker/var-run-xrootd:/var/run/xrootd" \
       -v "${LOG_DIR}:/qserv/log" \
@@ -213,7 +220,8 @@ if [ -n "${WORKER_XROOTD}" ]; then
       --detach=true \
       --name="${WORKER_XROOTD_CONTAINER_NAME}" \
       -u ${CONTAINER_UID}:${CONTAINER_GID} \
-      -v /etc/passwd:/etc/passwd:ro \
+      -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
+      -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
       -v "${QSERV_BASE_DIR}/worker/config:/config-etc:ro" \
       -v "${QSERV_BASE_DIR}/worker/var-run-xrootd:/var/run/xrootd" \
       -v "${QSERV_BASE_DIR}/worker/data/mysql:/qserv/data/mysql:ro" \
@@ -239,8 +247,9 @@ if [ -n "${WORKER_DEBUG}" ]; then
       --detach=true \
       --name="${WORKER_DEBUG_CONTAINER_NAME}" \
       -u root \
-      -v /etc/passwd:/etc/passwd:ro \
-      -v "${QSERV_BASE_DIR}/master/core-files:/tmp/core-files" \
+      -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
+      -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
+      -v "${QSERV_BASE_DIR}/worker/core-files:/tmp/core-files" \
       -v "${QSERV_BASE_DIR}/worker/qserv:/home/qserv" \
       "${QSERV_IMAGE_TAG}" \
       bash -c \''yum -y install gdb && tail -f /dev/null'\'
@@ -257,7 +266,8 @@ if [ -n "${REPL_DB}" ]; then
     --network=host \
     --name="${REPL_DB_CONTAINER_NAME}" \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
-    -v /etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
     -v "${QSERV_BASE_DIR}/master/tmp:/tmp" \
     -v "${QSERV_BASE_DIR}/master/replication/mysql:/var/lib/mysql" \
     -v "${LOG_DIR}:${LOG_DIR}" \
@@ -296,7 +306,8 @@ if [ -n "${REPL_REG}" ]; then
     --memory=${REPL_MEMORY_LIMIT} \
     --name="${REPL_REG_CONTAINER_NAME}" \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
-    -v "/etc/passwd:/etc/passwd:ro" \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
     -v "${QSERV_BASE_DIR}/master/config:/config-etc:ro" \
     -v "${LOG_DIR}:/qserv/log" \
     -v "${CORE_FILES_DIR}:/tmp/core-files" \
@@ -328,7 +339,8 @@ if [ -n "${REPL_CONTR}" ]; then
     --memory=${REPL_MEMORY_LIMIT} \
     --name="${REPL_CONTR_CONTAINER_NAME}" \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
-    -v "/etc/passwd:/etc/passwd:ro" \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
     -v "${QSERV_BASE_DIR}/master/qserv:/qserv/data/qserv" \
     -v "${QSERV_BASE_DIR}/master/data/ingest:/qserv/data/ingest" \
     ${REPL_HTTP_ROOT_VOL} \
@@ -360,7 +372,8 @@ if [ -n "${REPL_CONTR_DEBUG}" ]; then
     --memory=${REPL_MEMORY_LIMIT} \
     --name="${REPL_CONTR_DEBUG_CONTAINER_NAME}" \
     -u root \
-    -v "/etc/passwd:/etc/passwd:ro" \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
     -v "${QSERV_BASE_DIR}/master/qserv:/qserv/data/qserv" \
     -v "${QSERV_BASE_DIR}/master/data/ingest:/qserv/data/ingest" \
     -v "${QSERV_BASE_DIR}/master/replication/work:/qserv/replication/work" \
@@ -398,7 +411,8 @@ if [ -n "${REPL_WORKER}" ]; then
       --memory=${REPL_MEMORY_LIMIT} \
       --name="${REPL_WORKER_CONTAINER_NAME}" \
       -u ${CONTAINER_UID}:${CONTAINER_GID} \
-      -v /etc/passwd:/etc/passwd:ro \
+      -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
+      -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
       -v "${QSERV_BASE_DIR}/worker/data:/qserv/data" \
       -v "${QSERV_BASE_DIR}/worker/config:/config-etc:ro" \
       -v "${LOG_DIR}:/qserv/log" \
@@ -428,7 +442,8 @@ if [ -n "${REPL_WORKER_DEBUG}" ]; then
       --memory=${REPL_MEMORY_LIMIT} \
       --name="${REPL_WORKER_DEBUG_CONTAINER_NAME}" \
       -u root \
-      -v "/etc/passwd:/etc/passwd:ro" \
+      -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
+      -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
       -v "${QSERV_BASE_DIR}/worker/qserv:/qserv/data/qserv" \
       -v "${QSERV_BASE_DIR}/worker/data/ingest:/qserv/data/ingest" \
       -v "${QSERV_BASE_DIR}/worker/replication/work:/qserv/replication/work" \

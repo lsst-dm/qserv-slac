@@ -97,10 +97,6 @@ QSERV_WORKER_DB_CONN="mysql://root:${QSERV_WORKER_DB_PASSWORD}@localhost:${QSERV
 REPL_DB_CONN="mysql://qsreplica:${REPL_DB_QSREPLICA_PASSWORD}@${MASTER}:${REPL_DB_PORT}/qservReplica"
 REPL_DB_ROOT_CONN="mysql://root:${REPL_DB_ROOT_PASSWORD}@localhost:${REPL_DB_PORT}/qservReplica"
 
-# User account under which the containers will be run
-CONTAINER_UID=1000
-CONTAINER_GID=65534
-
 unset basedir
 unset -f get_param
 
