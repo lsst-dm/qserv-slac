@@ -6,6 +6,8 @@
 # management scripts in order to set up proper values of the corresponding
 # parameters.
 
+CORE_DUMPS=/var/lib/systemd/coredump
+
 # -----------------
 # ----- Qserv -----
 # -----------------

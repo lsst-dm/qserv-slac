@@ -47,8 +47,6 @@ fi
 
 if [ -n "${CZAR_CMSD}" ]; then
   echo "[${MASTER}] starting qserv czar cmsd"
-  CORE_FILES_DIR=${QSERV_BASE_DIR}/master/core-files/${CZAR_CMSD_CONTAINER_NAME}
-  ssh -n $MASTER mkdir -p ${CORE_FILES_DIR}
   LOG_DIR=${QSERV_BASE_DIR}/master/log
   ssh -n $MASTER docker run \
     --privileged \
@@ -62,7 +60,6 @@ if [ -n "${CZAR_CMSD}" ]; then
     -v "${QSERV_BASE_DIR}/master/config:/config-etc:ro" \
     -v "${QSERV_BASE_DIR}/master/var-run-xrootd:/var/run/xrootd" \
     -v "${LOG_DIR}:/qserv/log" \
-    -v "${CORE_FILES_DIR}:/tmp/core-files" \
     -v "${QSERV_BASE_DIR}/master/qserv:/home/qserv" \
     -e "LSST_LOG_CONFIG=/config-etc/log/cmsd.cfg" \
     -e "CONTAINER_NAME=${CZAR_CMSD_CONTAINER_NAME}" \
@@ -72,8 +69,6 @@ fi
 
 if [ -n "${CZAR_XROOTD}" ]; then
   echo "[${MASTER}] starting qserv czar xrootd"
-  CORE_FILES_DIR=${QSERV_BASE_DIR}/master/core-files/${CZAR_XROOTD_CONTAINER_NAME}
-  ssh -n $MASTER mkdir -p ${CORE_FILES_DIR}
   LOG_DIR=${QSERV_BASE_DIR}/master/log
   ssh -n $MASTER docker run \
     --privileged \
@@ -87,7 +82,6 @@ if [ -n "${CZAR_XROOTD}" ]; then
     -v "${QSERV_BASE_DIR}/master/config:/config-etc:ro" \
     -v "${QSERV_BASE_DIR}/master/var-run-xrootd:/var/run/xrootd" \
     -v "${LOG_DIR}:/qserv/log" \
-    -v "${CORE_FILES_DIR}:/tmp/core-files" \
     -v "${QSERV_BASE_DIR}/master/qserv:/home/qserv" \
     -e "LSST_LOG_CONFIG=/config-etc/log/xrootd.cfg" \
     -e "CONTAINER_NAME=${CZAR_XROOTD_CONTAINER_NAME}" \
@@ -97,8 +91,6 @@ fi
 
 if [ -n "${CZAR_PROXY}" ]; then
   echo "[${MASTER}] starting qserv czar proxy"
-  CORE_FILES_DIR=${QSERV_BASE_DIR}/master/core-files/${CZAR_PROXY_CONTAINER_NAME}
-  ssh -n $MASTER mkdir -p ${CORE_FILES_DIR}
   LOG_DIR=${QSERV_BASE_DIR}/master/log
   ssh -n $MASTER docker run \
     --privileged \
@@ -113,7 +105,6 @@ if [ -n "${CZAR_PROXY}" ]; then
     -v "${QSERV_BASE_DIR}/master/var-run-mysqld:/var/run/mysqld:ro" \
     -v "${QSERV_BASE_DIR}/master/data/qserv:/qserv/data/qserv:ro" \
     -v "${LOG_DIR}:/qserv/log" \
-    -v "${CORE_FILES_DIR}:/tmp/core-files" \
     -v "${QSERV_BASE_DIR}/master/qserv:/home/qserv" \
     -e "QSERV_CONFIG=/config-etc/qserv-czar.cfg" \
     -e "LSST_LOG_CONFIG=/config-etc/log/proxy.cfg" \
@@ -134,10 +125,10 @@ if [ -n "${CZAR_DEBUG}" ]; then
     -u root \
     -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
     -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
-    -v "${QSERV_BASE_DIR}/master/core-files:/tmp/core-files" \
+    -v "${CORE_DUMPS}:/tmp/core-files" \
     -v "${QSERV_BASE_DIR}/master/qserv:/home/qserv" \
     "${QSERV_IMAGE_TAG}" \
-    bash -c \''yum -y install gdb && tail -f /dev/null'\'
+    bash -c \''yum -y install gdb lz4 && tail -f /dev/null'\'
 fi
 
 if [ -n "${WORKER_DB}" ]; then
@@ -182,8 +173,6 @@ fi
 if [ -n "${WORKER_CMSD}" ]; then
   for WORKER in $WORKERS; do
     echo "[${WORKER}] starting qserv worker cmsd"
-    CORE_FILES_DIR=${QSERV_BASE_DIR}/worker/core-files/${WORKER_CMSD_CONTAINER_NAME}
-    ssh -n $WORKER mkdir -p ${CORE_FILES_DIR}
     LOG_DIR=${QSERV_BASE_DIR}/worker/log
     ssh -n $WORKER docker run \
       --privileged \
@@ -197,7 +186,6 @@ if [ -n "${WORKER_CMSD}" ]; then
       -v "${QSERV_BASE_DIR}/worker/config:/config-etc:ro" \
       -v "${QSERV_BASE_DIR}/worker/var-run-xrootd:/var/run/xrootd" \
       -v "${LOG_DIR}:/qserv/log" \
-      -v "${CORE_FILES_DIR}:/tmp/core-files" \
       -v "${QSERV_BASE_DIR}/worker/qserv:/home/qserv" \
       -e "LSST_LOG_CONFIG=/config-etc/log/cmsd.cfg" \
       -e "CONTAINER_NAME=${WORKER_CMSD_CONTAINER_NAME}" \
@@ -210,8 +198,6 @@ fi
 if [ -n "${WORKER_XROOTD}" ]; then
   for WORKER in $WORKERS; do
     echo "[${WORKER}] starting qserv worker xrootd"
-    CORE_FILES_DIR=${QSERV_BASE_DIR}/worker/core-files/${WORKER_XROOTD_CONTAINER_NAME}
-    ssh -n $WORKER mkdir -p ${CORE_FILES_DIR}
     LOG_DIR=${QSERV_BASE_DIR}/worker/log
     ssh -n $WORKER docker run \
       --privileged \
@@ -226,7 +212,6 @@ if [ -n "${WORKER_XROOTD}" ]; then
       -v "${QSERV_BASE_DIR}/worker/var-run-xrootd:/var/run/xrootd" \
       -v "${QSERV_BASE_DIR}/worker/data/mysql:/qserv/data/mysql:ro" \
       -v "${LOG_DIR}:/qserv/log" \
-      -v "${CORE_FILES_DIR}:/tmp/core-files" \
       -v "${QSERV_BASE_DIR}/worker/qserv:/home/qserv" \
       -e "LSST_LOG_CONFIG=/config-etc/log/xrootd.cfg" \
       -e "CONTAINER_NAME=${WORKER_XROOTD_CONTAINER_NAME}" \
@@ -249,10 +234,10 @@ if [ -n "${WORKER_DEBUG}" ]; then
       -u root \
       -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
       -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
-      -v "${QSERV_BASE_DIR}/worker/core-files:/tmp/core-files" \
+      -v "${CORE_DUMPS}:/tmp/core-files" \
       -v "${QSERV_BASE_DIR}/worker/qserv:/home/qserv" \
       "${QSERV_IMAGE_TAG}" \
-      bash -c \''yum -y install gdb && tail -f /dev/null'\'
+      bash -c \''yum -y install gdb lz4 && tail -f /dev/null'\'
   done
   wait
 fi
@@ -295,8 +280,6 @@ fi
 
 if [ -n "${REPL_REG}" ]; then
   echo "[${MASTER}] starting repl reg"
-  CORE_FILES_DIR=${QSERV_BASE_DIR}/master/core-files/${REPL_REG_CONTAINER_NAME}
-  ssh -n $MASTER mkdir -p ${CORE_FILES_DIR}
   LOG_DIR=${QSERV_BASE_DIR}/master/log
   ssh -n $MASTER docker run \
     --privileged \
@@ -310,7 +293,6 @@ if [ -n "${REPL_REG}" ]; then
     -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
     -v "${QSERV_BASE_DIR}/master/config:/config-etc:ro" \
     -v "${LOG_DIR}:/qserv/log" \
-    -v "${CORE_FILES_DIR}:/tmp/core-files" \
     -e "'REPL_REG_CONTAINER_NAME=${REPL_REG_CONTAINER_NAME}'" \
     -e "'LSST_LOG_CONFIG=/config-etc/log/repl-reg.cfg'" \
     -e "'REPL_REG_PARAMETERS=${REPL_REG_PARAMETERS}'" \
@@ -324,8 +306,6 @@ fi
 
 if [ -n "${REPL_CONTR}" ]; then
   echo "[${MASTER}] starting repl contr"
-  CORE_FILES_DIR=${QSERV_BASE_DIR}/master/core-files/${REPL_CONTR_CONTAINER_NAME}
-  ssh -n $MASTER mkdir -p ${CORE_FILES_DIR}
   LOG_DIR=${QSERV_BASE_DIR}/master/log
   REPL_HTTP_ROOT_VOL=
   if [ -n "${REPL_HTTP_ROOT}" ]; then
@@ -347,7 +327,6 @@ if [ -n "${REPL_CONTR}" ]; then
     -v "${QSERV_BASE_DIR}/master/replication/work:/qserv/replication/work" \
     -v "${QSERV_BASE_DIR}/master/config:/config-etc:ro" \
     -v "${LOG_DIR}:/qserv/log" \
-    -v "${CORE_FILES_DIR}:/tmp/core-files" \
     -e "'REPL_CONTR_CONTAINER_NAME=${REPL_CONTR_CONTAINER_NAME}'" \
     -e "'REPL_CONTR_PARAMETERS=${REPL_CONTR_PARAMETERS}'" \
     -e "'LSST_LOG_CONFIG=/config-etc/log/repl-contr.cfg'" \
@@ -379,7 +358,7 @@ if [ -n "${REPL_CONTR_DEBUG}" ]; then
     -v "${QSERV_BASE_DIR}/master/replication/work:/qserv/replication/work" \
     -v "${QSERV_BASE_DIR}/master/config:/config-etc:ro" \
     -v "${LOG_DIR}:/qserv/log" \
-    -v "${QSERV_BASE_DIR}/master/core-files:/tmp/core-files" \
+    -v "${CORE_DUMPS}:/tmp/core-files" \
     -e "'LSST_LOG_CONFIG=/config-etc/log/repl-debug.cfg'" \
     -e "'REPL_DB_CONN=${REPL_DB_CONN}'" \
     -e "'REPL_INSTANCE_ID=${REPL_INSTANCE_ID}'" \
@@ -388,7 +367,7 @@ if [ -n "${REPL_CONTR_DEBUG}" ]; then
     -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
     -e "'REPL_REG_HOST=${MASTER}'" \
     "${REPL_IMAGE_TAG}" \
-    bash -c \''yum -y install gdb && tail -f /dev/null'\'&
+    bash -c \''yum -y install gdb lz4 && tail -f /dev/null'\'&
 fi
 
 # The proxies should be now set by the ingest workflows on per catalog
@@ -400,8 +379,6 @@ fi
 if [ -n "${REPL_WORKER}" ]; then
   for WORKER in $WORKERS; do
     echo "[${WORKER}] starting repl worker"
-    CORE_FILES_DIR=${QSERV_BASE_DIR}/worker/core-files/${REPL_WORKER_CONTAINER_NAME}
-    ssh -n $WORKER mkdir -p ${CORE_FILES_DIR}
     LOG_DIR=${QSERV_BASE_DIR}/worker/log
     ssh -n $WORKER docker run \
       --privileged \
@@ -416,7 +393,6 @@ if [ -n "${REPL_WORKER}" ]; then
       -v "${QSERV_BASE_DIR}/worker/data:/qserv/data" \
       -v "${QSERV_BASE_DIR}/worker/config:/config-etc:ro" \
       -v "${LOG_DIR}:/qserv/log" \
-      -v "${CORE_FILES_DIR}:/tmp/core-files" \
       -e "'REPL_WORKER_CONTAINER_NAME=${REPL_WORKER_CONTAINER_NAME}'" \
       -e "'REPL_WORKER_PARAMETERS=${REPL_WORKER_PARAMETERS}'" \
       -e "'LSST_LOG_CONFIG=/config-etc/log/repl-worker.cfg'" \
@@ -449,7 +425,7 @@ if [ -n "${REPL_WORKER_DEBUG}" ]; then
       -v "${QSERV_BASE_DIR}/worker/replication/work:/qserv/replication/work" \
       -v "${QSERV_BASE_DIR}/worker/config:/config-etc:ro" \
       -v "${LOG_DIR}:/qserv/log" \
-      -v "${QSERV_BASE_DIR}/worker/core-files:/tmp/core-files" \
+      -v "${CORE_DUMPS}:/tmp/core-files" \
       -e "'LSST_LOG_CONFIG=/config-etc/log/repl-debug.cfg'" \
       -e "'REPL_DB_CONN=${REPL_DB_CONN}'" \
       -e "'REPL_INSTANCE_ID=${REPL_INSTANCE_ID}'" \
@@ -458,7 +434,7 @@ if [ -n "${REPL_WORKER_DEBUG}" ]; then
       -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
       -e "'REPL_REG_HOST=${MASTER}'" \
       "${REPL_IMAGE_TAG}" \
-      bash -c \''yum -y install gdb && tail -f /dev/null'\'&
+      bash -c \''yum -y install gdb lz4 && tail -f /dev/null'\'&
   done
 fi
 wait
