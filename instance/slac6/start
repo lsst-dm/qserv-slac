@@ -211,6 +211,7 @@ if [ -n "${WORKER_XROOTD}" ]; then
       -v "${QSERV_BASE_DIR}/worker/config:/config-etc:ro" \
       -v "${QSERV_BASE_DIR}/worker/var-run-xrootd:/var/run/xrootd" \
       -v "${QSERV_BASE_DIR}/worker/data/mysql:/qserv/data/mysql:ro" \
+      -v "${QSERV_BASE_DIR}/worker/data/results:/qserv/data/results" \
       -v "${LOG_DIR}:/qserv/log" \
       -v "${QSERV_BASE_DIR}/worker/qserv:/home/qserv" \
       -e "LSST_LOG_CONFIG=/config-etc/log/xrootd.cfg" \

@@ -84,8 +84,18 @@ QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc1-8-gc28fa47d8"
 #
 # A fix to SsiProvider to recognize   resources starting with "/tmp".
 # This is just a temporary hack.
+#
 # QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc1-8-gc28fa47d8-dirty"
 
+# 2023-03-28: the "new" Qserv based on tag DM-38427. It pulls results
+#             from workers using the HTTP protocol.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-25-g4df7ef8df"
+
+# 2023-03-28: the "new" Qserv based on tag DM-38427. It pulls results
+#             from workers using the XROOT protocol
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-25-g4df7ef8df-dirty"
 
 
 QSERV_BASE_DIR="/zfspool/qserv-dev"
@@ -273,7 +283,6 @@ REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
 #             per scheduler (there are 4 schedulers at each worker).
 
 REPL_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-47-g982eac7c4"
-
 
 REPL_INSTANCE_ID="slac6:qserv-dev"
 REPL_DB_PORT=23306
