@@ -90,8 +90,16 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 # 2023-03-28: the "new" Qserv based on tag DM-38427. It pulls results
 #             from workers using the XROOT protocol
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-25-g4df7ef8df-dirty"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-25-g4df7ef8df-dirty"
 
+# 2023-04-06: Based on the EPIC branch DM-38069 of the "new" Qserv.
+#             The container was built after merging DM-38427 into EPIC.
+#             This implementation allows configuring result delivery
+#             protocol at workers. Czar would automatically recognize
+#             which protocol was selected and pull data from the specified
+#             source.
+
+QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-29-g47900f7bc"
 
 QSERV_BASE_DIR="/zfspool/qserv-dev"
 QSERV_CZAR_DB_PORT=3307
@@ -285,8 +293,16 @@ REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
 #             the change in the HTTP protocol and decide if this fix
 #             should be allowed to be merged into the main branch
 #             of Qserv.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-26-gb9d3dbd2c"
 
-REPL_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-26-gb9d3dbd2c"
+# 2023-04-06: Based on the EPIC branch DM-38069 of the "new" Qserv.
+#             The container was built after merging DM-38427 into EPIC.
+#             This implementation allows configuring result delivery
+#             protocol at workers. Czar would automatically recognize
+#             which protocol was selected and pull data from the specified
+#             source.
+REPL_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-29-g47900f7bc"
 
 
 REPL_INSTANCE_ID="slac6dev"
