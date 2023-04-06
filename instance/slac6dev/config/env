@@ -17,7 +17,6 @@ CORE_DUMPS=/var/lib/systemd/coredump
 
 # 10.6.8 + updated SciSQL
 # ATTENTION: need to run mysql_upgrade on each server
-
 QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 
 # The latest stable release.
@@ -81,12 +80,7 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 #             Plus it inludes DM-37854 for monitoring extended
 #             task states.
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc1-8-gc28fa47d8"
-#
-# A fix to SsiProvider to recognize   resources starting with "/tmp".
-# This is just a temporary hack.
-#
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc1-8-gc28fa47d8-dirty"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc1-8-gc28fa47d8"
 
 # 2023-03-28: the "new" Qserv based on tag DM-38427. It pulls results
 #             from workers using the HTTP protocol.
@@ -96,12 +90,12 @@ QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc1-8-gc28fa47d8"
 # 2023-03-28: the "new" Qserv based on tag DM-38427. It pulls results
 #             from workers using the XROOT protocol
 #
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-25-g4df7ef8df-dirty"
+QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-25-g4df7ef8df-dirty"
 
 
-QSERV_BASE_DIR="/zfspool/qserv-prod"
-QSERV_CZAR_DB_PORT=3306
-QSERV_WORKER_DB_PORT=3366
+QSERV_BASE_DIR="/zfspool/qserv-dev"
+QSERV_CZAR_DB_PORT=3307
+QSERV_WORKER_DB_PORT=3367
 
 # -------------------------------------
 # ----- Replication/Ingest system -----
@@ -282,32 +276,41 @@ REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
 
 # 2023-01-24: Based on the tag DM-37688 that adds 6 more histograms
 #             per scheduler (there are 4 schedulers at each worker).
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-47-g982eac7c4"
 
-REPL_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-47-g982eac7c4"
+# 2023-03-31: Based on the "new" Qserv DM-38427 in which HTTP/1.1 was
+#             re-enabled in qhttp (it was disabled in DM-27396). This
+#             image has been deployed here to test the effect of
+#             the change in the HTTP protocol and decide if this fix
+#             should be allowed to be merged into the main branch
+#             of Qserv.
 
-REPL_INSTANCE_ID="slac6prod"
-REPL_DB_PORT=23306
-REPL_CONTR_HTTP_PORT=25081
-REPL_REG_PORT=25082
+REPL_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-26-gb9d3dbd2c"
+
+
+REPL_INSTANCE_ID="slac6dev"
+REPL_DB_PORT=23307
+REPL_CONTR_HTTP_PORT=25781
+REPL_REG_PORT=25782
 REPL_REG_PARAMETERS="--registry-port=${REPL_REG_PORT} --debug"
 # Extended Controller timeouts to allow long operation when ingesting
 # large catalogs:
 #   request timeout: 8 hours
 #   job timeout: 24 hours
 # --controller-num-director-index-connections=4
-QSERV_XROOTD_PORT=1094
+QSERV_XROOTD_PORT=1794
 REPL_CONTR_PARAMETERS="--registry-port=${REPL_REG_PORT} --xrootd-port=${QSERV_XROOTD_PORT} --controller-http-server-port=${REPL_CONTR_HTTP_PORT} --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --debug"
-REPL_WORKER_SVC_PORT=25000
-REPL_WORKER_FS_PORT=25001
-REPL_WORKER_LOADER_PORT=25002
-REPL_WORKER_EXPORTER_PORT=25003
-REPL_WORKER_HTTP_LOADER_PORT=25004
+REPL_WORKER_SVC_PORT=25700
+REPL_WORKER_FS_PORT=25701
+REPL_WORKER_LOADER_PORT=25702
+REPL_WORKER_EXPORTER_PORT=25703
+REPL_WORKER_HTTP_LOADER_PORT=25704
 REPL_WORKER_PARAMETERS="--registry-port=${REPL_REG_PORT} --worker-svc-port=${REPL_WORKER_SVC_PORT} --worker-fs-port=${REPL_WORKER_FS_PORT} --worker-loader-port=${REPL_WORKER_LOADER_PORT} --worker-exporter-port=${REPL_WORKER_EXPORTER_PORT} --worker-http-loader-port=${REPL_WORKER_HTTP_LOADER_PORT} --worker-ingest-num-retries=4 --schema-upgrade-wait=1 --schema-upgrade-wait-timeout=600 --do-not-create-folders --debug"
 
 # To mount the local (ouside the container) version of the Web dashboard
 # and other Web apps served by the HTTP server of the Master Controller 
-#
-# REPL_HTTP_ROOT="/zfspool/management/qserv/src/www"
+REPL_HTTP_ROOT="/zfspool/management/qserv/src/www"
 
 # Limit size of the replication containers by 100 GB
 # This is needed for ingesting (very) large numbers of contributions.
@@ -323,7 +326,8 @@ REPL_MEMORY_LIMIT=107374182400
 CONTAINER_UID=45386
 CONTAINER_GID=1126
 
-CONTAINER_NAME_PREFIX="qserv-prod-"
+
+CONTAINER_NAME_PREFIX="qserv-dev-"
 
 # 10 GB
 ULIMIT_MEMLOCK=1099511627776

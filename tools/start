@@ -39,6 +39,7 @@ if [ -n "${CZAR_DB}" ]; then
     --use_stat_tables=PREFERABLY \
     --optimizer_use_condition_selectivity=3 \
     --query-cache-size=0 \
+    --bulk-insert-buffer-size=1G \
     --log-error="${LOG_DIR}/${CZAR_DB_CONTAINER_NAME}.error.log" \
     --slow-query-log --slow-query-log-file="${LOG_DIR}/${CZAR_DB_CONTAINER_NAME}.slow-query.log" \
     --log-warnings=2 \

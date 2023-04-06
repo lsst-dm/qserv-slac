@@ -1,30 +1,30 @@
-qserv-replica-master-http --registry-port=25082 --xrootd-port= --controller-http-server-port=25081 --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --debug --registry-host=sdfk8sc011 --config=mysql://qsreplica:CHANGEME@sdfk8sc011:23306/qservReplica --instance-id=slac6:qserv-dev --qserv-czar-db=mysql://root:CHANGEME@localhost:3306/qservMeta --auth-key=slac6:kukara4a --admin-auth-key=slac5:admin:kukara4a
+qserv-replica-master-http --registry-port=25082 --xrootd-port= --controller-http-server-port=25081 --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --debug --registry-host=sdfqserv001 --config=mysql://qsreplica:CHANGEME@sdfqserv001:23306/qservReplica --instance-id=slac6prod --qserv-czar-db=mysql://root:CHANGEME@localhost:3306/qservMeta --auth-key=slac6prod:kukara4a --admin-auth-key=slac6prod:admin:kukara4a
 
 
 
 qserv-replica-job PURGE production \
---registry-host=sdfk8sc011 \
+--registry-host=sdfqserv001 \
 --registry-port=25082 \
 --controller-request-timeout-sec=28800 \
 --controller-job-timeout-sec=86400 --debug \
---registry-host=sdfk8sc011 \
---config=mysql://qsreplica:CHANGEME@sdfk8sc011:23306/qservReplica \
---instance-id=slac6:qserv-dev \
---auth-key=slac6:kukara4a \
---admin-auth-key=slac5:admin:kukara4a
+--registry-host=sdfqserv001 \
+--config=mysql://qsreplica:CHANGEME@sdfqserv001:23306/qservReplica \
+--instance-id=slac6prod \
+--auth-key=slac6prod:kukara4a \
+--admin-auth-key=slac6prod:admin:kukara4a
 
 
 
 
 qserv-replica-job CHUNKS production \
---registry-host=sdfk8sc011 \
+--registry-host=sdfqserv001 \
 --registry-port=25082 \
 --controller-request-timeout-sec=28800 \
 --controller-job-timeout-sec=86400 --debug \
---registry-host=sdfk8sc011 \
---config=mysql://qsreplica:CHANGEME@sdfk8sc011:23306/qservReplica \
---instance-id=slac6:qserv-dev \
+--registry-host=sdfqserv001 \
+--config=mysql://qsreplica:CHANGEME@sdfqserv001:23306/qservReplica \
+--instance-id=slac6prod \
 --auth-key=slac6:kukara4a \
---admin-auth-key=slac5:admin:kukara4a \
+--admin-auth-key=slac6prod:admin:kukara4a \
 --do-not-save-replica \
 --qserv-replicas
