@@ -98,8 +98,20 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 #             protocol at workers. Czar would automatically recognize
 #             which protocol was selected and pull data from the specified
 #             source.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-29-g47900f7bc"
+#
+#             The latest version of the branch built after mergin in
+#             the last child branch DM-38704.
+#
+QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-27-g0ce48eabd"
 
-QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-29-g47900f7bc"
+# 2023-04-07: Change to using shared templates for worker queries.
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-13-gab61afdef"
+
+# 2023-04-12: The latest production version installed to test "zombi"
+#             worker queries.
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1"
 
 QSERV_BASE_DIR="/zfspool/qserv-dev"
 QSERV_CZAR_DB_PORT=3307
