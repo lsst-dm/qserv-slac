@@ -164,6 +164,7 @@ if [ -n "${WORKER_DB}" ]; then
       --use_stat_tables=PREFERABLY \
       --optimizer_use_condition_selectivity=3 \
       --query-cache-size=0 \
+      --join-buffer-size=4G \
       --log-error="${LOG_DIR}/${WORKER_DB_CONTAINER_NAME}.error.log" \
       --slow-query-log --slow-query-log-file="${QSERV_BASE_DIR}/worker/log/${WORKER_DB_CONTAINER_NAME}.slow-query.log" \
       --log-warnings=2 \
