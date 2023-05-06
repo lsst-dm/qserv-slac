@@ -1,0 +1,1 @@
+../../tools/qserv_worker_tasks.py
