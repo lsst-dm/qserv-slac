@@ -104,14 +104,73 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 #             The latest version of the branch built after mergin in
 #             the last child branch DM-38704.
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-27-g0ce48eabd"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-27-g0ce48eabd"
 
 # 2023-04-07: Change to using shared templates for worker queries.
 # QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-13-gab61afdef"
 
 # 2023-04-12: The latest production version installed to test "zombi"
 #             worker queries.
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1"
+#
+#QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1"
+
+# 2023-04-26: The "main" branch after merging DM-38625 (make target
+#             for running clang-format) which was done
+#             before switching to XROOTD version ssi-5.3.x and before
+#             merging DM-38730 for MySQL query cancellation fix.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-4-g96ae20428"
+
+# 2023-04-18: Based on the reviewed PR of DM-38257 which introduces
+#             delayed query text generation from templates. This is
+#             is expected to reduce memory footprint of Qserv worker
+#             when processing many N-N queries in the subchunk-per-task
+#             scenario.
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-11-g2f5a47df8"
+
+# 2023-04-26: The "main" branch after merging DM-38257 (lower memory
+#             utilization at workers by keeping query text in a special
+#             manager) and before merging DM-38730
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-12-g640f2f081"
+
+# 2023-04-26: The "main" branch after merging DM-38833 (Update `log` and
+#             `sphgeom` sumbodules) and right before merging in DM-38730
+#             (for MySQL query cancellation fix at workers).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-19-g7f3abcc86"
+
+
+# 2023-04-26: The latest state of the "main" branch after merging in DM-38730
+#             for MySQL query cancellation fix at workers.
+#             This tag is being tested to see if there was a problem during
+#             rebase of DM-38069 against "main"
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-27-g2b2fa83a7"
+
+# 2023-04-25: Based on DM-38069 that was rebased against the "main"
+#             branch that has DM-38730 for MySQL query cancellation
+#             fix at workers and DM-38257 (lower memory utilization
+#             at workers by keeping query text in a special manager).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-35-g425c1d0c9"
+
+
+# 2023-05-01: Based on DM-38909 used to look for what is hanging query
+#             cancelation.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-32-gd094e7228-dirty"
+
+# 2023-05-01: Based on DM-38069 that was rebased against DM-38909 (an attempt
+#             to fix the query cancellaton problem that exists in "main").
+#             Note that DM-38909 is based on "main".
+#
+# 2023-05-01: Also instrumented mysql::MySQLConnection::cancel() to report
+#             progress of the operation to ensure the method get's called
+#             and it actually does someting.
+
+QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-36-g6a566e32c-dirty"
+
 
 QSERV_BASE_DIR="/zfspool/qserv-dev"
 QSERV_CZAR_DB_PORT=3307
@@ -314,7 +373,33 @@ REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
 #             protocol at workers. Czar would automatically recognize
 #             which protocol was selected and pull data from the specified
 #             source.
-REPL_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-29-g47900f7bc"
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-29-g47900f7bc"
+
+# 2023-04-17: Based of the DM-38730 branch to fix query cencelation 
+#             problems on the workers.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-4-g55e0b4b87-dirty"
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-15-g5a5f16c0c-dirty"
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-18-g35d880446"
+
+# 2023-04-18: Based on the reviewed PR of DM-38257 which introduces
+#             delayed query text generation from templates. This is
+#             is expected to reduce memory footprint of Qserv worker
+#             when processing many N-N queries in the subchunk-per-task
+#             scenario.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-11-g2f5a47df8"
+
+# 2023-04-20: The latest production version
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1"
+
+# 2023-04-25: Based on DM-38069 that was rebased against the "main"
+#             branch that has DM-38730 for MySQL query cancellation
+#             fix at workers and DM-38257 for improved (lower memory utilization
+#             query text generation at workers.
+#
+REPL_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-34-g8c24717c0"
 
 
 REPL_INSTANCE_ID="slac6dev"
@@ -338,7 +423,7 @@ REPL_WORKER_PARAMETERS="--registry-port=${REPL_REG_PORT} --worker-svc-port=${REP
 
 # To mount the local (ouside the container) version of the Web dashboard
 # and other Web apps served by the HTTP server of the Master Controller 
-REPL_HTTP_ROOT="/zfspool/management/qserv/src/www"
+# REPL_HTTP_ROOT="/zfspool/management/qserv/src/www"
 
 # Limit size of the replication containers by 100 GB
 # This is needed for ingesting (very) large numbers of contributions.
