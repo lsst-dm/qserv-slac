@@ -16,6 +16,7 @@ if [ -n "${CZAR_DB}" ]; then
     --network=host \
     --detach=true \
     --name="${CZAR_DB_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
     -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
     -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
@@ -55,6 +56,7 @@ if [ -n "${CZAR_CMSD}" ]; then
     --network=host \
     --detach=true \
     --name="${CZAR_CMSD_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
     -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
     -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
@@ -77,6 +79,7 @@ if [ -n "${CZAR_XROOTD}" ]; then
     --network=host \
     --detach=true \
     --name="${CZAR_XROOTD_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
     -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
     -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
@@ -99,6 +102,7 @@ if [ -n "${CZAR_PROXY}" ]; then
     --network=host \
     --detach=true \
     --name="${CZAR_PROXY_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
     -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
     -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
@@ -123,6 +127,7 @@ if [ -n "${CZAR_DEBUG}" ]; then
     --network=host \
     --detach=true \
     --name="${CZAR_DEBUG_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
     -u root \
     -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
     -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
@@ -140,6 +145,7 @@ if [ -n "${WORKER_DB}" ]; then
       --network=host \
       --detach=true \
       --name="${WORKER_DB_CONTAINER_NAME}" \
+      --restart="${CONTAINER_RESTART_POLICY}" \
       -u ${CONTAINER_UID}:${CONTAINER_GID} \
       -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
       -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
@@ -182,6 +188,7 @@ if [ -n "${WORKER_CMSD}" ]; then
       --network=host \
       --detach=true \
       --name="${WORKER_CMSD_CONTAINER_NAME}" \
+      --restart="${CONTAINER_RESTART_POLICY}" \
       -u ${CONTAINER_UID}:${CONTAINER_GID} \
       -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
       -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
@@ -207,6 +214,7 @@ if [ -n "${WORKER_XROOTD}" ]; then
       --network=host \
       --detach=true \
       --name="${WORKER_XROOTD_CONTAINER_NAME}" \
+      --restart="${CONTAINER_RESTART_POLICY}" \
       -u ${CONTAINER_UID}:${CONTAINER_GID} \
       -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
       -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
@@ -234,6 +242,7 @@ if [ -n "${WORKER_DEBUG}" ]; then
       --network=host \
       --detach=true \
       --name="${WORKER_DEBUG_CONTAINER_NAME}" \
+      --restart="${CONTAINER_RESTART_POLICY}" \
       -u root \
       -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
       -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
@@ -253,6 +262,7 @@ if [ -n "${REPL_DB}" ]; then
     --detach=true \
     --network=host \
     --name="${REPL_DB_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
     -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
     -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
@@ -291,6 +301,7 @@ if [ -n "${REPL_REG}" ]; then
     --network=host \
     --memory=${REPL_MEMORY_LIMIT} \
     --name="${REPL_REG_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
     -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
     -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
@@ -321,6 +332,7 @@ if [ -n "${REPL_CONTR}" ]; then
     --network=host \
     --memory=${REPL_MEMORY_LIMIT} \
     --name="${REPL_CONTR_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
     -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
     -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
@@ -353,6 +365,7 @@ if [ -n "${REPL_CONTR_DEBUG}" ]; then
     --network=host \
     --memory=${REPL_MEMORY_LIMIT} \
     --name="${REPL_CONTR_DEBUG_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
     -u root \
     -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
     -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
@@ -390,6 +403,7 @@ if [ -n "${REPL_WORKER}" ]; then
       --network=host \
       --memory=${REPL_MEMORY_LIMIT} \
       --name="${REPL_WORKER_CONTAINER_NAME}" \
+      --restart="${CONTAINER_RESTART_POLICY}" \
       -u ${CONTAINER_UID}:${CONTAINER_GID} \
       -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
       -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
@@ -420,6 +434,7 @@ if [ -n "${REPL_WORKER_DEBUG}" ]; then
       --network=host \
       --memory=${REPL_MEMORY_LIMIT} \
       --name="${REPL_WORKER_DEBUG_CONTAINER_NAME}" \
+      --restart="${CONTAINER_RESTART_POLICY}" \
       -u root \
       -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
       -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \

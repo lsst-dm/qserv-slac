@@ -290,8 +290,13 @@ REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
 
 # 2023-04-21: The latest production version
 #
-REPL_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1"
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1"
 
+# 2023-05-11: Based on DM-39080 to investigate a possible memory
+#             leak within the Replication Framework when sending
+#             status probes to Qserv workers.
+#
+REPL_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-39-g60299e029"
 
 REPL_INSTANCE_ID="slac6prod"
 REPL_DB_PORT=23306
@@ -332,6 +337,7 @@ CONTAINER_UID=45386
 CONTAINER_GID=1126
 
 CONTAINER_NAME_PREFIX="qserv-prod-"
+CONTAINER_RESTART_POLICY="unless-stopped"
 
 # 10 GB
 ULIMIT_MEMLOCK=1099511627776
