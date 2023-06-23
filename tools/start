@@ -318,6 +318,10 @@ if [ -n "${REPL_REG}" ]; then
     bash -c \''qserv-replica-registry ${REPL_REG_PARAMETERS} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" >& /qserv/log/${REPL_REG_CONTAINER_NAME}.log'\'&
 fi
 
+# Set the following environment variable before running the Controller
+#
+#   LD_PRELOAD=/usr/lib64/libjemalloc.so.2 qserv-replica-master-http ...
+
 if [ -n "${REPL_CONTR}" ]; then
   echo "[${MASTER}] starting repl contr"
   LOG_DIR=${QSERV_BASE_DIR}/master/log

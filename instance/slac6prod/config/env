@@ -100,7 +100,18 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 
 # 2023-04-21: The latest production version
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1"
+
+# 2023-05-18: The latest production version that comes with the following
+#             changes on top of the previous release:
+#
+# - Use templatized queries at workers to reduce memory allocation
+# - Fixes for extreme slowdowns when cancelling broad subchunk queries
+# - Eliminated false-positive error messages for missing optional ingest config parameters
+# - Fixed some issues with transaction state counters and colors on web dashboard
+# - Upgrades of package dependencies (XRootD, lsst/log, and lsst/sphgeom)
+#
+QSERV_IMAGE_TAG="qserv/lite-qserv:2023.5.1-rc1"
 
 QSERV_BASE_DIR="/zfspool/qserv-prod"
 QSERV_CZAR_DB_PORT=3306

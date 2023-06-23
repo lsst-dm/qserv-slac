@@ -27,8 +27,45 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 # 2023-05-01: Also instrumented mysql::MySQLConnection::cancel() to report
 #             progress of the operation to ensure the method get's called
 #             and it actually does someting.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-36-g6a566e32c-dirty"
 
-QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-36-g6a566e32c-dirty"
+# 2023-05-18: The latest production version that comes with the following
+#             changes on top of the previous release:
+#
+# - Use templatized queries at workers to reduce memory allocation
+# - Fixes for extreme slowdowns when cancelling broad subchunk queries
+# - Eliminated false-positive error messages for missing optional ingest config parameters
+# - Fixed some issues with transaction state counters and colors on web dashboard
+# - Upgrades of package dependencies (XRootD, lsst/log, and lsst/sphgeom)
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.5.1-rc1"
+
+# 2023-05-22: Based on DM-39080 which fixes the memory grows in the R-I
+#             system's Controller and comes with optimized worker
+#             monitoring protocol.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.5.1-rc1-7-g96c46879d"
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.5.1-rc1-8-gdad558377"
+#
+#             Is rebased against DM-39425 which has a fix to a bug fix
+#             in wpublish:QueriesAndChunks which was only reporting
+#             the N-N queries of suibChunkId=0. Now it reports
+#             all subchunks.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.5.1-rc1-23-g23fa3b341"
+
+# 2023-06-15: Based on DM-39464 which comes with the query completion/cancellation
+#             broadcasts.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.5.1-rc1-30-g2ce4cf109"
+
+# 2023-06-20: Based on DM-38069 (file-based result delivery) which was
+#             rebased against the latest state of the main branch,
+#             including DM-39464 (query completion/cancellation broadcasts).
+#
+QSERV_IMAGE_TAG="qserv/lite-qserv:2023.5.1-rc1-43-gcc60822f3"
 
 QSERV_BASE_DIR="/zfspool/qserv-test"
 QSERV_CZAR_DB_PORT=3308
@@ -45,11 +82,40 @@ REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
 #
 # REPL_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1"
 
-# 2023-05-07: Based on DM-39080 to investigate a possible memory
-#             leak within the Replication Framework when sending
-#             status probes to Qserv workers.
+# 2023-05-16: Based on DM-39200 which fixes incorrect counters
+#             displayed on the Web Dashboard. Note that this
+#             branch doesn't include a fix of the branch DM-39080
+#             that is mentioned above.
 #
-REPL_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-39-g60299e029"
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-43-g7bd3cbc78"
+
+# 2023-05-22: Based on DM-39080 which fixes the memory grows in the R-I
+#             system's Controller and comes with optimized worker
+#             monitoring protocol.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.5.1-rc1-7-g96c46879d"
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.5.1-rc1-8-gdad558377"
+#
+#             Is rebased against DM-39425 which has a fix to a bug fix
+#             in wpublish:QueriesAndChunks which was only reporting
+#             the N-N queries of suibChunkId=0. Now it reports
+#             all subchunks.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.5.1-rc1-23-g23fa3b341"
+
+# 2023-06-19: Based on DM-39704 which eliminates the option "local=0"
+#             when constructing the "director" indexes.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.5.1-rc1-25-gfbe0972ad"
+
+# 2023-06-20: Based on DM-38069 (file-based result delivery) which was
+#             rebased against the latest state of the main branch,
+#             including DM-39464 (query completion/cancellation broadcasts)
+#             and DM-39704 (eliminating "local=0" option in the director
+#             index construction).
+REPL_IMAGE_TAG="qserv/lite-qserv:2023.5.1-rc1-43-gcc60822f3"
+
 
 REPL_INSTANCE_ID="slac6test"
 REPL_DB_PORT=23308
@@ -72,7 +138,7 @@ REPL_WORKER_PARAMETERS="--registry-port=${REPL_REG_PORT} --worker-svc-port=${REP
 
 # To mount the local (ouside the container) version of the Web dashboard
 # and other Web apps served by the HTTP server of the Master Controller 
-# REPL_HTTP_ROOT="/zfspool/management/qserv/src/www"
+REPL_HTTP_ROOT="/zfspool/management/qserv/src/www"
 
 # Limit size of the replication containers by 100 GB
 # This is needed for ingesting (very) large numbers of contributions.
@@ -89,7 +155,8 @@ CONTAINER_UID=45386
 CONTAINER_GID=1126
 
 CONTAINER_NAME_PREFIX="qserv-test-"
-CONTAINER_RESTART_POLICY="unless-stopped"
+#CONTAINER_RESTART_POLICY="unless-stopped"
+CONTAINER_RESTART_POLICY=""
 
 # 10 GB
 ULIMIT_MEMLOCK=1099511627776
