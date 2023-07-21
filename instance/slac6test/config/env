@@ -65,7 +65,19 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 #             rebased against the latest state of the main branch,
 #             including DM-39464 (query completion/cancellation broadcasts).
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2023.5.1-rc1-43-gcc60822f3"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.6.1-rc1-10-g430ffc0f4"
+
+# 2023-07-18: Based on DM-39819 (worker-side termination of the large result
+#             queries), which also includes DM-38069 and the latest "main".
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.7.1-rc3-16-gd49caf432"
+
+# 2023-07-20: Based on DM-39819 (worker-side termination of the large result
+#             queries), which is based on the latest "main" (including DM-38069
+#             merged into it), plus a possible bug in the MySQL query cancellation
+#             at workers.
+#
+QSERV_IMAGE_TAG="qserv/lite-qserv:2023.7.1-rc3-17-gac92a0610"
 
 QSERV_BASE_DIR="/zfspool/qserv-test"
 QSERV_CZAR_DB_PORT=3308
@@ -114,8 +126,20 @@ REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
 #             including DM-39464 (query completion/cancellation broadcasts)
 #             and DM-39704 (eliminating "local=0" option in the director
 #             index construction).
-REPL_IMAGE_TAG="qserv/lite-qserv:2023.5.1-rc1-43-gcc60822f3"
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.6.1-rc1-10-g430ffc0f4"
 
+# 2023-07-18: Based on DM-39819 (worker-side termination of the large result
+#             queries), which also includes DM-38069 and the latest "main".
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.7.1-rc3-16-gd49caf432"
+
+# 2023-07-20: Based on DM-39819 (worker-side termination of the large result
+#             queries), which is based on the latest "main" (including DM-38069
+#             merged into it), plus a possible bug in the MySQL query cancellation
+#             at workers.
+#
+REPL_IMAGE_TAG="qserv/lite-qserv:2023.7.1-rc3-17-gac92a0610"
 
 REPL_INSTANCE_ID="slac6test"
 REPL_DB_PORT=23308
@@ -138,7 +162,8 @@ REPL_WORKER_PARAMETERS="--registry-port=${REPL_REG_PORT} --worker-svc-port=${REP
 
 # To mount the local (ouside the container) version of the Web dashboard
 # and other Web apps served by the HTTP server of the Master Controller 
-REPL_HTTP_ROOT="/zfspool/management/qserv/src/www"
+#
+# REPL_HTTP_ROOT="/zfspool/management/qserv/src/www"
 
 # Limit size of the replication containers by 100 GB
 # This is needed for ingesting (very) large numbers of contributions.
