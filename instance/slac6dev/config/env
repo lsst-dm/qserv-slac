@@ -6,7 +6,47 @@
 # management scripts in order to set up proper values of the corresponding
 # parameters.
 
-CORE_DUMPS=/var/lib/systemd/coredump
+# ---------------------------------------------------------------------
+# 2023-11-06: changes to the configuration of all 15 nodes of the Qserv
+#             cluster.
+#
+# The default location of the core dumps on the RHEL8 filesystem is at
+#
+#  CORE_DUMPS=/var/lib/systemd/coredump
+#
+# The files are stored here in the lz4 compressed format by the system
+# as configured by
+#
+# % cat /proc/sys/kernel/core_pattern
+#   |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h %e
+#
+# This service has the following configuration
+#
+# % cat /etc/systemd/coredump.conf
+# [Coredump]
+# #Storage=external
+# #Compress=yes
+# #ProcessSizeMax=2G
+# #ExternalSizeMax=2G
+# #JournalSizeMax=767M
+# #MaxUse=
+# #KeepFree=
+#
+# There are a few problems with this configuration:
+#   - limited capacity (a few GB of the destinaton folder which is mounted
+#     to the root filesystem of a host)
+#   - the files are owned by user 'root'
+#   - the files are truncated at 2GB (which is way to low for Qserv processes)
+#
+# The following solution was applied at each node o fthe cluster:
+# 
+# mkdir -p /zfspool/core-files
+# chmod a+rwx /zfspool/core-files
+# echo '/zfspool/core-files/core.%e.%p.%h.%t' > /proc/sys/kernel/core_pattern
+#
+# And the new location of the files is specified below:
+
+CORE_DUMPS=/zfspool/core-files
 
 # -----------------
 # ----- Qserv -----
@@ -163,10 +203,14 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 
 QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-37-g2d2289266"
 
-
 QSERV_BASE_DIR="/zfspool/qserv-dev"
 QSERV_CZAR_DB_PORT=3307
+# Disabled for now before upgrading Qserv to the version which requires
+# a connection string for the Czar proxy passed to the Controller.
+#
+# QSERV_CZAR_PROXY_PORT=4047
 QSERV_WORKER_DB_PORT=3367
+QSERV_XROOTD_PORT=1794
 
 # -------------------------------------
 # ----- Replication/Ingest system -----
@@ -418,19 +462,22 @@ REPL_INSTANCE_ID="slac6dev"
 REPL_DB_PORT=23307
 REPL_CONTR_HTTP_PORT=25781
 REPL_REG_PORT=25782
+
 REPL_REG_PARAMETERS="--registry-port=${REPL_REG_PORT} --debug"
+
 # Extended Controller timeouts to allow long operation when ingesting
 # large catalogs:
 #   request timeout: 8 hours
 #   job timeout: 24 hours
 # --controller-num-director-index-connections=4
-QSERV_XROOTD_PORT=1794
 REPL_CONTR_PARAMETERS="--registry-port=${REPL_REG_PORT} --xrootd-port=${QSERV_XROOTD_PORT} --controller-http-server-port=${REPL_CONTR_HTTP_PORT} --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --debug"
+
 REPL_WORKER_SVC_PORT=25700
 REPL_WORKER_FS_PORT=25701
 REPL_WORKER_LOADER_PORT=25702
 REPL_WORKER_EXPORTER_PORT=25703
 REPL_WORKER_HTTP_LOADER_PORT=25704
+
 REPL_WORKER_PARAMETERS="--registry-port=${REPL_REG_PORT} --worker-svc-port=${REPL_WORKER_SVC_PORT} --worker-fs-port=${REPL_WORKER_FS_PORT} --worker-loader-port=${REPL_WORKER_LOADER_PORT} --worker-exporter-port=${REPL_WORKER_EXPORTER_PORT} --worker-http-loader-port=${REPL_WORKER_HTTP_LOADER_PORT} --worker-ingest-num-retries=4 --schema-upgrade-wait=1 --schema-upgrade-wait-timeout=600 --do-not-create-folders --debug"
 
 # To mount the local (ouside the container) version of the Web dashboard
@@ -457,6 +504,9 @@ CONTAINER_RESTART_POLICY="no"
 
 # 10 GB
 ULIMIT_MEMLOCK=1099511627776
+
+# Unlimited core file size
+ULIMIT_CORE="-1:-1"
 
 # Other parameters are set by the following script based on the above defined
 # one, or be loaded from predefined locations.

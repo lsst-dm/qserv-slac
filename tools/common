@@ -93,6 +93,10 @@ REPL_AUTH_KEY="$(get_param config/secrets/repl_auth_key)"
 REPL_ADMIN_AUTH_KEY="$(get_param config/secrets/repl_admin_auth_key)"
 
 QSERV_CZAR_DB_CONN="mysql://root:${QSERV_CZAR_DB_PASSWORD}@localhost:${QSERV_CZAR_DB_PORT}/qservMeta"
+QSERV_CZAR_PROXY_CONN=
+if [ -n "${QSERV_CZAR_PROXY_PORT}" ]; then
+    QSERV_CZAR_PROXY_CONN="mysql://qsmaster@${MASTER}:${QSERV_CZAR_PROXY_PORT}"
+fi
 QSERV_WORKER_DB_CONN="mysql://root:${QSERV_WORKER_DB_PASSWORD}@localhost:${QSERV_WORKER_DB_PORT}/qservw_worker"
 REPL_DB_CONN="mysql://qsreplica:${REPL_DB_QSREPLICA_PASSWORD}@${MASTER}:${REPL_DB_PORT}/qservReplica"
 REPL_DB_ROOT_CONN="mysql://root:${REPL_DB_ROOT_PASSWORD}@localhost:${REPL_DB_PORT}/qservReplica"
