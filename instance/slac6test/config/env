@@ -203,7 +203,58 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 #
 #             Improved implementation of the connector.
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2023.10.1-rc1-23-g1d9be073f-dirty"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.10.1-rc1-23-g1d9be073f-dirty"
+
+# 2023-11-08: Based on DM-41657 (re-enable conditional booting into Snail)
+#             as well as all above-mentioned tags
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.10.1-rc1-28-g47e2b2aaa"
+
+# 2023-11-29: Based on DM-41291 (does NOT include DM-41657) that implements
+#             the HTTP-based Qserv worker management protocol replacing
+#             an older one based on XROOTD/SSI.
+#
+#             NOTE: This requires changes (extension) to be made to the Qserv worker
+#                   configuration files to allow workers log into the Registry.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-15-g0230c64f5"
+
+# 2023-12-01: Based on DM-41535 (that's based on DM-41291) that adds
+#             the Qserv worker-side REST service for pulling info on
+#             files.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-20-gd18f4aafe"
+
+# 2023-12-16: Based on DM-40003 that eliminates the SSI streaming
+#             from a list of available result delivery options.
+#             Includes the main branch that has DM-41535.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-25-gf8f193b6e"
+#
+#             Same as before, plus relaxed memory manager that won't
+#             attempt to lock table sin memory or cound any memory
+#             used by the tables.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-26-g13bc27135"
+#
+#             Same as before, plus rebased on the latest state of the main
+#             branch and wbase::ChannelShared merged into wbase::FileChannelShared.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-42-g9baa513d4"
+#
+#             Refactored and streamlined implementation of FileChannelShared
+#             The new implementation no longer depends on a separate data processing
+#             class TransmitData for extracting rows from the result sets and
+#             generating the Protobuf-serialized output stream of data or sending
+#             responses to Czar.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-45-ga67a5d013"
+#
+#             Significant changes in the Qserv protocol. Refactored and streamlined
+#             result processing at Czar. Eliminated any code related to the SSI-based
+#             result streaming at Czar.
+#
+QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-45-gb1ad8be48-dirty"
 
 QSERV_BASE_DIR="/zfspool/qserv-test"
 QSERV_CZAR_DB_PORT=3308
@@ -352,7 +403,59 @@ REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
 #
 #             Improved implementation of the connector.
 #
-REPL_IMAGE_TAG="qserv/lite-qserv:2023.10.1-rc1-23-g1d9be073f-dirty"
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.10.1-rc1-23-g1d9be073f-dirty"
+
+# 2023-11-08: Based on DM-41657 (re-enable conditional booting into Snail)
+#             as well as all above-mentioned tags
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.10.1-rc1-28-g47e2b2aaa"
+
+# 2023-11-29: Based on DM-41291 (does NOT include DM-41657) that implements
+#             the HTTP-based Qserv worker management protocol replacing
+#             an older one based on XROOTD/SSI.
+#
+#             NOTE: This requires changes (extension) to be made to the Qserv worker
+#                   configuration files to allow workers log into the Registry.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-15-g0230c64f5"
+
+# 2023-12-01: Based on DM-41535 (that's based on DM-41291) that adds
+#             the Qserv worker-side REST service for pulling info on
+#             files.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-20-gd18f4aafe"
+
+# 2023-12-16: Based on DM-40003 that eliminates the SSI streaming
+#             from a list of available result delivery options.
+#             Includes the main branch that has DM-41535.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-25-gf8f193b6e"
+#
+#             Same as before, plus relaxed memory manager that won't
+#             attempt to lock table sin memory or cound any memory
+#             used by the tables.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-26-g13bc27135"
+#
+#             Same as before, plus rebased on the latest state of the main
+#             branch and wbase::ChannelShared merged into wbase::FileChannelShared.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-42-g9baa513d4"
+#
+#             Refactored and streamlined implementation of FileChannelShared
+#             The new implementation no longer depends on a separate data processing
+#             class TransmitData for extracting rows from the result sets and
+#             generating the Protobuf-serialized output stream of data or sending
+#             responses to Czar.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-45-ga67a5d013"
+#
+#             Significant changes in the Qserv protocol. Refactored and streamlined
+#             result processing at Czar. Eliminated any code related to the SSI-based
+#             result streaming at Czar.
+#
+REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-45-gb1ad8be48-dirty"
+
 
 REPL_INSTANCE_ID="slac6test"
 REPL_DB_PORT=23308
