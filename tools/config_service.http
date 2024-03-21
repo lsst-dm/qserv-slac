@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Reconfigure services
+
+set -e
+
+# Load parameters of the setup into the corresponding environment
+# variables
+
+. $(dirname "$0")/config/env
+
+if [ -n "${CZAR_CMSD}" ]; then
+    update_config_master ${QSERV_BASE_DIR}/master/config/cmsd.cfg
+fi
+if [ -n "${CZAR_XROOTD}" ]; then
+    update_config_master ${QSERV_BASE_DIR}/master/config/xrootd.cfg
+fi
+if [ -n "${CZAR_PROXY}" ]; then
+    update_config_master ${QSERV_BASE_DIR}/master/config/my-proxy.cfg
+    update_config_master ${QSERV_BASE_DIR}/master/config/qserv-czar.cfg
+fi
+if [ -n "${CZAR_HTTP}" ]; then
+    update_config_master ${QSERV_BASE_DIR}/master/config/qserv-czar-http.cfg
+fi
+if [ -n "${WORKER_CMSD}" ]; then
+    update_config ${QSERV_BASE_DIR}/worker/config/cmsd.cfg
+fi
+if [ -n "${WORKER_XROOTD}" ]; then
+    update_config ${QSERV_BASE_DIR}/worker/config/xrdssi.cfg
+fi

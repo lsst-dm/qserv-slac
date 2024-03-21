@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# Start the select services on the select nodes
+
+set -e
+
+# Load parameters of the setup into the corresponding environment
+# variables
+
+. $(dirname "$0")/config/env
+
+if [ -n "${CZAR_DB}" ]; then
+  ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar mariadb: "$(docker ps -a | grep '$CZAR_DB_CONTAINER_NAME')'
+fi
+if [ -n "${CZAR_CMSD}" ]; then
+  ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar cmsd:    "$(docker ps -a | grep '$CZAR_CMSD_CONTAINER_NAME')'
+fi
+if [ -n "${CZAR_XROOTD}" ]; then
+  ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar xrootd:  "$(docker ps -a | grep '$CZAR_XROOTD_CONTAINER_NAME')'
+fi
+if [ -n "${CZAR_PROXY}" ]; then
+  ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar proxy:   "$(docker ps -a | grep '$CZAR_PROXY_CONTAINER_NAME')'
+fi
+if [ -n "${CZAR_HTTP}" ]; then
+  ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar http:    "$(docker ps -a | grep '$CZAR_HTTP_CONTAINER_NAME')'
+fi
+if [ -n "${CZAR_DEBUG}" ]; then
+  ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar debug:   "$(docker ps -a | grep '$CZAR_DEBUG_CONTAINER_NAME')'
+fi
+for WORKER in $WORKERS; do
+  if [ -n "${WORKER_DB}" ]; then
+    ssh -n $WORKER 'echo "["'$WORKER'"] qserv worker mariadb: "$(docker ps -a | grep '$WORKER_DB_CONTAINER_NAME')'
+  fi
+  if [ -n "${WORKER_CMSD}" ]; then
+    ssh -n $WORKER 'echo "["'$WORKER'"] qserv worker cmsd:    "$(docker ps -a | grep '$WORKER_CMSD_CONTAINER_NAME')'
+  fi
+  if [ -n "${WORKER_XROOTD}" ]; then
+    ssh -n $WORKER 'echo "["'$WORKER'"] qserv worker xrootd:  "$(docker ps -a | grep '$WORKER_XROOTD_CONTAINER_NAME')'
+  fi
+  if [ -n "${WORKER_DEBUG}" ]; then
+    ssh -n $WORKER 'echo "["'$WORKER'"] qserv worker debug:  "$(docker ps -a | grep '$WORKER_DEBUG_CONTAINER_NAME')'
+  fi
+done
+if [ -n "${REPL_DB}" ]; then
+  ssh -n $MASTER 'echo "["'$MASTER'"] repl mariadb:     "$(docker ps -a | grep '$REPL_DB_CONTAINER_NAME')'
+fi
+if [ -n "${REPL_REG}" ]; then
+  ssh -n $MASTER 'echo "["'$MASTER'"] repl reg:         "$(docker ps -a | grep '$REPL_REG_CONTAINER_NAME')'
+fi
+if [ -n "${REPL_CONTR}" ]; then
+  ssh -n $MASTER 'echo "["'$MASTER'"] repl contr:       "$(docker ps -a | grep '$REPL_CONTR_CONTAINER_NAME')'
+fi
+if [ -n "${REPL_CONTR_DEBUG}" ]; then
+  ssh -n $MASTER 'echo "["'$MASTER'"] repl contr debug: "$(docker ps -a | grep '$REPL_CONTR_DEBUG_CONTAINER_NAME')'
+fi
+for WORKER in $WORKERS; do
+  if [ -n "${REPL_WORKER}" ]; then
+    ssh -n $WORKER 'echo "["'$WORKER'"] repl worker:       "$(docker ps -a | grep '$REPL_WORKER_CONTAINER_NAME')'
+  fi
+  if [ -n "${REPL_WORKER_DEBUG}" ]; then
+    ssh -n $WORKER 'echo "["'$WORKER'"] repl worker debug: "$(docker ps -a | grep '$REPL_WORKER_DEBUG_CONTAINER_NAME')'
+  fi
+done
