@@ -254,13 +254,104 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 #             result processing at Czar. Eliminated any code related to the SSI-based
 #             result streaming at Czar.
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-45-gb1ad8be48-dirty"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-45-gb1ad8be48-dirty"
+#
+#             Configured with CURLOPT_MAXCONNECTS set to 1024 in an attempt to reuse
+#             as many TCP sockets as possible.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-46-ga71de46f2-dirty"
+#
+#             Fixed the memory leak at worker (due to a cyclic depedency)
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-48-g7160d9c70-dirty"
+#
+#             Re-enable Protobuf Arean at workers to prevent huge memory grows
+#             when processing large result data. The growth is being observed
+#             since the SSI streaming was removed.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-49-gea7bf528c-dirty"
+#
+#             The temporary fix not to remove result files after pulling
+#             the files to Czar. It's meant to test a memory leak in qhttp.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-50-g7c034ec5b-dirty"
+#
+#             Tuned up HTTP client to prevent lingering connections to
+#             workers that are causing huge memory footprint in there.
+#             Disabled connectioncaching, keep alive. Connections are now closed
+#             in the destructor of http::Client.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-51-ge4df38d4c-dirty"
+#
+#             Improved version of the QHTTP server to send large files
+#             in a series of records, where the maximum size of each record
+#             is limited by 2 MB.
+#             It's based on DM-42562.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-53-ga83d23d58"
+#
+#             Shifted error checking upstream before attempting to merge
+#             rows of a failed job.
+#             Removed unneccesary data member from the result merger
+#             The older implementation of the class MergingHandler had a data
+#             member that had no pracical use.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-56-g662904253"
+#
+#             Early termination of jobs to avoid pulling too much data from workers
+#             Checking if a job gets cancelled at rproc::InfileMerger while pulling
+#             and processing data from a worker. This is meant to reinforce
+#             an existing termination logic at qdisp::QueryRequest.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-57-ga2c4a33f8"
+#
+#             Extended configuration of http::Client used for pulling result fils
+#             from workers to Czar.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-59-g7990e0603"
+#
+#             The simplest version of the connection sharing in the libcurl-based
+#             sync client class http::Client. All instances of the class share
+#             the same pool of connections.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-63-g67fdca0ca"
+#
+#             Fixed a bug in the result file reader at Czar to finish reading
+#             when the expected number of rows is received from a worker rather
+#             than waiting forever for connection termination.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-64-g3eb0c060a"
+#             Correct implementation of the client connection pool.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-59-g4077b16f9"
+#
+# 2024-02-02: Based on DM-42617 (based on main and excludes DM-40003)
+#             which ads the HTTP-based frontend for Czar. Include dual
+#             identities of Czars.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-61-g5fd78c059"
+#
+# 2024-02-15: Based on John's DM-11526 which includes DM-42617 (the HTTP frontend
+#             to Czar merged into the main branch).
+#
+#             NOTE: This version was installed to develop the Dashboard view
+#                   of the "booted" worker queries and a status of schedulers.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-72-g5369da838"
+#
+# 2024-02-20: Based on DM-40003 and includes DM-42617 (the HTTP frontend
+#             to Czar merged into the main branch).
+#
+QSERV_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-76-g5547eb7fe"
 
 QSERV_BASE_DIR="/zfspool/qserv-test"
 QSERV_CZAR_DB_PORT=3308
 QSERV_CZAR_PROXY_PORT=4048
+QSERV_CZAR_HTTP_PORT=4148
 QSERV_WORKER_DB_PORT=3368
 QSERV_XROOTD_PORT=1894
+QSERV_CZAR_HTTP_THREADS=16
+
 
 # -------------------------------------
 # ----- Replication/Ingest system -----
@@ -454,8 +545,96 @@ REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
 #             result processing at Czar. Eliminated any code related to the SSI-based
 #             result streaming at Czar.
 #
-REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-45-gb1ad8be48-dirty"
-
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-45-gb1ad8be48-dirty"
+#
+#             Configured with CURLOPT_MAXCONNECTS set to 1024 in an attempt to reuse
+#             as many TCP sockets as possible.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-46-ga71de46f2-dirty"
+#
+#             Fixed the memory leak at worker (due to a cyclic depedency)
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-48-g7160d9c70-dirty"
+#
+#             Re-enable Protobuf Arean at workers to prevent huge memory grows
+#             when processing large result data. The growth is being observed
+#             since the SSI streaming was removed.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-49-gea7bf528c-dirty"
+#
+#             The temporary fix not to remove result files after pulling
+#             the files to Czar. It's meant to test a memory leak in qhttp.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-50-g7c034ec5b-dirty"
+#
+#             Tuned up HTTP client to prevent lingering connections to
+#             workers that are causing huge memory footprint in there.
+#             Disabled connectioncaching, keep alive. Connections are now closed
+#             in the destructor of http::Client.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-51-ge4df38d4c-dirty"
+#
+#             Improved version of the QHTTP server to send large files
+#             in a series of records, where the maximum size of each record
+#             is limited by 2 MB.
+#             It's based on DM-42562.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-53-ga83d23d58"
+#
+#             Shifted error checking upstream before attempting to merge
+#             rows of a failed job.
+#             Removed unneccesary data member from the result merger
+#             The older implementation of the class MergingHandler had a data
+#             member that had no pracical use.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-56-g662904253"
+#
+#             Early termination of jobs to avoid pulling too much data from workers
+#             Checking if a job gets cancelled at rproc::InfileMerger while pulling
+#             and processing data from a worker. This is meant to reinforce
+#             an existing termination logic at qdisp::QueryRequest.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-57-ga2c4a33f8"
+#
+#             Extended configuration of http::Client used for pulling result fils
+#             from workers to Czar.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-59-g7990e0603"
+#
+#             The simplest version of the connection sharing in the libcurl-based
+#             sync client class http::Client. All instances of the class share
+#             the same pool of connections.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-63-g67fdca0ca"
+#
+#             Fixed a bug in the result file reader at Czar to finish reading
+#             when the expected number of rows is received from a worker rather
+#             than waiting forever for connection termination.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-64-g3eb0c060a"
+#
+#             Correct implementation of the client connection pool.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-59-g4077b16f9"
+#
+# 2024-02-02: Based on DM-42617 (based on main and excludes DM-40003)
+#             which ads the HTTP-based frontend for Czar. Include dual
+#             identity of Czars.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-61-g5fd78c059"
+#
+# 2024-02-15: Based on John's DM-11526 which includes DM-42617 (the HTTP frontend
+#             to Czar merged into the main branch).
+#
+#             NOTE: This version was installed to develop the Dashboard view
+#                   of the "booted" worker queries and a status of schedulers.
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-72-g5369da838"
+#
+# 2024-02-20: Based on DM-40003 and includes DM-42617 (the HTTP frontend
+#             to Czar merged into the main branch).
+#
+REPL_IMAGE_TAG="qserv/lite-qserv:2023.11.1-rc3-76-g5547eb7fe"
 
 REPL_INSTANCE_ID="slac6test"
 REPL_DB_PORT=23308
