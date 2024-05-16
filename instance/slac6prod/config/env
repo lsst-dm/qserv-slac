@@ -38,7 +38,7 @@
 #   - the files are owned by user 'root'
 #   - the files are truncated at 2GB (which is way to low for Qserv processes)
 #
-# The following solution was applied at each node o fthe cluster:
+# The following solution was applied at each node of the cluster:
 #
 # mkdir -p /zfspool/core-files
 # chmod a+rwx /zfspool/core-files
@@ -46,321 +46,49 @@
 #
 # And the new location of the files is specified below:
 
-CORE_DUMPS=/var/lib/systemd/coredump
+CORE_DUMPS=/zfspool/core-files
 
 # -----------------
 # ----- Qserv -----
 # -----------------
 
-# 10.6.5
-# QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
-
 # 10.6.8 + updated SciSQL
-# ATTENTION: need to run mysql_upgrade on each server
-
+#
 QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
-
-# The latest stable release.
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2022.5.2-rc1"
-
-# 2022-09-09: Built of the main branch
-#             NOTE: updated QMeta schema version to 6 to support
-#                   full text search on the queries.
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2022.7.1-rc1-32-gcbe5a5e48"
-
-# 2022-09-13: Based on the bug fix branch DM-36223.
-#             NOTE: updated QMeta schema version to 8 for extended
-#                   bytes/rowsd counters and a bug fix in the table
-#                   schema of QInfo.
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2022.7.1-rc1-39-g572903551"
-
-# 2022-11-09: Based on the bug fix branch DM-36935 that is meant
-#             to address an issue with the memory utilization of
-#             the worker database servers while processing queries
-#             that require materialized sub-chunks. The related problem
-#             that _may_ be studied here as well would be a bug in the query
-#             cancellation algorithm at workers.
-#             
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2022.9.1-rc1-62-gba7875716"
-
-# 2022-12-01: The latest stable release.
-#
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2"
-
-# John's development container
-#
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-50-g9b5789dcf-dirty"
-
-# 2023-01-24: Igor's development container based on the tag DM-37688 that
-#             adds 6 more histograms per scheduler (there are 4 schedulers
-#             at each worker).
-#
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-52-g7f9587796"
-
-# 2023-02-02: Igor's development container based on the tag DM-37835 that
-#             allows "dry run" for the czar's infile merger if the following
-#             SQL variable is specified at the user session:
-#
-#               SET SESSION QSERV_DEBUG_CZAR_NO_MERGE = 1
-#
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.1.1-rc2-dirty"
-
-# 2023-02-02: Igor's development container based on the tag DM-37854 that
-#             implements extended (worker) task states.
-
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.1.1-rc2-8-g0d02644e0"
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.1.1-rc2-9-g8266e7390-dirty"
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.1.1-rc2-9-g84871e60f-dirty"
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.1.1-rc2-9-g514d054f7"
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.1.1-rc2-13-g6211193b6-dirty"
-
-# 2023-02-15: based on the main branch that includes John's DM-37983
-#             that extend lifetime of temporary subchunk tables to
-#             avoid MySQL deadlocking on DROP/CREATE/SELECT 
-#             made against the same materialized sub-chunk table.
-#             Plus it inludes DM-37854 for monitoring extended
-#             task states.
-#
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc1-8-gc28fa47d8"
-
-# A fix to SsiProvider to recognize   resources starting with "/tmp".
-# This is just a temporary hack.
-#
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc1-8-gc28fa47d8-dirty"
-
-# 2023-03-28: the "new" Qserv based on tag DM-38427. It pulls results
-#             from workers using the HTTP protocol.
-#
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-25-g4df7ef8df"
-
-# 2023-03-28: the "new" Qserv based on tag DM-38427. It pulls results
-#             from workers using the XROOT protocol
-#
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.2.1-rc2-25-g4df7ef8df-dirty"
-
-# 2023-04-21: The latest production version
-#
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1"
-
-# 2023-05-18: The latest production version that comes with the following
-#             changes on top of the previous release:
-#
-# - Use templatized queries at workers to reduce memory allocation
-# - Fixes for extreme slowdowns when cancelling broad subchunk queries
-# - Eliminated false-positive error messages for missing optional ingest config parameters
-# - Fixed some issues with transaction state counters and colors on web dashboard
-# - Upgrades of package dependencies (XRootD, lsst/log, and lsst/sphgeom)
-#
-# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.5.1-rc1"
 
 # 2023-07-19: The latest production version
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2023.7.1-rc3"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.7.1-rc3"
+#
+# 2024-05-13: The latest production release that supports HTTP frontend
+#             for submitting queries.
+#
+QSERV_IMAGE_TAG="qserv/lite-qserv:2024.4.1-rc1"
 
 QSERV_BASE_DIR="/zfspool/qserv-prod"
 QSERV_CZAR_DB_PORT=3306
-# Disabled for now before upgrading Qserv to the version which requires
-# a connection string for the Czar proxy passed to the Controller.
-#
-# QSERV_CZAR_PROXY_PORT=4040
+QSERV_CZAR_PROXY_PORT=4040
+QSERV_CZAR_HTTP_PORT=4048
 QSERV_WORKER_DB_PORT=3366
 QSERV_XROOTD_PORT=1094
+QSERV_CZAR_HTTP_THREADS=16
 
 # -------------------------------------
 # ----- Replication/Ingest system -----
 # -------------------------------------
 
-# 10.4.21
-#REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2021.10.1-lite-rc2"
-
 # 10.6.5
+#
 REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
-
-
-# DM-28626: reopening catalogs to add more tables, excluding published
-#           tables from the operations.
-#           ATTENTION: Replication database schema changes to version 10 
-#           in DM-34979.
-# REPL_IMAGE_TAG="qserv/lite-qserv:2022.5.2-rc1-29-g1c42476c7"
-
-# 2022-09-09: Built of the main branch
-#             ATTENTION: updated replication database version to 11 to support
-#                        RefMatch tables. There have been a bunch of other
-#                        improvements as well.
-# REPL_IMAGE_TAG="qserv/lite-qserv:2022.7.1-rc1-32-gcbe5a5e48"
-
-# 2022-09-13: Based on the bug fix branch DM-36223.
-#             NOTE: updated QMeta schema version to 8 for extended
-#                   byte/row counters and a bug fix in the table
-#                   schema of QInfo. The R-I system's REST API was
-#                   also nodified to follow changes in the schema.
-# REPL_IMAGE_TAG="qserv/lite-qserv:2022.7.1-rc1-39-g572903551"
-
-# 2022-09-19: Based on DM-36287 that adds support for configuring
-#             HTTP proxies for catalog ingests.
-# REPL_IMAGE_TAG="qserv/lite-qserv:2022.9.1-rc1-8-gb9e011f02"
-
-# 2022-09-19: Based on DM-36322 that allows ingest workers to pass
-#             the FQDN of their hosts to the worker Registry instead
-#             of the short host names.
-# REPL_IMAGE_TAG="qserv/lite-qserv:2022.9.1-rc1-10-g940badb9c"
-
-# 2022-09-23: Based on DM-30719 that adds the REST service for
-#             changing the reoplicatin level and puts the upper
-#             limit on the level based on the general configuration
-#             parameter and the number of available workers.
-# REPL_IMAGE_TAG="qserv/lite-qserv:2022.9.1-rc1-16-g74591498c"
-
-# Temporary image w/ ad-hoc character set settings to 'latin1' in order
-# to unblock loaiding ObsCore that has the binary columns. This will be
-# permanently fixed in DM-36398.
-#
-# REPL_IMAGE_TAG="qserv/lite-qserv:2022.9.1-rc1-22-g65d5d162b-dirty"
-
-# 2022-10-04: Based on DM-34899 that captures warnings after LOAD DATA
-#             INFILE ..., stores the warningsin the Replication database,
-#             abnd displays those on the Web Dashbnoard.
-# REPL_IMAGE_TAG="qserv/lite-qserv:2022.9.1-rc1-37-g838f19a8d"
-
-# 2022-10-24: Based on DM-36627 that implements resource-awared scheduler
-#             for processing ingest requests at workers.
-# REPL_IMAGE_TAG="qserv/lite-qserv:2022.9.1-rc1-53-gd3c91b47f"
-
-# 2022-10-28: Based on DM-36398 that allows specifying a desired character
-#             set for contributions.
-# REPL_IMAGE_TAG="qserv/lite-qserv:2022.9.1-rc1-59-g213ed6189"
-
-# 2022-11-04: Based on DM-36722 that allows automated retries of
-#             the failed (to pull the input data) ingest requests.
-#             Note the schema version number change to 13 for
-#             the Replication database.
-# REPL_IMAGE_TAG="qserv/lite-qserv:2022.9.1-rc1-68-g89649e638"
-
-# 2022-11-11: Based on DM-36842 that comes with the improved REST API
-#             for reporting status info on the table indexes at workers.
-# REPL_IMAGE_TAG="qserv/lite-qserv:2022.9.1-rc1-74-g1164f2a9d"
-
-# 2022-11-24: Based on DM-36241 mant to optimize the director index
-#             building algorithm.
-#
-# Improvement 1:
-#   Allowed many BOOST ASIO threads at workers to serve
-#   Controller's requests
-#
-#   REPL_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-6-g3b3652edb"
-#
-# Improvement 3:
-#   Parallel loading of the index contributions into the "director"
-#   index table by many threads at the Controller. The threads
-#   belong to the Controller's BOOST ASIO pool. Note that
-#   the curren implementation if the callback invocaton in
-#   the Messanger is still blocking. It means, only one request
-#   per worker would be executed. At the next step, the unblocking
-#   implementation of the callbacks will be tried.
-#
-#   REPL_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-11-ge57a4fd46"
-#
-# Improvement 3:
-#   CSV files are now recorded into the temporary staging area by
-#   the index data harveasting requests rather than by the jobs
-#   After that the jobs would learn locations of the files from
-#   the response objects of the requests and initiate uploding
-#   the data into the destination ("director" index) table.
-#
-#   REPL_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-12-g7659af032"
-#
-# Improvement 4:
-#   Extended protocol for pulling the "director" index data from
-#   workers. The new protocol allows the "windowing" capability.
-#   Note that no actual implementation has been made yet. This will
-#   be don ein the next commit. Also, fixed a bug in the worker
-#   service that wasn't not deleting the temporary files.
-#
-#   REPL_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-13-gddc50b571"
-#
-# Improvement 5:
-#   Implemented the "windowing" capability.
-#
-# REPL_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-14-g5a9bbe3f7-dirty"
-#
-# Improvement 5:
-#   MySQL table engine for creating the "director" index tables.
-#   The default engine is "MyISAM". This has poor performance.
-#
-#   REPL_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-17-g99ffaac8c"
-#
-# Improvement 6:
-#   MySQL table engine for creating the "director" index tables.
-#   The default engine is "InnoDB".
-#
-#   REPL_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-17-gb5348613c"
-#
-# Improvement 7:
-#   Forced garbage collection of the worker requests is now
-#   initiated by the index builder job after receiving index
-#   data in the completed requests.
-#
-#   REPL_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-18-g625cfc600"
-#
-# Improvement 8:
-#   Reduced the numnber of concurrent requests processed by each worker
-#   not to exceed the number of processing threads. Also, removing forgotten
-#   empty files at workers
-#
-#   REPL_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-19-gffa28d078"
-#
-# Improvement 8:
-#   Instance counters for ProtocolBuffer and WorkerRequest to track
-#   possible memory leaks. The class ProtocolBuffer would also report
-#   the memory allocations/deallocations. All reports are done at
-#   the TRACE logging levels.
-#
-#   REPL_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-19-gffa28d078-dirty"
-#
-# Improvement 9:
-#   Fixed worker request disposal algorithm at a level of the improved
-#   controller requests rather than jobs.
-#
-#   REPL_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-21-g1bdd55a4d"
-#
-# Improvement 10:
-#   Loading into MySQL is happening within the dedicated threads
-#   started by the index builder job rather than using the shared
-#   pool of the BOOST ASIO used for processing requests & jobs.
-#   Otherwise, all other communications between the Controller
-#   and the workers may get blocked while the jobs is attempting
-#   to push large amounts of data into MySQL.
-#
-# REPL_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-22-g24662726f"
-
-# 2023-01-18: Based on the tag DM-37543. Improvements to the worker
-#             monitoring REST service.
-#
-# REPL_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-25-g268225920"
-
-# 2023-01-23: The main branch based on the previous two efforts
-#             DM-36241 and DM-37543.
-#
-# REPL_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-46-gfea6c8162"
-
-# 2023-01-24: Based on the tag DM-37688 that adds 6 more histograms
-#             per scheduler (there are 4 schedulers at each worker).
-#
-# REPL_IMAGE_TAG="qserv/lite-qserv:2022.12.1-rc2-47-g982eac7c4"
-
-# 2023-04-21: The latest production version
-#
-# REPL_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1"
-
-# 2023-05-11: Based on DM-39080 to investigate a possible memory
-#             leak within the Replication Framework when sending
-#             status probes to Qserv workers.
-#
-# REPL_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-39-g60299e029"
 
 # 2023-07-19: The latest production version
 #
-REPL_IMAGE_TAG="qserv/lite-qserv:2023.7.1-rc3"
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.7.1-rc3"
+#
+# 2024-05-13: The latest production release that supports HTTP frontend
+#             for submitting queries.
+#
+REPL_IMAGE_TAG="qserv/lite-qserv:2024.4.1-rc1"
 
 REPL_INSTANCE_ID="slac6prod"
 REPL_DB_PORT=23306
