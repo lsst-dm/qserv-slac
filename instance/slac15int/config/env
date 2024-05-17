@@ -1,0 +1,146 @@
+#!/bin/bash
+
+#set -x
+
+# This instance-specific script is supposed to be sourced from the Qserv
+# management scripts in order to set up proper values of the corresponding
+# parameters.
+
+# ---------------------------------------------------------------------
+# 2023-11-06: changes to the configuration of all 15 nodes of the Qserv
+#             cluster.
+#
+# The default location of the core dumps on the RHEL8 filesystem is at
+#
+#  CORE_DUMPS=/var/lib/systemd/coredump
+#
+# The files are stored here in the lz4 compressed format by the system
+# as configured by
+#
+# % cat /proc/sys/kernel/core_pattern
+#   |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h %e
+#
+# This service has the following configuration
+#
+# % cat /etc/systemd/coredump.conf
+# [Coredump]
+# #Storage=external
+# #Compress=yes
+# #ProcessSizeMax=2G
+# #ExternalSizeMax=2G
+# #JournalSizeMax=767M
+# #MaxUse=
+# #KeepFree=
+#
+# There are a few problems with this configuration:
+#   - limited capacity (a few GB of the destinaton folder which is mounted
+#     to the root filesystem of a host)
+#   - the files are owned by user 'root'
+#   - the files are truncated at 2GB (which is way to low for Qserv processes)
+#
+# The following solution was applied at each node of the cluster:
+#
+# mkdir -p /zfspool/core-files
+# chmod a+rwx /zfspool/core-files
+# echo '/zfspool/core-files/core.%e.%p.%h.%t' > /proc/sys/kernel/core_pattern
+#
+# And the new location of the files is specified below:
+
+CORE_DUMPS=/zfspool/core-files
+
+# -----------------
+# ----- Qserv -----
+# -----------------
+
+# 10.6.8 + updated SciSQL
+#
+QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
+
+# 2023-07-19: The latest production version
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.7.1-rc3"
+#
+# 2024-05-13: The latest production release that supports HTTP frontend
+#             for submitting queries.
+#
+QSERV_IMAGE_TAG="qserv/lite-qserv:2024.4.1-rc1"
+
+QSERV_BASE_DIR="/zfspool/qserv-int"
+QSERV_CZAR_DB_PORT=3309
+QSERV_CZAR_PROXY_PORT=4090
+QSERV_CZAR_HTTP_PORT=4098
+QSERV_WORKER_DB_PORT=3369
+QSERV_XROOTD_PORT=1994
+QSERV_CZAR_HTTP_THREADS=16
+
+# -------------------------------------
+# ----- Replication/Ingest system -----
+# -------------------------------------
+
+# 10.6.5
+#
+REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
+
+# 2023-07-19: The latest production version
+#
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.7.1-rc3"
+#
+# 2024-05-13: The latest production release that supports HTTP frontend
+#             for submitting queries.
+#
+REPL_IMAGE_TAG="qserv/lite-qserv:2024.4.1-rc1"
+
+REPL_INSTANCE_ID="slac15int"
+REPL_DB_PORT=23309
+REPL_CONTR_HTTP_PORT=25981
+REPL_REG_PORT=25982
+
+REPL_REG_PARAMETERS="--registry-port=${REPL_REG_PORT} --debug"
+
+# Extended Controller timeouts to allow long operation when ingesting
+# large catalogs:
+#   request timeout: 8 hours
+#   job timeout: 24 hours
+# --controller-num-director-index-connections=4
+REPL_CONTR_PARAMETERS="--registry-port=${REPL_REG_PORT} --xrootd-port=${QSERV_XROOTD_PORT} --controller-http-server-port=${REPL_CONTR_HTTP_PORT} --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --debug"
+
+REPL_WORKER_SVC_PORT=25900
+REPL_WORKER_FS_PORT=25901
+REPL_WORKER_LOADER_PORT=25902
+REPL_WORKER_EXPORTER_PORT=25903
+REPL_WORKER_HTTP_LOADER_PORT=25904
+
+REPL_WORKER_PARAMETERS="--registry-port=${REPL_REG_PORT} --worker-svc-port=${REPL_WORKER_SVC_PORT} --worker-fs-port=${REPL_WORKER_FS_PORT} --worker-loader-port=${REPL_WORKER_LOADER_PORT} --worker-exporter-port=${REPL_WORKER_EXPORTER_PORT} --worker-http-loader-port=${REPL_WORKER_HTTP_LOADER_PORT} --worker-ingest-num-retries=4 --schema-upgrade-wait=1 --schema-upgrade-wait-timeout=600 --do-not-create-folders --debug"
+
+# To mount the local (ouside the container) version of the Web dashboard
+# and other Web apps served by the HTTP server of the Master Controller 
+#
+# REPL_HTTP_ROOT="/zfspool/management/qserv/src/www"
+
+# Limit size of the replication containers by 100 GB
+# This is needed for ingesting (very) large numbers of contributions.
+REPL_MEMORY_LIMIT=107374182400
+
+# ----- Common parameters
+
+# User account under which the containers will be run.
+#
+# % id rubinqsv
+#   uid=45386(rubinqsv) gid=1126(gu) groups=1126(gu)
+#
+CONTAINER_UID=45386
+CONTAINER_GID=1126
+
+CONTAINER_NAME_PREFIX="qserv-int-"
+CONTAINER_RESTART_POLICY="unless-stopped"
+
+# 10 GB
+ULIMIT_MEMLOCK=1099511627776
+
+# Unlimited core file size
+ULIMIT_CORE="-1:-1"
+
+# Other parameters are set by the following script based on the above defined
+# one, or be loaded from predefined locations.
+. $(dirname "$0")/common
+
