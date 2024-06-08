@@ -23,6 +23,9 @@ if [ -n "${CZAR_PROXY}" ]; then
     ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/'${CZAR_PROXY_CONTAINER_NAME}'.mysql-proxy.log'&
     ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/'${CZAR_PROXY_CONTAINER_NAME}'.log'&
 fi
+if [ -n "${CZAR_PROXYSQL}" ]; then
+    ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/'${CZAR_PROXYSQL_CONTAINER_NAME}'.log'&
+fi
 if [ -n "${CZAR_HTTP}" ]; then
     ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/'${CZAR_HTTP_CONTAINER_NAME}'.log'&
 fi

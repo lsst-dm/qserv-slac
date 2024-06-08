@@ -56,6 +56,10 @@ CORE_DUMPS=/zfspool/core-files
 #
 QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 
+# TODO: Consider setting to a specific version instead.
+#
+PROXYSQL_IMAGE_TAG="proxysql/proxysql:latest"
+
 # 2023-07-19: The latest production version
 #
 # QSERV_IMAGE_TAG="qserv/lite-qserv:2023.7.1-rc3"
@@ -67,11 +71,18 @@ QSERV_IMAGE_TAG="qserv/lite-qserv:2024.4.1-rc1"
 
 QSERV_BASE_DIR="/zfspool/qserv-int"
 QSERV_CZAR_DB_PORT=3309
-QSERV_CZAR_PROXY_PORT=4090
+QSERV_CZAR_PROXY_PORT=14090
 QSERV_CZAR_HTTP_PORT=4098
 QSERV_WORKER_DB_PORT=3369
 QSERV_XROOTD_PORT=1994
 QSERV_CZAR_HTTP_THREADS=16
+
+# These two ports are configured in $QSERV_BASE_DIR/master/config/proxysql.cnf
+# Thea are not used by none of the deployment management scripts.
+# Port QSERV_CZAR_PROXYSQL_USER_PORT is the SSL-encrypted fronend for
+# Czar's port QSERV_CZAR_PROXY_PORT.
+QSERV_CZAR_PROXYSQL_USER_PORT=4090
+QSERV_CZAR_PROXYSQL_ADMIN_PORT=16932
 
 # -------------------------------------
 # ----- Replication/Ingest system -----

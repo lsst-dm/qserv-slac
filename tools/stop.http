@@ -10,22 +10,25 @@ set -e
 . $(dirname "$0")/config/env
 
 if [ -n "${CZAR_DB}" ]; then
-    ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar mariadb: "$(docker stop '$CZAR_DB_CONTAINER_NAME')" "$(docker rm '$CZAR_DB_CONTAINER_NAME')'&
+    ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar mariadb:   "$(docker stop '$CZAR_DB_CONTAINER_NAME')" "$(docker rm '$CZAR_DB_CONTAINER_NAME')'&
 fi
 if [ -n "${CZAR_CMSD}" ]; then
-    ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar cmsd:    "$(docker stop '$CZAR_CMSD_CONTAINER_NAME')" "$(docker rm '$CZAR_CMSD_CONTAINER_NAME')'&
+    ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar cmsd:      "$(docker stop '$CZAR_CMSD_CONTAINER_NAME')" "$(docker rm '$CZAR_CMSD_CONTAINER_NAME')'&
 fi
 if [ -n "${CZAR_XROOTD}" ]; then
-    ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar xrootd:  "$(docker stop '$CZAR_XROOTD_CONTAINER_NAME')" "$(docker rm '$CZAR_XROOTD_CONTAINER_NAME')'&
+    ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar xrootd:    "$(docker stop '$CZAR_XROOTD_CONTAINER_NAME')" "$(docker rm '$CZAR_XROOTD_CONTAINER_NAME')'&
 fi
 if [ -n "${CZAR_PROXY}" ]; then
-    ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar proxy:   "$(docker stop '$CZAR_PROXY_CONTAINER_NAME')" "$(docker rm '$CZAR_PROXY_CONTAINER_NAME')'&
+    ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar proxy:     "$(docker stop '$CZAR_PROXY_CONTAINER_NAME')" "$(docker rm '$CZAR_PROXY_CONTAINER_NAME')'&
+fi
+if [ -n "${CZAR_PROXYSQL}" ]; then
+    ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar proxysql:  "$(docker stop '$CZAR_PROXYSQL_CONTAINER_NAME')" "$(docker rm '$CZAR_PROXYSQL_CONTAINER_NAME')'&
 fi
 if [ -n "${CZAR_HTTP}" ]; then
-    ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar http:    "$(docker stop '$CZAR_HTTP_CONTAINER_NAME')" "$(docker rm '$CZAR_HTTP_CONTAINER_NAME')'&
+    ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar http:      "$(docker stop '$CZAR_HTTP_CONTAINER_NAME')" "$(docker rm '$CZAR_HTTP_CONTAINER_NAME')'&
 fi
 if [ -n "${CZAR_DEBUG}" ]; then
-    ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar debug:   "$(docker stop '$CZAR_DEBUG_CONTAINER_NAME')" "$(docker rm '$CZAR_DEBUG_CONTAINER_NAME')'&
+    ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar debug:     "$(docker stop '$CZAR_DEBUG_CONTAINER_NAME')" "$(docker rm '$CZAR_DEBUG_CONTAINER_NAME')'&
 fi
 for WORKER in $WORKERS; do
     if [ -n "${WORKER_DB}" ]; then

@@ -121,6 +121,30 @@ if [ -n "${CZAR_PROXY}" ]; then
     bash -c \''mysql-proxy --proxy-lua-script=/usr/local/lua/qserv/scripts/mysqlProxy.lua --lua-cpath=/usr/local/lua/qserv/lib/czarProxy.so --defaults-file=/config-etc/my-proxy.cfg --log-file=/qserv/log/${CONTAINER_NAME}.mysql-proxy.log >& /qserv/log/${CONTAINER_NAME}.log'\'
 fi
 
+if [ -n "${CZAR_PROXYSQL}" ]; then
+  echo "[${MASTER}] starting qserv czar proxysql"
+  LOG_DIR=${QSERV_BASE_DIR}/master/log
+  ssh -n $MASTER docker run \
+    --privileged \
+    --cap-add=SYS_PTRACE \
+    --network=host \
+    --detach=true \
+    --name="${CZAR_PROXYSQL_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
+    -u ${CONTAINER_UID}:${CONTAINER_GID} \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
+    -v "${QSERV_BASE_DIR}/master/config/proxysql.cnf:/etc/proxysql.cnf:ro" \
+    -v "${LOG_DIR}:/qserv/log" \
+    -v "${QSERV_BASE_DIR}/master/config/proxysql_var_lib:/var/lib/proxysql" \
+    -v "${CORE_DUMPS}:${CORE_DUMPS}" \
+    -e "CONTAINER_NAME=${CZAR_PROXYSQL_CONTAINER_NAME}" \
+    --ulimit memlock=${ULIMIT_MEMLOCK} \
+    --ulimit core=${ULIMIT_CORE} \
+    "${PROXYSQL_IMAGE_TAG}" \
+    bash -c \''proxysql -f --idle-threads -D /var/lib/proxysql -c /etc/proxysql.cnf >& /qserv/log/${CONTAINER_NAME}.log'\'
+fi
+
 if [ -n "${CZAR_HTTP}" ]; then
   echo "[${MASTER}] starting qserv czar http frontend"
   LOG_DIR=${QSERV_BASE_DIR}/master/log

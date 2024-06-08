@@ -15,6 +15,9 @@ fi
 if [ -n "${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}${CZAR_HTTP}${CZAR_DEBUG}" ]; then
   ssh -n $MASTER docker pull $QSERV_IMAGE_TAG&
 fi
+if [ -n "${CZAR_PROXYSQL}" ]; then
+  ssh -n $MASTER docker pull $PROXYSQL_IMAGE_TAG&
+fi
 for WORKER in $WORKERS; do
   if [ -n "${WORKER_DB}" ]; then
     ssh -n $WORKER docker pull $QSERV_DB_IMAGE_TAG&

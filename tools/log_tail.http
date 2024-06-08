@@ -67,6 +67,9 @@ function get_logfile {
 if [ -n "${CZAR_PROXY}" ]; then
   get_logfile master $MASTER $CZAR_PROXY_CONTAINER_NAME
 fi
+if [ -n "${CZAR_PROXYSQL}" ]; then
+  get_logfile master $MASTER $CZAR_PROXYSQL_CONTAINER_NAME
+fi
 if [ -n "${CZAR_HTTP}" ]; then
   get_logfile master $MASTER $CZAR_HTTP_CONTAINER_NAME
 fi
