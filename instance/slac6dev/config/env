@@ -200,17 +200,46 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 #             cancelation.
 #
 # QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-32-gd094e7228-dirty"
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-37-g2d2289266"
 
-QSERV_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-37-g2d2289266"
+# 2024-02-13: The development version of John G.. It's based on DM-11526
+#             which is based on the latest state of the "main"branch of Qserv
+#
+#QSERV_IMAGE_TAG="qserv/lite-qserv:2024.3.1-rc2-20-g3c149771c"
+
+# 2024-03-12: DM-43262
+#QSERV_IMAGE_TAG="qserv/lite-qserv:2024.3.1-rc2-38-g849d10934"
+
+# 2024-03-27: DM-43262
+#QSERV_IMAGE_TAG="qserv/lite-qserv:2024.3.1-rc2-56-ga58f49ce6"
+
+# 2024-04-04: DM-43139   controversial
+#QSERV_IMAGE_TAG="qserv/lite-qserv:2024.3.2-rc1-3-gf64e22cb6"
+
+# 2024-04-08: DM-43384
+#QSERV_IMAGE_TAG="qserv/lite-qserv:2024.3.2-rc1-12-g23e0bcd69"
+
+# 2024-04-15: DM-43385
+#QSERV_IMAGE_TAG="qserv/lite-qserv:2024.3.2-rc1-17-g599000a41"
+
+# 2024-07-23: DM-43386 UberJob prototype.
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2024.4.1-rc1-27-g66ac35ef8-dirty"
+
+# 2024-08-28: The latest production version
+QSERV_IMAGE_TAG="qserv/lite-qserv:2024.7.1-rc1"
+
+# 2024-10-24: DM-45548 
+QSERV_IMAGE_TAG="qserv/lite-qserv:2024.10.1-rc1-50-g7b34bb77b-dirty"
 
 QSERV_BASE_DIR="/zfspool/qserv-dev"
 QSERV_CZAR_DB_PORT=3307
-# Disabled for now before upgrading Qserv to the version which requires
-# a connection string for the Czar proxy passed to the Controller.
-#
-# QSERV_CZAR_PROXY_PORT=4047
+QSERV_CZAR_PROXY_PORT=4047
+QSERV_CZAR_HTTP_PORT=4147
 QSERV_WORKER_DB_PORT=3367
 QSERV_XROOTD_PORT=1794
+QSERV_CZAR_HTTP_THREADS=16
+
 
 # -------------------------------------
 # ----- Replication/Ingest system -----
@@ -455,8 +484,13 @@ REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
 #             leak within the Replication Framework when sending
 #             status probes to Qserv workers.
 #
-REPL_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-39-g60299e029"
+# REPL_IMAGE_TAG="qserv/lite-qserv:2023.4.1-rc1-39-g60299e029"
+#
 
+# 2024-02-13: Set to be the same tag as for Qserv.
+#             Do not change it unless needed.
+#
+REPL_IMAGE_TAG="${QSERV_IMAGE_TAG}"
 
 REPL_INSTANCE_ID="slac6dev"
 REPL_DB_PORT=23307
@@ -470,6 +504,8 @@ REPL_REG_PARAMETERS="--registry-port=${REPL_REG_PORT} --debug"
 #   request timeout: 8 hours
 #   job timeout: 24 hours
 # --controller-num-director-index-connections=4
+# Temporarily removed:
+# --qserv-chunk-map-update
 REPL_CONTR_PARAMETERS="--registry-port=${REPL_REG_PORT} --xrootd-port=${QSERV_XROOTD_PORT} --controller-http-server-port=${REPL_CONTR_HTTP_PORT} --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --debug"
 
 REPL_WORKER_SVC_PORT=25700
@@ -480,8 +516,9 @@ REPL_WORKER_HTTP_LOADER_PORT=25704
 
 REPL_WORKER_PARAMETERS="--registry-port=${REPL_REG_PORT} --worker-svc-port=${REPL_WORKER_SVC_PORT} --worker-fs-port=${REPL_WORKER_FS_PORT} --worker-loader-port=${REPL_WORKER_LOADER_PORT} --worker-exporter-port=${REPL_WORKER_EXPORTER_PORT} --worker-http-loader-port=${REPL_WORKER_HTTP_LOADER_PORT} --worker-ingest-num-retries=4 --schema-upgrade-wait=1 --schema-upgrade-wait-timeout=600 --do-not-create-folders --debug"
 
-# To mount the local (ouside the container) version of the Web dashboard
-# and other Web apps served by the HTTP server of the Master Controller 
+# Uncomment if needed to mount the local (ouside the container) version of
+# the Web dashboard and other Web apps served by the HTTP server of
+# the Master Controller 
 # REPL_HTTP_ROOT="/zfspool/management/qserv/src/www"
 
 # Limit size of the replication containers by 100 GB
@@ -500,7 +537,8 @@ CONTAINER_GID=1126
 
 
 CONTAINER_NAME_PREFIX="qserv-dev-"
-CONTAINER_RESTART_POLICY="no"
+#CONTAINER_RESTART_POLICY="unless-stopped"
+CONTAINER_RESTART_POLICY=""
 
 # 10 GB
 ULIMIT_MEMLOCK=1099511627776

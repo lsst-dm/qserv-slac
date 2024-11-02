@@ -56,9 +56,10 @@ CORE_DUMPS=/zfspool/core-files
 #
 QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 
-# TODO: Consider setting to a specific version instead.
+# Using a custom version built for Qserv
 #
-PROXYSQL_IMAGE_TAG="proxysql/proxysql:latest"
+PROXYSQL_IMAGE_TAG="qserv/proxysql:2.5.3"
+
 
 # 2023-07-19: The latest production version
 #
@@ -67,7 +68,17 @@ PROXYSQL_IMAGE_TAG="proxysql/proxysql:latest"
 # 2024-05-13: The latest production release that supports HTTP frontend
 #             for submitting queries.
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2024.4.1-rc1"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2024.4.1-rc1"
+#
+# 2024-07-19: The latest production release that adds HTTPS to
+#             the Czar frontend and the JSON-based userr table ingest
+#             service (same HTTPS port as for the Czar frontend).
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2024.7.1-rc1"
+#
+# 2024-10-10: The latest production release that includes all development tags
+#             mentioned above.
+#
+QSERV_IMAGE_TAG="qserv/lite-qserv:2024.10.1-rc1"
 
 QSERV_BASE_DIR="/zfspool/qserv-int"
 QSERV_CZAR_DB_PORT=3309
@@ -99,7 +110,11 @@ REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
 # 2024-05-13: The latest production release that supports HTTP frontend
 #             for submitting queries.
 #
-REPL_IMAGE_TAG="qserv/lite-qserv:2024.4.1-rc1"
+# REPL_IMAGE_TAG="qserv/lite-qserv:2024.4.1-rc1"
+#
+# 2024-07-19: Same version as for Qserv
+#
+REPL_IMAGE_TAG=$QSERV_IMAGE_TAG
 
 REPL_INSTANCE_ID="slac15int"
 REPL_DB_PORT=23309
