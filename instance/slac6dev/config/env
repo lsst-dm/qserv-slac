@@ -59,6 +59,10 @@ CORE_DUMPS=/zfspool/core-files
 # ATTENTION: need to run mysql_upgrade on each server
 QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 
+# Using a custom version built for Qserv
+#
+PROXYSQL_IMAGE_TAG="qserv/proxysql:2.5.3"
+
 # The latest stable release.
 # QSERV_IMAGE_TAG="qserv/lite-qserv:2022.5.2-rc1"
 
@@ -227,10 +231,17 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 # QSERV_IMAGE_TAG="qserv/lite-qserv:2024.4.1-rc1-27-g66ac35ef8-dirty"
 
 # 2024-08-28: The latest production version
-QSERV_IMAGE_TAG="qserv/lite-qserv:2024.7.1-rc1"
+#QSERV_IMAGE_TAG="qserv/lite-qserv:2024.7.1-rc1"
 
 # 2024-10-24: DM-45548 
-QSERV_IMAGE_TAG="qserv/lite-qserv:2024.10.1-rc1-50-g7b34bb77b-dirty"
+#QSERV_IMAGE_TAG="qserv/lite-qserv:2024.10.1-rc1-50-g7b34bb77b-dirty"
+
+# 2024-10-24 DM-45548 revamped UberJobMsg
+#QSERV_IMAGE_TAG="qserv/lite-qserv:2024.11.2-rc1-65-g5d8d91e11"
+
+# 2025-02-13 DM-43715
+#QSERV_IMAGE_TAG="qserv/lite-qserv:2024.11.2-rc1-66-g0515db58c-dirty"
+QSERV_IMAGE_TAG="qserv/lite-qserv:2025.2.2-rc1-72-g76944723e-dirty"
 
 QSERV_BASE_DIR="/zfspool/qserv-dev"
 QSERV_CZAR_DB_PORT=3307
@@ -238,8 +249,19 @@ QSERV_CZAR_PROXY_PORT=4047
 QSERV_CZAR_HTTP_PORT=4147
 QSERV_WORKER_DB_PORT=3367
 QSERV_XROOTD_PORT=1794
+# These two ports are configured in $QSERV_BASE_DIR/master/config/proxysql.cnf
+# Thea are not used by none of the deployment management scripts.
+# Port QSERV_CZAR_PROXYSQL_USER_PORT is the SSL-encrypted fronend for
+# Czar's port QSERV_CZAR_PROXY_PORT.
+QSERV_CZAR_PROXYSQL_USER_PORT=14047
+QSERV_CZAR_PROXYSQL_ADMIN_PORT=14148
 QSERV_CZAR_HTTP_THREADS=16
-
+QSERV_CZAR_HTTP_INGEST_THREADS=16
+QSERV_CZAR_HTTP_CONFIG="/config-etc/qserv-czar-http.cfg"
+QSERV_CZAR_HTTP_SSL_CERT="/config-etc/ssl/czar-cert.pem"
+QSERV_CZAR_HTTP_SSL_KEY="/config-etc/ssl/czar-key.pem"
+QSERV_CZAR_HTTP_TMP_DIR="/qserv/data/ingest"
+QSERV_CZAR_HTTP_PARAMS="--config=${QSERV_CZAR_HTTP_CONFIG} --port=${QSERV_CZAR_HTTP_PORT} --threads=${QSERV_CZAR_HTTP_THREADS} --worker-ingest-threads=${QSERV_CZAR_HTTP_INGEST_THREADS} --ssl-cert-file=${QSERV_CZAR_HTTP_SSL_CERT} --ssl-private-key-file=${QSERV_CZAR_HTTP_SSL_KEY} --tmp-dir=${QSERV_CZAR_HTTP_TMP_DIR} --verbose"
 
 # -------------------------------------
 # ----- Replication/Ingest system -----
@@ -506,7 +528,7 @@ REPL_REG_PARAMETERS="--registry-port=${REPL_REG_PORT} --debug"
 # --controller-num-director-index-connections=4
 # Temporarily removed:
 # --qserv-chunk-map-update
-REPL_CONTR_PARAMETERS="--registry-port=${REPL_REG_PORT} --xrootd-port=${QSERV_XROOTD_PORT} --controller-http-server-port=${REPL_CONTR_HTTP_PORT} --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --debug"
+REPL_CONTR_PARAMETERS="--registry-port=${REPL_REG_PORT} --xrootd-port=${QSERV_XROOTD_PORT} --controller-http-server-port=${REPL_CONTR_HTTP_PORT} --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --purge --debug"
 
 REPL_WORKER_SVC_PORT=25700
 REPL_WORKER_FS_PORT=25701

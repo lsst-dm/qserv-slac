@@ -54,7 +54,11 @@ CORE_DUMPS=/zfspool/core-files
 
 # 10.6.8 + updated SciSQL
 #
-QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
+# QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
+#
+# 2024-11-21: MariaDB 11.4.4.
+#
+QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2024.11.2-rc1"
 
 # Using a custom version built for Qserv
 #
@@ -77,7 +81,16 @@ PROXYSQL_IMAGE_TAG="qserv/proxysql:2.5.3"
 # 2024-10-10: The latest production release that includes all development tags
 #             mentioned above.
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2024.10.1-rc1"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2024.10.1-rc1"
+#
+# 2024-11-21: The latest production release based on MariaDB 11.4.4.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2024.11.2-rc1"
+#
+# 2025-02-07: The latest production release.
+#             NOTE: Qserv Meta schema upgrade to 10.
+#
+QSERV_IMAGE_TAG="qserv/lite-qserv:2025.2.2-rc1"
 
 QSERV_BASE_DIR="/zfspool/qserv-prod"
 QSERV_CZAR_DB_PORT=3306
@@ -86,14 +99,19 @@ QSERV_CZAR_PROXY_PORT=14040
 QSERV_CZAR_HTTP_PORT=4048
 QSERV_WORKER_DB_PORT=3366
 QSERV_XROOTD_PORT=1094
-QSERV_CZAR_HTTP_THREADS=16
-
 # These two ports are configured in $QSERV_BASE_DIR/master/config/proxysql.cnf
 # Thea are not used by none of the deployment management scripts.
 # Port QSERV_CZAR_PROXYSQL_USER_PORT is the SSL-encrypted fronend for
 # Czar's port QSERV_CZAR_PROXY_PORT.
 QSERV_CZAR_PROXYSQL_USER_PORT=4040
 QSERV_CZAR_PROXYSQL_ADMIN_PORT=16032
+QSERV_CZAR_HTTP_THREADS=16
+QSERV_CZAR_HTTP_INGEST_THREADS=16
+QSERV_CZAR_HTTP_CONFIG="/config-etc/qserv-czar-http.cfg"
+QSERV_CZAR_HTTP_SSL_CERT="/config-etc/ssl/czar-cert.pem"
+QSERV_CZAR_HTTP_SSL_KEY="/config-etc/ssl/czar-key.pem"
+QSERV_CZAR_HTTP_TMP_DIR="/qserv/data/ingest"
+QSERV_CZAR_HTTP_PARAMS="--config=${QSERV_CZAR_HTTP_CONFIG} --port=${QSERV_CZAR_HTTP_PORT} --threads=${QSERV_CZAR_HTTP_THREADS} --worker-ingest-threads=${QSERV_CZAR_HTTP_INGEST_THREADS} --ssl-cert-file=${QSERV_CZAR_HTTP_SSL_CERT} --ssl-private-key-file=${QSERV_CZAR_HTTP_SSL_KEY} --tmp-dir=${QSERV_CZAR_HTTP_TMP_DIR} --verbose"
 
 # -------------------------------------
 # ----- Replication/Ingest system -----
@@ -101,7 +119,11 @@ QSERV_CZAR_PROXYSQL_ADMIN_PORT=16032
 
 # 10.6.5
 #
-REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
+# REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
+#
+# 2024-11-21: MariaDB 11.4.4.
+#
+REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2024.11.2-rc1"
 
 # 2023-07-19: The latest production version
 #
@@ -128,7 +150,7 @@ REPL_REG_PARAMETERS="--registry-port=${REPL_REG_PORT} --debug"
 #   request timeout: 8 hours
 #   job timeout: 24 hours
 # --controller-num-director-index-connections=4
-REPL_CONTR_PARAMETERS="--registry-port=${REPL_REG_PORT} --xrootd-port=${QSERV_XROOTD_PORT} --controller-http-server-port=${REPL_CONTR_HTTP_PORT} --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --debug"
+REPL_CONTR_PARAMETERS="--registry-port=${REPL_REG_PORT} --xrootd-port=${QSERV_XROOTD_PORT} --controller-http-server-port=${REPL_CONTR_HTTP_PORT} --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --purge --debug"
 
 REPL_WORKER_SVC_PORT=25000
 REPL_WORKER_FS_PORT=25001

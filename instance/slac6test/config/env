@@ -54,7 +54,11 @@ CORE_DUMPS=/zfspool/core-files
 
 # 10.6.8 + updated SciSQL
 #
-QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
+# QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
+#
+# 2024-11-19: pgraded to MariaDB 11.4.4
+#
+QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2024.11.1-rc1-1-g36b8ad4a4"
 
 # Using a custom version built for Qserv
 #
@@ -111,7 +115,58 @@ PROXYSQL_IMAGE_TAG="qserv/proxysql:2.5.3"
 # 2024-10-04: The latest production release that includes all development tags
 #             mentioned above.
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2024.10.1-rc1"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2024.10.1-rc1"
+#
+# 2024-11-19: Based on DM-47512 (MariaDB 11.4.4) which is based on
+#             the latest production release 2024.11.1-rc1
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2024.11.1-rc1-4-g4e4736078"
+#
+# 2024-11-20: Based on DM-47612 for refactoring and simplification of the Replication
+#             worker which is also based on release 2024.11.2 (MariaDB 11.4.4).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2024.11.2-rc1-2-ge42b22bd5"
+#
+# 2024-12-02: Based on DM-47748 (Refactor and simplify the Replication Controller Framework)
+#             which itself is based on the main branch that also includes the above-mentioned
+#             branch DM-47612.
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2024.11.2-rc1-4-g7f76d17ea"
+#
+# 2024-12-05: Based on DM-47985 (An option to control XROOTD/SSI chunk resource management
+#             at Qserv workers) which is based on the "main" branch, which already includes
+#             the branch DM-47748.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2024.11.2-rc1-8-g5988e6ace"
+#
+# 2025-01-07: Based on DM-42005 (which adds the HTTP-based Replication worker service).
+#             The ticket includes the previous branches merged into "main".
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2024.11.2-rc1-18-gb5b2f7ff9"
+#
+# 2025-01-28: Based on DM-48646 (Replication worker crashes when no response from DNS is received),
+#             that is based on "main". NOte this branch does NOT include the above-mentioned
+#             branch DM-42005. So, no REST API here for the Replication worker services.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2024.11.2-rc1-25-g3d14871f1"
+#
+# 2025-02-03: Based on DM-48758 (improved implementation of SHOW [FULL] PROCESSLIST).
+#             The tag includes the previous one that was merged earlier into the "main" branch.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2024.11.2-rc1-30-gae2ac0897"
+#
+# 2025-02-09: Based on DM-48846 (sequrity patch in worker REST service) which is based
+#             on 2025.2.2-rc1 end which also included the previous branch merged
+#             into "main".
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.2.2-rc1-dirty"
+#
+#             Same as befor, except cashing FQDN in Task.cc to see if this would accelerate
+#             queries
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.2.2-rc1-4-gb23e5eeeb"
+#
+# Adds tracking when Finished() is called in the QueryRequest
+QSERV_IMAGE_TAG="qserv/lite-qserv:2025.2.2-rc1-23-g021a07aa0-dirty"
 
 QSERV_BASE_DIR="/zfspool/qserv-test"
 QSERV_CZAR_DB_PORT=3308
@@ -119,14 +174,19 @@ QSERV_CZAR_PROXY_PORT=4140
 QSERV_CZAR_HTTP_PORT=4148
 QSERV_WORKER_DB_PORT=3368
 QSERV_XROOTD_PORT=1894
-QSERV_CZAR_HTTP_THREADS=16
-
 # These two ports are configured in $QSERV_BASE_DIR/master/config/proxysql.cnf
 # Thea are not used by none of the deployment management scripts.
 # Port QSERV_CZAR_PROXYSQL_USER_PORT is the SSL-encrypted fronend for
 # Czar's port QSERV_CZAR_PROXY_PORT.
 QSERV_CZAR_PROXYSQL_USER_PORT=14140
 QSERV_CZAR_PROXYSQL_ADMIN_PORT=14141
+QSERV_CZAR_HTTP_THREADS=16
+QSERV_CZAR_HTTP_INGEST_THREADS=16
+QSERV_CZAR_HTTP_CONFIG="/config-etc/qserv-czar-http.cfg"
+QSERV_CZAR_HTTP_SSL_CERT="/config-etc/ssl/czar-cert.pem"
+QSERV_CZAR_HTTP_SSL_KEY="/config-etc/ssl/czar-key.pem"
+QSERV_CZAR_HTTP_TMP_DIR="/qserv/data/ingest"
+QSERV_CZAR_HTTP_PARAMS="--config=${QSERV_CZAR_HTTP_CONFIG} --port=${QSERV_CZAR_HTTP_PORT} --threads=${QSERV_CZAR_HTTP_THREADS} --worker-ingest-threads=${QSERV_CZAR_HTTP_INGEST_THREADS} --ssl-cert-file=${QSERV_CZAR_HTTP_SSL_CERT} --ssl-private-key-file=${QSERV_CZAR_HTTP_SSL_KEY} --tmp-dir=${QSERV_CZAR_HTTP_TMP_DIR} --verbose"
 
 # -------------------------------------
 # ----- Replication/Ingest system -----
@@ -134,7 +194,12 @@ QSERV_CZAR_PROXYSQL_ADMIN_PORT=14141
 
 # 10.6.5
 #
-REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
+# REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2022.1.1-rc1"
+#
+# 2024-11-19: pgraded to MariaDB 11.4.4
+#
+REPL_DB_IMAGE_TAG="qserv/lite-mariadb:2024.11.1-rc1-1-g36b8ad4a4"
+
 
 # 2024-05-13: The latest production release that supports HTTP frontend
 #             for submitting queries.
@@ -157,17 +222,28 @@ REPL_REG_PARAMETERS="--registry-port=${REPL_REG_PORT} --debug"
 #   request timeout: 8 hours
 #   job timeout: 24 hours
 # --controller-num-director-index-connections=4
+#
 # DISABLED (this option only exists in John's "feature" branch for his version of the "new" Qserv):
-# --qserv-chunk-map-update
-REPL_CONTR_PARAMETERS="--registry-port=${REPL_REG_PORT} --xrootd-port=${QSERV_XROOTD_PORT} --controller-http-server-port=${REPL_CONTR_HTTP_PORT} --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --debug"
+#   --qserv-chunk-map-update
+#
+# DISABLED (this flag and the option are only usefull for John's branch to disable replica
+# synchronization mechanism):
+#   --qserv-sync-disable
+#   --xrootd-auto-notify=0
+#
+REPL_CONTR_PARAMETERS="--registry-port=${REPL_REG_PORT} --xrootd-port=${QSERV_XROOTD_PORT} --controller-http-server-port=${REPL_CONTR_HTTP_PORT} --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --purge --debug"
 
 REPL_WORKER_SVC_PORT=25800
 REPL_WORKER_FS_PORT=25801
 REPL_WORKER_LOADER_PORT=25802
 REPL_WORKER_EXPORTER_PORT=25803
 REPL_WORKER_HTTP_LOADER_PORT=25804
+REPL_WORKER_HTTP_SVC_PORT=25805
 
-REPL_WORKER_PARAMETERS="--registry-port=${REPL_REG_PORT} --worker-svc-port=${REPL_WORKER_SVC_PORT} --worker-fs-port=${REPL_WORKER_FS_PORT} --worker-loader-port=${REPL_WORKER_LOADER_PORT} --worker-exporter-port=${REPL_WORKER_EXPORTER_PORT} --worker-http-loader-port=${REPL_WORKER_HTTP_LOADER_PORT} --worker-ingest-num-retries=4 --schema-upgrade-wait=1 --schema-upgrade-wait-timeout=600 --do-not-create-folders --worker-num-async-loader-processing-threads=32 --worker-num-http-loader-processing-threads=32 --debug"
+# Uncomment to configure properly the HTTP-based Replication worker
+REPL_WORKER_PARAMETERS="--registry-port=${REPL_REG_PORT} --worker-svc-port=${REPL_WORKER_SVC_PORT} --worker-fs-port=${REPL_WORKER_FS_PORT} --worker-loader-port=${REPL_WORKER_LOADER_PORT} --worker-exporter-port=${REPL_WORKER_EXPORTER_PORT} --worker-http-loader-port=${REPL_WORKER_HTTP_LOADER_PORT} --worker-ingest-num-retries=4 --schema-upgrade-wait=1 --schema-upgrade-wait-timeout=600 --do-not-create-folders --worker-num-async-loader-processing-threads=32 --worker-num-http-loader-processing-threads=32 --worker-http-svc-port=${REPL_WORKER_HTTP_SVC_PORT} --debug"
+# REPL_WORKER_PARAMETERS="--registry-port=${REPL_REG_PORT} --worker-svc-port=${REPL_WORKER_SVC_PORT} --worker-fs-port=${REPL_WORKER_FS_PORT} --worker-loader-port=${REPL_WORKER_LOADER_PORT} --worker-exporter-port=${REPL_WORKER_EXPORTER_PORT} --worker-http-loader-port=${REPL_WORKER_HTTP_LOADER_PORT} --worker-ingest-num-retries=4 --schema-upgrade-wait=1 --schema-upgrade-wait-timeout=600 --do-not-create-folders --worker-num-async-loader-processing-threads=32 --worker-num-http-loader-processing-threads=32 --debug"
+
 
 # Uncomment if needed to mount the local (ouside the container) version of
 # the Web dashboard and other Web apps served by the HTTP server of
