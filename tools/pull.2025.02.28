@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Start the select services on the select nodes
+
+set -e
+
+# Load parameters of the setup into the corresponding environment
+# variables
+
+. $(dirname "$0")/config/env
+
+if [ -n "${CZAR_DB}" ]; then
+  ssh -n $MASTER docker pull $QSERV_DB_IMAGE_TAG&
+fi
+if [ -n "${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}${CZAR_HTTP}${CZAR_DEBUG}" ]; then
+  ssh -n $MASTER docker pull $QSERV_IMAGE_TAG&
+fi
+if [ -n "${CZAR_SSL_PROXY}" ]; then
+  ssh -n $MASTER docker pull $CZAR_SSL_PROXY_IMAGE_TAG&
+fi
+for WORKER in $WORKERS; do
+  if [ -n "${WORKER_DB}" ]; then
+    ssh -n $WORKER docker pull $QSERV_DB_IMAGE_TAG&
+  fi
+  if [ -n "${WORKER_CMSD}${WORKER_XROOTD}${WORKER_DEBUG}" ]; then
+    ssh -n $WORKER docker pull $QSERV_IMAGE_TAG&
+  fi
+done
+if [ -n "${REPL_DB}" ]; then
+  ssh -n $MASTER docker pull $REPL_DB_IMAGE_TAG&
+fi
+if [ -n "${REPL_REG}${REPL_CONTR}${REPL_CONTR_DEBUG}" ]; then
+  ssh -n $MASTER docker pull $REPL_IMAGE_TAG&
+fi
+for WORKER in $WORKERS; do
+  if [ -n "${REPL_WORKER}${REPL_WORKER_DEBUG}" ]; then
+    ssh -n $WORKER docker pull $REPL_IMAGE_TAG&
+  fi
+done
+wait

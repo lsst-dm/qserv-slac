@@ -1,0 +1,531 @@
+#!/bin/bash
+
+# Start the select services on the select nodes
+#set -x
+set -e
+
+# Load parameters of the setup into the corresponding environment
+# variables
+
+. $(dirname "$0")/config/env
+
+if [ -n "${CZAR_DB}" ]; then
+  echo "[${MASTER}] starting qserv czar mariadb"
+  LOG_DIR=${QSERV_BASE_DIR}/master/log
+  ssh -n $MASTER docker run \
+    --network=host \
+    --detach=true \
+    --name="${CZAR_DB_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
+    -u ${CONTAINER_UID}:${CONTAINER_GID} \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
+    -v "${QSERV_BASE_DIR}/master/tmp:/tmp" \
+    -v "${QSERV_BASE_DIR}/master/data/mysql:/var/lib/mysql" \
+    -v "${LOG_DIR}:${LOG_DIR}" \
+    -v "${QSERV_BASE_DIR}/master/qserv:/home/qserv" \
+    -v "${QSERV_BASE_DIR}/master/var-run-mysqld:/var/run/mysqld" \
+    -e "MYSQL_ROOT_PASSWORD=${QSERV_CZAR_DB_ROOT_PASSWORD}" \
+    "${QSERV_DB_IMAGE_TAG}" \
+    --port="${QSERV_CZAR_DB_PORT}" \
+    --socket=/var/run/mysqld/mysqld.sock \
+    --max-connections=16384 \
+    --max_allowed_packet=128M \
+    --connect_timeout=28800 \
+    --net_read_timeout=90000 \
+    --net_write_timeout=90000 \
+    --wait_timeout=90000 \
+    --symbolic-links=0 \
+    --tmp_table_size=4G \
+    --max_heap_table_size=4G \
+    --use_stat_tables=PREFERABLY \
+    --optimizer_use_condition_selectivity=3 \
+    --query-cache-size=0 \
+    --bulk-insert-buffer-size=1G \
+    --log-error="${LOG_DIR}/${CZAR_DB_CONTAINER_NAME}.error.log" \
+    --slow-query-log --slow-query-log-file="${LOG_DIR}/${CZAR_DB_CONTAINER_NAME}.slow-query.log" \
+    --log-warnings=2 \
+    --pid-file="${LOG_DIR}/${CZAR_DB_CONTAINER_NAME}.pid"
+fi
+
+if [ -n "${CZAR_CMSD}" ]; then
+  echo "[${MASTER}] starting qserv czar cmsd"
+  LOG_DIR=${QSERV_BASE_DIR}/master/log
+  ssh -n $MASTER docker run \
+    --privileged \
+    --cap-add=SYS_PTRACE \
+    --network=host \
+    --detach=true \
+    --name="${CZAR_CMSD_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
+    -u ${CONTAINER_UID}:${CONTAINER_GID} \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
+    -v "${QSERV_BASE_DIR}/master/config:/config-etc:ro" \
+    -v "${QSERV_BASE_DIR}/master/var-run-xrootd:/var/run/xrootd" \
+    -v "${LOG_DIR}:/qserv/log" \
+    -v "${QSERV_BASE_DIR}/master/qserv:/home/qserv" \
+    -e "LSST_LOG_CONFIG=/config-etc/log/cmsd.cfg" \
+    -e "CONTAINER_NAME=${CZAR_CMSD_CONTAINER_NAME}" \
+    "${QSERV_IMAGE_TAG}" \
+    bash -c \''cmsd -c /config-etc/cmsd.cfg -n manager -I v4 -d -l @libXrdSsiLog.so >& /qserv/log/${CONTAINER_NAME}.log'\'
+fi
+
+if [ -n "${CZAR_XROOTD}" ]; then
+  echo "[${MASTER}] starting qserv czar xrootd"
+  LOG_DIR=${QSERV_BASE_DIR}/master/log
+  ssh -n $MASTER docker run \
+    --privileged \
+    --cap-add=SYS_PTRACE \
+    --network=host \
+    --detach=true \
+    --name="${CZAR_XROOTD_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
+    -u ${CONTAINER_UID}:${CONTAINER_GID} \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
+    -v "${QSERV_BASE_DIR}/master/config:/config-etc:ro" \
+    -v "${QSERV_BASE_DIR}/master/var-run-xrootd:/var/run/xrootd" \
+    -v "${LOG_DIR}:/qserv/log" \
+    -v "${QSERV_BASE_DIR}/master/qserv:/home/qserv" \
+    -e "LSST_LOG_CONFIG=/config-etc/log/xrootd.cfg" \
+    -e "CONTAINER_NAME=${CZAR_XROOTD_CONTAINER_NAME}" \
+    "${QSERV_IMAGE_TAG}" \
+    bash -c \''xrootd -c /config-etc/xrootd.cfg -n manager -I v4 -d -l @libXrdSsiLog.so >& /qserv/log/${CONTAINER_NAME}.log'\'
+fi
+
+if [ -n "${CZAR_PROXY}" ]; then
+  echo "[${MASTER}] starting qserv czar proxy"
+  LOG_DIR=${QSERV_BASE_DIR}/master/log
+  ssh -n $MASTER docker run \
+    --privileged \
+    --cap-add=SYS_PTRACE \
+    --network=host \
+    --detach=true \
+    --name="${CZAR_PROXY_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
+    -u ${CONTAINER_UID}:${CONTAINER_GID} \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
+    -v "${QSERV_BASE_DIR}/master/config:/config-etc:ro" \
+    -v "${QSERV_BASE_DIR}/master/var-run-mysqld:/var/run/mysqld:ro" \
+    -v "${QSERV_BASE_DIR}/master/data/qserv:/qserv/data/qserv:ro" \
+    -v "${LOG_DIR}:/qserv/log" \
+    -v "${QSERV_BASE_DIR}/master/qserv:/home/qserv" \
+    -v "${CORE_DUMPS}:${CORE_DUMPS}" \
+    -e "QSERV_CONFIG=/config-etc/qserv-czar.cfg" \
+    -e "LSST_LOG_CONFIG=/config-etc/log/proxy.cfg" \
+    -e "CONTAINER_NAME=${CZAR_PROXY_CONTAINER_NAME}" \
+    --ulimit memlock=${ULIMIT_MEMLOCK} \
+    --ulimit core=${ULIMIT_CORE} \
+    "${QSERV_IMAGE_TAG}" \
+    bash -c \''mysql-proxy --proxy-lua-script=/usr/local/lua/qserv/scripts/mysqlProxy.lua --lua-cpath=/usr/local/lua/qserv/lib/czarProxy.so --defaults-file=/config-etc/my-proxy.cfg --log-file=/qserv/log/${CONTAINER_NAME}.mysql-proxy.log >& /qserv/log/${CONTAINER_NAME}.log'\'
+fi
+
+if [ -n "${CZAR_SSL_PROXY}" ]; then
+  echo "[${MASTER}] starting qserv czar ssl proxy"
+  LOG_DIR=${QSERV_BASE_DIR}/master/log
+  ssh -n $MASTER docker run \
+    --privileged \
+    --cap-add=SYS_PTRACE \
+    --network=host \
+    --detach=true \
+    --name="${CZAR_SSL_PROXY_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
+    -u ${CONTAINER_UID}:${CONTAINER_GID} \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
+    -v "${QSERV_BASE_DIR}/master/config/ssl:/etc/ssl:ro" \
+    -v "${LOG_DIR}:/qserv/log" \
+    -v "${CORE_DUMPS}:${CORE_DUMPS}" \
+    -e "PORT_IN=${QSERV_CZAR_PROXY_PORT}" \
+    -e "SSL_PORT_OUT=${QSERV_CZAR_SSL_PROXY_PORT}" \
+    -e "CONTAINER_NAME=${CZAR_SSL_PROXY_CONTAINER_NAME}" \
+    --ulimit memlock=${ULIMIT_MEMLOCK} \
+    --ulimit core=${ULIMIT_CORE} \
+    "${CZAR_SSL_PROXY_IMAGE_TAG}" \
+    /bin/sh -c \''/usr/local/bin/proxy ${SSL_PORT_OUT} ${PORT_IN} /etc/ssl/czar-cert.pem /etc/ssl/czar-key.pem >& /qserv/log/${CONTAINER_NAME}.log'\'
+fi
+
+if [ -n "${CZAR_HTTP}" ]; then
+  echo "[${MASTER}] starting qserv czar http frontend"
+  LOG_DIR=${QSERV_BASE_DIR}/master/log
+  ssh -n $MASTER docker run \
+    --privileged \
+    --cap-add=SYS_PTRACE \
+    --network=host \
+    --detach=true \
+    --name="${CZAR_HTTP_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
+    -u ${CONTAINER_UID}:${CONTAINER_GID} \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
+    -v "${QSERV_BASE_DIR}/master/config:/config-etc:ro" \
+    -v "${QSERV_BASE_DIR}/master/var-run-mysqld:/var/run/mysqld:ro" \
+    -v "${QSERV_BASE_DIR}/master/data/qserv:/qserv/data/qserv:rw" \
+    -v "${QSERV_BASE_DIR}/master/data/ingest:/qserv/data/ingest:rw" \
+    -v "${LOG_DIR}:/qserv/log" \
+    -v "${QSERV_BASE_DIR}/master/qserv:/home/qserv" \
+    -v "${CORE_DUMPS}:${CORE_DUMPS}" \
+    -e "QSERV_CZAR_HTTP_PARAMS='"${QSERV_CZAR_HTTP_PARAMS}"'" \
+    -e "LSST_LOG_CONFIG=/config-etc/log/czar-http.cfg" \
+    -e "CONTAINER_NAME=${CZAR_HTTP_CONTAINER_NAME}" \
+    --ulimit memlock=${ULIMIT_MEMLOCK} \
+    --ulimit core=${ULIMIT_CORE} \
+    "${QSERV_IMAGE_TAG}" \
+    bash -c \''qserv-czar-http ${QSERV_CZAR_HTTP_PARAMS} >& /qserv/log/${CONTAINER_NAME}.log'\'
+fi
+
+
+if [ -n "${CZAR_DEBUG}" ]; then
+  echo "[${MASTER}] starting qserv czar debug"
+  ssh -n $MASTER docker run \
+    --privileged \
+    --cap-add=SYS_PTRACE \
+    --network=host \
+    --detach=true \
+    --name="${CZAR_DEBUG_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
+    -u root \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
+    -v "${CORE_DUMPS}:/tmp/core-files" \
+    -v "${QSERV_BASE_DIR}/master/qserv:/home/qserv" \
+    "${QSERV_IMAGE_TAG}" \
+    bash -c \''yum -y install gdb lz4 && tail -f /dev/null'\'
+fi
+
+if [ -n "${WORKER_DB}" ]; then
+  for WORKER in $WORKERS; do
+    echo "[${WORKER}] starting qserv worker mariadb"
+    LOG_DIR=${QSERV_BASE_DIR}/worker/log
+    ssh -n $WORKER docker run \
+      --network=host \
+      --detach=true \
+      --name="${WORKER_DB_CONTAINER_NAME}" \
+      --restart="${CONTAINER_RESTART_POLICY}" \
+      -u ${CONTAINER_UID}:${CONTAINER_GID} \
+      -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
+      -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
+      -v "${QSERV_BASE_DIR}/worker/tmp:/tmp" \
+      -v "${QSERV_BASE_DIR}/worker/data:/qserv/data" \
+      -v "${QSERV_BASE_DIR}/worker/data/mysql:/var/lib/mysql" \
+      -v "${LOG_DIR}:${LOG_DIR}" \
+      -v "${QSERV_BASE_DIR}/worker/qserv:/home/qserv" \
+      -e "MYSQL_ROOT_PASSWORD=${QSERV_WORKER_DB_ROOT_PASSWORD}" \
+      "${QSERV_DB_IMAGE_TAG}" \
+      --port="${QSERV_WORKER_DB_PORT}" \
+      --max-connections=16384 \
+      --connect_timeout=28800 \
+      --net_read_timeout=90000 \
+      --net_write_timeout=90000 \
+      --wait_timeout=90000 \
+      --symbolic-links=0 \
+      --tmp_table_size=4G \
+      --max_heap_table_size=4G \
+      --myisam_sort_buffer_size=4G \
+      --myisam_repair_threads=2 \
+      --use_stat_tables=PREFERABLY \
+      --optimizer_use_condition_selectivity=3 \
+      --query-cache-size=0 \
+      --join-buffer-size=4G \
+      --log-error="${LOG_DIR}/${WORKER_DB_CONTAINER_NAME}.error.log" \
+      --slow-query-log --slow-query-log-file="${QSERV_BASE_DIR}/worker/log/${WORKER_DB_CONTAINER_NAME}.slow-query.log" \
+      --log-warnings=2 \
+      --pid-file="${LOG_DIR}/${WORKER_DB_CONTAINER_NAME}.pid"&
+  done
+  wait
+fi
+if [ -n "${WORKER_CMSD}" ]; then
+  for WORKER in $WORKERS; do
+    echo "[${WORKER}] starting qserv worker cmsd"
+    LOG_DIR=${QSERV_BASE_DIR}/worker/log
+    ssh -n $WORKER docker run \
+      --privileged \
+      --cap-add=SYS_PTRACE \
+      --network=host \
+      --detach=true \
+      --name="${WORKER_CMSD_CONTAINER_NAME}" \
+      --restart="${CONTAINER_RESTART_POLICY}" \
+      -u ${CONTAINER_UID}:${CONTAINER_GID} \
+      -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
+      -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
+      -v "${QSERV_BASE_DIR}/worker/config:/config-etc:ro" \
+      -v "${QSERV_BASE_DIR}/worker/var-run-xrootd:/var/run/xrootd" \
+      -v "${LOG_DIR}:/qserv/log" \
+      -v "${QSERV_BASE_DIR}/worker/qserv:/home/qserv" \
+      -e "LSST_LOG_CONFIG=/config-etc/log/cmsd.cfg" \
+      -e "CONTAINER_NAME=${WORKER_CMSD_CONTAINER_NAME}" \
+      "${QSERV_IMAGE_TAG}" \
+      bash -c \''cmsd -c /config-etc/cmsd.cfg -n worker -I v4 -d -l @libXrdSsiLog.so -+xrdssi /config-etc/xrdssi.cfg >& /qserv/log/${CONTAINER_NAME}.log'\'&
+  done
+  wait
+fi
+
+if [ -n "${WORKER_XROOTD}" ]; then
+  for WORKER in $WORKERS; do
+    echo "[${WORKER}] starting qserv worker xrootd"
+    LOG_DIR=${QSERV_BASE_DIR}/worker/log
+    ssh -n $WORKER docker run \
+      --init \
+      --privileged \
+      --cap-add=SYS_PTRACE \
+      --network=host \
+      --detach=true \
+      --name="${WORKER_XROOTD_CONTAINER_NAME}" \
+      --restart="${CONTAINER_RESTART_POLICY}" \
+      -u ${CONTAINER_UID}:${CONTAINER_GID} \
+      -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
+      -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
+      -v "${QSERV_BASE_DIR}/worker/config:/config-etc:ro" \
+      -v "${QSERV_BASE_DIR}/worker/var-run-xrootd:/var/run/xrootd" \
+      -v "${QSERV_BASE_DIR}/worker/data/mysql:/qserv/data/mysql:ro" \
+      -v "${QSERV_BASE_DIR}/worker/data/results:/qserv/data/results" \
+      -v "${LOG_DIR}:/qserv/log" \
+      -v "${QSERV_BASE_DIR}/worker/qserv:/home/qserv" \
+      -v "${CORE_DUMPS}:${CORE_DUMPS}" \
+      -e "LSST_LOG_CONFIG=/config-etc/log/xrootd.cfg" \
+      -e "CONTAINER_NAME=${WORKER_XROOTD_CONTAINER_NAME}" \
+      --ulimit memlock=${ULIMIT_MEMLOCK} \
+      --ulimit core=${ULIMIT_CORE} \
+      "${QSERV_IMAGE_TAG}" \
+      bash -c \''xrootd -c /config-etc/cmsd.cfg -n worker -I v4 -d -l @libXrdSsiLog.so -+xrdssi /config-etc/xrdssi.cfg >& /qserv/log/${CONTAINER_NAME}.log'\'&
+  done
+  wait
+fi
+
+if [ -n "${WORKER_DEBUG}" ]; then
+  for WORKER in $WORKERS; do
+    echo "[${WORKER}] starting qserv worker debug"
+    ssh -n $WORKER docker run \
+      --privileged \
+      --cap-add=SYS_PTRACE \
+      --network=host \
+      --detach=true \
+      --name="${WORKER_DEBUG_CONTAINER_NAME}" \
+      --restart="${CONTAINER_RESTART_POLICY}" \
+      -u root \
+      -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
+      -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
+      -v "${CORE_DUMPS}:/tmp/core-files" \
+      -v "${QSERV_BASE_DIR}/worker/qserv:/home/qserv" \
+      "${QSERV_IMAGE_TAG}" \
+      bash -c \''yum -y install gdb lz4 && tail -f /dev/null'\'
+  done
+  wait
+fi
+# --character-set-server=latin1 \
+# --collation_server=latin1_swedish_ci \
+if [ -n "${REPL_DB}" ]; then
+  echo "[${MASTER}] starting repl mariadb"
+  LOG_DIR=${QSERV_BASE_DIR}/master/log
+  ssh -n $MASTER docker run \
+    --detach=true \
+    --network=host \
+    --name="${REPL_DB_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
+    -u ${CONTAINER_UID}:${CONTAINER_GID} \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
+    -v "${QSERV_BASE_DIR}/master/tmp:/tmp" \
+    -v "${QSERV_BASE_DIR}/master/replication/mysql:/var/lib/mysql" \
+    -v "${LOG_DIR}:${LOG_DIR}" \
+    -v "${QSERV_BASE_DIR}/master/replication/config/docker/etc/mysql/conf.d/docker.cnf:/etc/mysql/conf.d/docker.cnf:ro" \
+    -e "MYSQL_ROOT_PASSWORD=${REPL_DB_ROOT_PASSWORD}" \
+    "${REPL_DB_IMAGE_TAG}" \
+    --port="${REPL_DB_PORT}" \
+    --max-connections=16384 \
+    --connect_timeout=28800 \
+    --net_read_timeout=86400 \
+    --net_write_timeout=86400 \
+    --wait_timeout=86400 \
+    --innodb_lock_wait_timeout=3600 \
+    --innodb-read-io-threads=16 \
+    --innodb-random-read-ahead=1 \
+    --innodb-buffer-pool-size=8589934592 \
+    --symbolic-links=0 \
+    --tmp_table_size=4G \
+    --max_heap_table_size=4G \
+    --query-cache-size=0 \
+    --log-error="${LOG_DIR}/${REPL_DB_CONTAINER_NAME}.error.log" \
+    --slow-query-log --slow-query-log-file="${LOG_DIR}/${REPL_DB_CONTAINER_NAME}.slow-query.log" \
+    --log-warnings=2 \
+    --pid-file="${LOG_DIR}/${REPL_DB_CONTAINER_NAME}.pid"&
+fi
+
+if [ -n "${REPL_REG}" ]; then
+  echo "[${MASTER}] starting repl reg"
+  LOG_DIR=${QSERV_BASE_DIR}/master/log
+  ssh -n $MASTER docker run \
+    --privileged \
+    --cap-add=SYS_PTRACE \
+    --detach=true \
+    --network=host \
+    --memory=${REPL_MEMORY_LIMIT} \
+    --name="${REPL_REG_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
+    -u ${CONTAINER_UID}:${CONTAINER_GID} \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
+    -v "${QSERV_BASE_DIR}/master/config:/config-etc:ro" \
+    -v "${LOG_DIR}:/qserv/log" \
+    -v "${CORE_DUMPS}:${CORE_DUMPS}" \
+    -e "'REPL_REG_CONTAINER_NAME=${REPL_REG_CONTAINER_NAME}'" \
+    -e "'LSST_LOG_CONFIG=/config-etc/log/repl-reg.cfg'" \
+    -e "'REPL_REG_PARAMETERS=${REPL_REG_PARAMETERS}'" \
+    -e "'REPL_DB_CONN=${REPL_DB_CONN}'" \
+    -e "'REPL_INSTANCE_ID=${REPL_INSTANCE_ID}'" \
+    -e "'REPL_AUTH_KEY=${REPL_AUTH_KEY}'" \
+    -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
+    --ulimit core=${ULIMIT_CORE} \
+    "${REPL_IMAGE_TAG}" \
+    bash -c \''qserv-replica-registry ${REPL_REG_PARAMETERS} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" >& /qserv/log/${REPL_REG_CONTAINER_NAME}.log'\'&
+fi
+
+# Set the following environment variable before running the Controller
+#
+#   LD_PRELOAD=/usr/lib64/libjemalloc.so.2 qserv-replica-master-http ...
+
+if [ -n "${REPL_CONTR}" ]; then
+  echo "[${MASTER}] starting repl contr"
+  LOG_DIR=${QSERV_BASE_DIR}/master/log
+  REPL_HTTP_ROOT_VOL=
+  if [ -n "${REPL_HTTP_ROOT}" ]; then
+    REPL_HTTP_ROOT_VOL='-v "'${REPL_HTTP_ROOT}':/usr/local/qserv/www:ro"'
+  fi
+  ssh -n $MASTER docker run \
+    --privileged \
+    --cap-add=SYS_PTRACE \
+    --detach=true \
+    --network=host \
+    --memory=${REPL_MEMORY_LIMIT} \
+    --name="${REPL_CONTR_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
+    -u ${CONTAINER_UID}:${CONTAINER_GID} \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
+    -v "${QSERV_BASE_DIR}/master/qserv:/qserv/data/qserv" \
+    -v "${QSERV_BASE_DIR}/master/data/ingest:/qserv/data/ingest" \
+    ${REPL_HTTP_ROOT_VOL} \
+    -v "${QSERV_BASE_DIR}/master/replication/work:/qserv/replication/work" \
+    -v "${QSERV_BASE_DIR}/master/config:/config-etc:ro" \
+    -v "${LOG_DIR}:/qserv/log" \
+    -v "${CORE_DUMPS}:${CORE_DUMPS}" \
+    -e "'REPL_CONTR_CONTAINER_NAME=${REPL_CONTR_CONTAINER_NAME}'" \
+    -e "'REPL_CONTR_PARAMETERS=${REPL_CONTR_PARAMETERS}'" \
+    -e "'LSST_LOG_CONFIG=/config-etc/log/repl-contr.cfg'" \
+    -e "'REPL_DB_CONN=${REPL_DB_CONN}'" \
+    -e "'REPL_INSTANCE_ID=${REPL_INSTANCE_ID}'" \
+    -e "'QSERV_CZAR_DB_CONN=${QSERV_CZAR_DB_CONN}'" \
+    -e "'REPL_AUTH_KEY=${REPL_AUTH_KEY}'" \
+    -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
+    -e "'REPL_REG_HOST=${MASTER}'" \
+    --ulimit core=${ULIMIT_CORE} \
+    "${REPL_IMAGE_TAG}" \
+    bash -c \''qserv-replica-master-http ${REPL_CONTR_PARAMETERS} --registry-host=${REPL_REG_HOST} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-czar-db="${QSERV_CZAR_DB_CONN}" --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" >& /qserv/log/${REPL_CONTR_CONTAINER_NAME}.log'\'&
+fi
+
+if [ -n "${REPL_CONTR_DEBUG}" ]; then
+  echo "[${MASTER}] starting repl debug"
+  LOG_DIR=${QSERV_BASE_DIR}/master/log
+  ssh -n $MASTER docker run \
+    --privileged \
+    --cap-add=SYS_PTRACE \
+    --detach=true \
+    --network=host \
+    --memory=${REPL_MEMORY_LIMIT} \
+    --name="${REPL_CONTR_DEBUG_CONTAINER_NAME}" \
+    --restart="${CONTAINER_RESTART_POLICY}" \
+    -u root \
+    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
+    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
+    -v "${QSERV_BASE_DIR}/master/qserv:/qserv/data/qserv" \
+    -v "${QSERV_BASE_DIR}/master/data/ingest:/qserv/data/ingest" \
+    -v "${QSERV_BASE_DIR}/master/replication/work:/qserv/replication/work" \
+    -v "${QSERV_BASE_DIR}/master/config:/config-etc:ro" \
+    -v "${LOG_DIR}:/qserv/log" \
+    -v "${CORE_DUMPS}:/tmp/core-files" \
+    -e "'LSST_LOG_CONFIG=/config-etc/log/repl-debug.cfg'" \
+    -e "'REPL_DB_CONN=${REPL_DB_CONN}'" \
+    -e "'REPL_INSTANCE_ID=${REPL_INSTANCE_ID}'" \
+    -e "'QSERV_CZAR_DB_CONN=${QSERV_CZAR_DB_CONN}'" \
+    -e "'REPL_AUTH_KEY=${REPL_AUTH_KEY}'" \
+    -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
+    -e "'REPL_REG_HOST=${MASTER}'" \
+    "${REPL_IMAGE_TAG}" \
+    bash -c \''yum -y install gdb lz4 && tail -f /dev/null'\'&
+fi
+
+# The proxies should be now set by the ingest workflows on per catalog
+# basic rather than globally
+#
+# -e "'HTTP_PROXY=http://squid.slac.stanford.edu:3128/'" \
+# -e "'HTTPS_PROXY=http://squid.slac.stanford.edu:3128/'" \
+
+if [ -n "${REPL_WORKER}" ]; then
+  for WORKER in $WORKERS; do
+    echo "[${WORKER}] starting repl worker"
+    LOG_DIR=${QSERV_BASE_DIR}/worker/log
+    ssh -n $WORKER docker run \
+      --privileged \
+      --cap-add=SYS_PTRACE \
+      --detach=true \
+      --network=host \
+      --memory=${REPL_MEMORY_LIMIT} \
+      --name="${REPL_WORKER_CONTAINER_NAME}" \
+      --restart="${CONTAINER_RESTART_POLICY}" \
+      -u ${CONTAINER_UID}:${CONTAINER_GID} \
+      -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
+      -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
+      -v "${QSERV_BASE_DIR}/worker/data:/qserv/data" \
+      -v "${QSERV_BASE_DIR}/worker/config:/config-etc:ro" \
+      -v "${LOG_DIR}:/qserv/log" \
+      -v "${CORE_DUMPS}:${CORE_DUMPS}" \
+      -e "'REPL_WORKER_CONTAINER_NAME=${REPL_WORKER_CONTAINER_NAME}'" \
+      -e "'REPL_WORKER_PARAMETERS=${REPL_WORKER_PARAMETERS}'" \
+      -e "'LSST_LOG_CONFIG=/config-etc/log/repl-worker.cfg'" \
+      -e "'REPL_DB_CONN=${REPL_DB_CONN}'" \
+      -e "'REPL_INSTANCE_ID=${REPL_INSTANCE_ID}'" \
+      -e "'QSERV_WORKER_DB_CONN=${QSERV_WORKER_DB_CONN}'" \
+      -e "'REPL_AUTH_KEY=${REPL_AUTH_KEY}'" \
+      -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
+      -e "'REPL_REG_HOST=${MASTER}'" \
+      --ulimit core=${ULIMIT_CORE} \
+     "${REPL_IMAGE_TAG}" \
+      bash -c \''qserv-replica-worker ${REPL_WORKER_PARAMETERS} --registry-host=${REPL_REG_HOST} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-worker-db="${QSERV_WORKER_DB_CONN}" --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" >& /qserv/log/${REPL_WORKER_CONTAINER_NAME}.log'\' &
+  done
+fi
+if [ -n "${REPL_WORKER_DEBUG}" ]; then
+  for WORKER in $WORKERS; do
+    echo "[${WORKER}] starting repl worker debug"
+    LOG_DIR=${QSERV_BASE_DIR}/worker/log
+    ssh -n $WORKER docker run \
+      --privileged \
+      --cap-add=SYS_PTRACE \
+      --detach=true \
+      --network=host \
+      --memory=${REPL_MEMORY_LIMIT} \
+      --name="${REPL_WORKER_DEBUG_CONTAINER_NAME}" \
+      --restart="${CONTAINER_RESTART_POLICY}" \
+      -u root \
+      -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
+      -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
+      -v "${QSERV_BASE_DIR}/worker/qserv:/qserv/data/qserv" \
+      -v "${QSERV_BASE_DIR}/worker/data/ingest:/qserv/data/ingest" \
+      -v "${QSERV_BASE_DIR}/worker/replication/work:/qserv/replication/work" \
+      -v "${QSERV_BASE_DIR}/worker/config:/config-etc:ro" \
+      -v "${LOG_DIR}:/qserv/log" \
+      -v "${CORE_DUMPS}:/tmp/core-files" \
+      -e "'LSST_LOG_CONFIG=/config-etc/log/repl-debug.cfg'" \
+      -e "'REPL_DB_CONN=${REPL_DB_CONN}'" \
+      -e "'REPL_INSTANCE_ID=${REPL_INSTANCE_ID}'" \
+      -e "'QSERV_CZAR_DB_CONN=${QSERV_CZAR_DB_CONN}'" \
+      -e "'REPL_AUTH_KEY=${REPL_AUTH_KEY}'" \
+      -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
+      -e "'REPL_REG_HOST=${MASTER}'" \
+      "${REPL_IMAGE_TAG}" \
+      bash -c \''yum -y install gdb lz4 && tail -f /dev/null'\'&
+  done
+fi
+wait
+
