@@ -119,7 +119,7 @@ if [ -n "${CZAR_PROXY}" ]; then
     --ulimit memlock=${ULIMIT_MEMLOCK} \
     --ulimit core=${ULIMIT_CORE} \
     "${QSERV_IMAGE_TAG}" \
-    bash -c \''mysql-proxy --proxy-lua-script=/usr/local/lua/qserv/scripts/mysqlProxy.lua --lua-cpath=/usr/local/lua/qserv/lib/czarProxy.so --defaults-file=/config-etc/my-proxy.cfg --log-file=/qserv/log/${CONTAINER_NAME}.mysql-proxy.log >& /qserv/log/${CONTAINER_NAME}.log'\'
+    bash -c \''LD_PRELOAD=libjemalloc.so.2 mysql-proxy --proxy-lua-script=/usr/local/lua/qserv/scripts/mysqlProxy.lua --lua-cpath=/usr/local/lua/qserv/lib/czarProxy.so --defaults-file=/config-etc/my-proxy.cfg --log-file=/qserv/log/${CONTAINER_NAME}.mysql-proxy.log >& /qserv/log/${CONTAINER_NAME}.log'\'
 fi
 
 if [ -n "${CZAR_SSL_PROXY}" ]; then
@@ -289,7 +289,7 @@ if [ -n "${WORKER_XROOTD}" ]; then
       --ulimit memlock=${ULIMIT_MEMLOCK} \
       --ulimit core=${ULIMIT_CORE} \
       "${QSERV_IMAGE_TAG}" \
-      bash -c \''xrootd -c /config-etc/cmsd.cfg -n worker -I v4 -d -l @libXrdSsiLog.so -+xrdssi /config-etc/xrdssi.cfg >& /qserv/log/${CONTAINER_NAME}.log'\'&
+      bash -c \''LD_PRELOAD=libjemalloc.so.2 xrootd -c /config-etc/cmsd.cfg -n worker -I v4 -d -l @libXrdSsiLog.so -+xrdssi /config-etc/xrdssi.cfg >& /qserv/log/${CONTAINER_NAME}.log'\'&
   done
   wait
 fi
