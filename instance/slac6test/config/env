@@ -166,8 +166,93 @@ CZAR_SSL_PROXY_IMAGE_TAG="qserv/mysql-proxy-ssl:latest"
 #
 # QSERV_IMAGE_TAG="qserv/lite-qserv:2025.2.2-rc1-4-gb23e5eeeb"
 #
-# Adds tracking when Finished() is called in the QueryRequest
-QSERV_IMAGE_TAG="qserv/lite-qserv:2025.2.2-rc1-23-g021a07aa0-dirty"
+#             Adds tracking when Finished() is called in the QueryRequest
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.2.2-rc1-23-g021a07aa0-dirty"
+#
+#             An ultimate fix for a race condition in XROOTD/SSI that was causing a crash
+#             in Czar earlier.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.2.2-rc1-25-gc8f58ae4d"
+#
+# 2025-03-04: DM-42005 (REST-based Rep;lication worker services) rebased against
+#             the latest production release 2025.3.1-rc1. The release includes a fix
+#             for the XROOTD/SSI race condition.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.3.1-rc1-9-g9973d08b0"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.3.1-rc1-9-g9973d08b0-dirty"
+#
+#             Updated:
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.3.1-rc1-14-g19c7368e7"
+#
+#             Bypass resultset writing:
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.3.1-rc1-15-g3b78683a6"
+#
+#             Bypass resultset pulling from workers.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.3.1-rc1-15-g65d4b6dc9"
+#
+#             Count and report the number of instances of qdisp::QueryRequest
+#             to see if there is a memory leak in there.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.3.1-rc1-16-g2056848c9"
+#
+#             Reverted JEMALLOC back to the stock version (from the one built by scratch
+#             as per Fritz's effort DM-49489). The change was made to investigate spurious crashes
+#             in workers (xrootd). All crashes are initiated by the qhttp handler. One crash
+#             inidicated "malloc(): double linked list"
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.3.1-rc1-17-g9ad0c704f"
+#
+#             Possible fix for an aledged race conditionin worker's query statistics
+#             collection code.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.3.1-rc1-18-g678799252"
+#
+#             Logging to track abnormal string sizes in wdb::QueryRunner
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.3.1-rc1-19-gc2590e432"
+#
+#             Building each Qserv module into a separate shared library
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.3.1-rc1-20-g71fc458d3"
+#
+#             Commented out logging statememts in Czar query dispatch and result
+#             processing.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.3.1-rc1-21-g420de828f"
+#
+#             Back to allowing result merges into the result table.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.3.1-rc1-17-g172dc2d79"
+#
+#             Re-enabled infromative error logging in John's code to see errors
+#             in Czar during query processing.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.3.1-rc1-17-g15d914ec2"
+#
+#             Eliminated uninitialzied weak pointer from wdb::QueryRunner
+#             where a crash to lock that pointer happened.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.3.1-rc1-18-g823def1a9"
+#
+#             Fixed a ug in teh silly implementation of WorkerConfig (no _defVal was set)
+#             that was crashing (sometimes) workers at start time.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.3.1-rc1-19-gb1fe532ef"
+#
+#             Essentially, this is the same code based on the developoment branch DM-42005 (plus
+#             some minor fixes) where most improvements made earlier in a scope of the branch
+#             were pushed into the new release.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.1-rc2-10-gbf0a0087a"
+#
+#             Re-enabled previously (temporarily) disabled logging statements at Czar
+#             to allow investiogating the potential query lock up.
+#
+QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.1-rc2-9-g24c549553"
 
 QSERV_BASE_DIR="/zfspool/qserv-test"
 QSERV_CZAR_DB_PORT=3308

@@ -60,10 +60,10 @@ CORE_DUMPS=/zfspool/core-files
 #
 QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2024.11.2-rc1"
 
-# Using a custom version built for Qserv
+# Using custom versions built for Qserv
 #
 PROXYSQL_IMAGE_TAG="qserv/proxysql:2.5.3"
-
+CZAR_SSL_PROXY_IMAGE_TAG="qserv/mysql-proxy-ssl:latest"
 
 # 2023-07-19: The latest production version
 #
@@ -91,7 +91,15 @@ PROXYSQL_IMAGE_TAG="qserv/proxysql:2.5.3"
 # 2025-02-07: The latest production release.
 #             NOTE: Qserv Meta schema upgrade to 10.
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2025.2.2-rc1"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.2.2-rc1"
+#
+# 2025-03-04: The latest production release.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.3.1-rc1"
+#
+# 2025-04-03: The latest production release.
+#
+QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.1-rc2"
 
 QSERV_BASE_DIR="/zfspool/qserv-int"
 QSERV_CZAR_DB_PORT=3309
@@ -112,6 +120,9 @@ QSERV_CZAR_HTTP_SSL_CERT="/config-etc/ssl/czar-cert.pem"
 QSERV_CZAR_HTTP_SSL_KEY="/config-etc/ssl/czar-key.pem"
 QSERV_CZAR_HTTP_TMP_DIR="/qserv/data/ingest"
 QSERV_CZAR_HTTP_PARAMS="--config=${QSERV_CZAR_HTTP_CONFIG} --port=${QSERV_CZAR_HTTP_PORT} --threads=${QSERV_CZAR_HTTP_THREADS} --worker-ingest-threads=${QSERV_CZAR_HTTP_INGEST_THREADS} --ssl-cert-file=${QSERV_CZAR_HTTP_SSL_CERT} --ssl-private-key-file=${QSERV_CZAR_HTTP_SSL_KEY} --tmp-dir=${QSERV_CZAR_HTTP_TMP_DIR} --verbose"
+
+# An alternative option for the TLS/SSL termination of the port
+QSERV_CZAR_SSL_PROXY_PORT=4090
 
 # -------------------------------------
 # ----- Replication/Ingest system -----
