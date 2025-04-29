@@ -1,0 +1,14 @@
+./start --czar-db
+./start --worker-db
+./start --repl-db
+sleep 10
+./start --czar-proxy
+./start --czar-http
+./start --czar-proxysql
+./start --czar-xrootd
+./start --czar-cmsd
+./start --worker-xrootd
+./start --worker-cmsd
+./start --repl-contr
+./start --repl-reg
+./start --repl-worker

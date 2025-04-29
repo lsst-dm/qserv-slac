@@ -1,0 +1,1 @@
+for table in $(mysql -h127.0.0.1 -P3368 -uroot -pCHANGEME -A -e "SHOW TABLES FROM dp02_dc2_catalogs" -B -N); do echo $table; mysql -h127.0.0.1 -P3368 -uroot -pCHANGEME -A -e "ANALYZE TABLE dp02_dc2_catalogs.${table} PERSISTENT FOR ALL"; done

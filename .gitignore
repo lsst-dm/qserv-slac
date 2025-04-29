@@ -1,1 +1,4 @@
 instance/*/config/secrets
+instance/*/README*
+*.log
+*.result

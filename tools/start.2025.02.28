@@ -223,7 +223,7 @@ if [ -n "${WORKER_DB}" ]; then
       --symbolic-links=0 \
       --tmp_table_size=4G \
       --max_heap_table_size=4G \
-      --myisam_sort_buffer_size=4G \
+      --myisam_sort_buffer_size=16G \
       --myisam_repair_threads=2 \
       --use_stat_tables=PREFERABLY \
       --optimizer_use_condition_selectivity=3 \

@@ -1,0 +1,1 @@
+select g.source_id,m.gaia_source_id,m.catwise_source_name,c.source_name from gaia_source as g inner join matches as m on  g.source_id=m.gaia_source_id  inner join catwise_2020 as c on m.catwise_source_name=c.source_name where g.dec between -4.77 and -4.76

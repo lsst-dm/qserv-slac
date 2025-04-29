@@ -250,9 +250,84 @@ CZAR_SSL_PROXY_IMAGE_TAG="qserv/mysql-proxy-ssl:latest"
 # QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.1-rc2-10-gbf0a0087a"
 #
 #             Re-enabled previously (temporarily) disabled logging statements at Czar
-#             to allow investiogating the potential query lock up.
+#             to allow investigating the potential query lock up.
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.1-rc2-9-g24c549553"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.1-rc2-9-g24c549553"
+#
+#             Creating prototype tables as MyISAM tables rather than InnoDB
+#             in Czar database during the catalog publishing phase.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.1-rc2-10-g60fee592e"
+#
+#             Improved index management to use IF EXISTS or IF NOT EXISTS
+#             where applies to reduce MySQL noise on existing or missing
+#             indexes.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.1-rc2-12-g0b57bfe59"
+#
+#             Fixed a bug (using an invalidated iterator) in the worker ingest
+#             service.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.1-rc2-15-g90db4b5fb"
+#
+#             Temporary fix for worker crashes in the XROOTD/SSI stack.
+#             (using a patch from DM-50005).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.1-rc2-16-g069bbdfce"
+#
+#             Based on DM-42005 rebased against "main" to include DM-50057 (removed XROOTD-based
+#             results delivery protocol) and cherry-picked commits from DM-50097 (simplified
+#             result merger at Czar).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.1-rc2-24-g154426ab4"
+#
+#             Same base ticket plus a bug fix "cherry-picked" from DM-50307 (Incomplete query
+#             status reported by the Qserv's HTTP frontend for finished queries).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.1-rc2-27-gb581b6a40"
+#
+#             Based on DM-42005 plus 6 commits cherry-picked from DM-50187 (CSV result delivery)
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.2-rc1-15-g5c90af1d1"
+#
+#             Same as above plus 1 commit cherry-picked from DM-50360 (eliminated obsolete memman).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.2-rc1-16-ga468e4d15"
+#
+#             Same as above plus reinforced implementation of the result reader
+#             to properly report and process errors. The new algorithm should fail
+#             the corresponding job.
+#
+# QSERV_IMAGE_TAG="docker.io/qserv/lite-qserv:2025.4.2-rc1-17-g1c3106613"
+#
+#             Rolled back query cancellation status check within the result reader.
+#             as it may result in locking up Czar when processing large result
+#             queries that require "superflous" job cancellation.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.2-rc1-19-g699a9d864"
+#
+#             Same base tag as above. Added one commit from DM-50399 (clean up obsolete
+#             configuration parameters of the Qserv worker). 
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.2-rc1-19-g740ebbd48"
+#
+#             Same tag as above plus DM-50445 (Incorrect implementation of
+#             the Qserv information schema queries).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.2-rc1-21-g38177a2a2"
+#
+#             Same as above, plus DM-50452 (Race condition in the implementation
+#             the Qserv query processor for some queries).
+#             The intent is to test 1) pulling result of ASYNC queries, and
+#             2) 'SELECT COUNT(*) FROM <db>.<table>' w/o any aditional conbtraints.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.3-rc1-13-g6d7be5bf3"
+#
+#             Previous branch was mergd into main. Rebased against main.
+#             Temporarily upgraded CP-HTTPLIB to v0.20.0 to see if that would
+#             help to address a problme with the SSL error 32 (write aborted).
+#
+QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.3-rc1-16-gf5e5f57e9"
 
 QSERV_BASE_DIR="/zfspool/qserv-test"
 QSERV_CZAR_DB_PORT=3308

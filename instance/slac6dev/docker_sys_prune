@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# List log files of the select services
+
+set -e
+
+# Load parameters of the setup into the corresponding environment
+# variables
+
+. $(dirname "$0")/config/env
+
+if [ -n "${CZAR_DB}${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}${CZAR_HTTP}${REPL_DB}${REPL_REG}${REPL_CONTR}" ]; then
+  echo
+  echo "[${MASTER}]"
+  echo
+  ssh -n $MASTER 'docker system prune -af '
+fi
+if [ -n "${WORKER_DB}${WORKER_CMSD}${WORKER_XROOTD}${REPL_WORKER}" ]; then
+  for WORKER in $WORKERS; do
+    echo
+    echo "[${WORKER}]"
+    echo
+    ssh -n $WORKER 'docker system prune -af '
+  done
+fi
+echo

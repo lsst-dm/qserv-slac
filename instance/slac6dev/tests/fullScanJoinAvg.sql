@@ -1,0 +1,2 @@
+SELECT AVG(obj.g_ap12Flux),MIN(obj.g_ap12Flux),MAX(obj.g_ap12Flux), AVG(obj.g_ap12FluxErr),MIN(obj.g_ap12FluxErr),MAX(obj.g_ap12FluxErr), AVG(obj.g_ap25Flux),MIN(obj.g_ap25Flux),MAX(obj.g_ap25Flux), AVG(obj.g_ap25FluxErr),MIN(obj.g_ap25FluxErr),MAX(obj.g_ap25FluxErr) FROM dp02_dc2_catalogs.MatchesTruth AS mt JOIN dp02_dc2_catalogs.TruthSummary AS ts ON mt.id_truth_type=ts.id_truth_type JOIN dp02_dc2_catalogs.Object AS obj ON mt.match_objectId=obj.objectId
+

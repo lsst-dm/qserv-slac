@@ -241,12 +241,14 @@ PROXYSQL_IMAGE_TAG="qserv/proxysql:2.5.3"
 
 # 2025-02-13 DM-43715
 #QSERV_IMAGE_TAG="qserv/lite-qserv:2024.11.2-rc1-66-g0515db58c-dirty"
-QSERV_IMAGE_TAG="qserv/lite-qserv:2025.2.2-rc1-72-g76944723e-dirty"
+
+#2025-04-28 DM-45384
+QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.1-rc2-138-gce2b7a2e3-dirty"
 
 QSERV_BASE_DIR="/zfspool/qserv-dev"
 QSERV_CZAR_DB_PORT=3307
 QSERV_CZAR_PROXY_PORT=4047
-QSERV_CZAR_HTTP_PORT=4147
+QSERV_CZAR_HTTP_PORT=4078
 QSERV_WORKER_DB_PORT=3367
 QSERV_XROOTD_PORT=1794
 # These two ports are configured in $QSERV_BASE_DIR/master/config/proxysql.cnf
@@ -526,9 +528,11 @@ REPL_REG_PARAMETERS="--registry-port=${REPL_REG_PORT} --debug"
 #   request timeout: 8 hours
 #   job timeout: 24 hours
 # --controller-num-director-index-connections=4
-# Temporarily removed:
+# Temporarily disabled to avoid overloading the new qserv dispatcher:
 # --qserv-chunk-map-update
-REPL_CONTR_PARAMETERS="--registry-port=${REPL_REG_PORT} --xrootd-port=${QSERV_XROOTD_PORT} --controller-http-server-port=${REPL_CONTR_HTTP_PORT} --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --purge --debug"
+# Temporarily disabled to avoid removing extra replicas:
+# --purge
+REPL_CONTR_PARAMETERS="--registry-port=${REPL_REG_PORT} --xrootd-port=${QSERV_XROOTD_PORT} --controller-http-server-port=${REPL_CONTR_HTTP_PORT} --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --debug"
 
 REPL_WORKER_SVC_PORT=25700
 REPL_WORKER_FS_PORT=25701

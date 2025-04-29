@@ -1,0 +1,1 @@
+SELECT COUNT(*) FROM dp02_dc2_catalogs.MatchesTruth AS mt JOIN dp02_dc2_catalogs.TruthSummary AS ts ON ts.id_truth_type=mt.id_truth_type JOIN dp02_dc2_catalogs.Object AS obj ON mt.match_objectId=obj.objectId WHERE scisql_s2PtInCircle(ts.ra,ts.dec,64.5,-37.0,2.0)=1 AND ts.mag_r < 28

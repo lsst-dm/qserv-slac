@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Remove unused docker containers.
+
+set -e
+
+# Load parameters of the setup into the corresponding environment
+# variables
+
+. $(dirname "$0")/config/env
+
+DSPRUNE="docker system prune -f"
+
+if [ -n "${CZAR_DB}" ]; then
+  ssh -n $MASTER $DSPRUNE&
+fi
+for WORKER in $WORKERS; do
+  if [ -n "${WORKER_DB}" ]; then
+    ssh -n $WORKER $DSPRUNE&
+  fi
+done
+wait
