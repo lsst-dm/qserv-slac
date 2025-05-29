@@ -9,23 +9,14 @@ set -e
 
 . $(dirname "$0")/config/env
 
-if [ -n "${CZAR_CMSD}" ]; then
-    update_config_master ${QSERV_BASE_DIR}/master/config/log/cmsd.cfg
-fi
-if [ -n "${CZAR_XROOTD}" ]; then
-    update_config_master ${QSERV_BASE_DIR}/master/config/log/xrootd.cfg
-fi
 if [ -n "${CZAR_PROXY}" ]; then
     update_config_master ${QSERV_BASE_DIR}/master/config/log/proxy.cfg
 fi
 if [ -n "${CZAR_HTTP}" ]; then
     update_config_master ${QSERV_BASE_DIR}/master/config/log/czar-http.cfg
 fi
-if [ -n "${WORKER_CMSD}" ]; then
-    update_config ${QSERV_BASE_DIR}/worker/config/log/cmsd.cfg
-fi
-if [ -n "${WORKER_XROOTD}" ]; then
-    update_config ${QSERV_BASE_DIR}/worker/config/log/xrootd.cfg
+if [ -n "${WORKER_SVC}" ]; then
+    update_config ${QSERV_BASE_DIR}/worker/config/log/worker-svc.cfg
 fi
 if [ -n "${REPL_REG}" ]; then
     update_config_master ${QSERV_BASE_DIR}/master/config/log/repl-reg.cfg

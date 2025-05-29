@@ -12,12 +12,6 @@ set -e
 if [ -n "${CZAR_DB}" ]; then
     ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar mariadb:   "$(docker stop '$CZAR_DB_CONTAINER_NAME')" "$(docker rm '$CZAR_DB_CONTAINER_NAME')'&
 fi
-if [ -n "${CZAR_CMSD}" ]; then
-    ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar cmsd:      "$(docker stop '$CZAR_CMSD_CONTAINER_NAME')" "$(docker rm '$CZAR_CMSD_CONTAINER_NAME')'&
-fi
-if [ -n "${CZAR_XROOTD}" ]; then
-    ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar xrootd:    "$(docker stop '$CZAR_XROOTD_CONTAINER_NAME')" "$(docker rm '$CZAR_XROOTD_CONTAINER_NAME')'&
-fi
 if [ -n "${CZAR_PROXY}" ]; then
     ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar proxy:     "$(docker stop '$CZAR_PROXY_CONTAINER_NAME')" "$(docker rm '$CZAR_PROXY_CONTAINER_NAME')'&
 fi
@@ -34,11 +28,8 @@ for WORKER in $WORKERS; do
     if [ -n "${WORKER_DB}" ]; then
         ssh -n $WORKER 'echo "["'$WORKER'"] qserv worker mariadb: "$(docker stop '$WORKER_DB_CONTAINER_NAME')" "$(docker rm '$WORKER_DB_CONTAINER_NAME')'&
     fi
-    if [ -n "${WORKER_CMSD}" ]; then
-        ssh -n $WORKER 'echo "["'$WORKER'"] qserv worker cmsd:    "$(docker stop '$WORKER_CMSD_CONTAINER_NAME')" "$(docker rm '$WORKER_CMSD_CONTAINER_NAME')'&
-    fi
-    if [ -n "${WORKER_XROOTD}" ]; then
-        ssh -n $WORKER 'echo "["'$WORKER'"] qserv worker xrootd:  "$(docker stop '$WORKER_XROOTD_CONTAINER_NAME')" "$(docker rm '$WORKER_XROOTD_CONTAINER_NAME')'&
+    if [ -n "${WORKER_SVC}" ]; then
+        ssh -n $WORKER 'echo "["'$WORKER'"] qserv worker service:  "$(docker stop '$WORKER_SVC_CONTAINER_NAME')" "$(docker rm '$WORKER_SVC_CONTAINER_NAME')'&
     fi
     if [ -n "${WORKER_DEBUG}" ]; then
         ssh -n $WORKER 'echo "["'$WORKER'"] qserv worker debug:   "$(docker stop '$WORKER_DEBUG_CONTAINER_NAME')" "$(docker rm '$WORKER_DEBUG_CONTAINER_NAME')'&

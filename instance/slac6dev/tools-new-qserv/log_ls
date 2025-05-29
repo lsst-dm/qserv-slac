@@ -9,13 +9,13 @@ set -e
 
 . $(dirname "$0")/config/env
 
-if [ -n "${CZAR_DB}${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}${CZAR_PROXYSQL}${CZAR_HTTP}${REPL_DB}${REPL_REG}${REPL_CONTR}" ]; then
+if [ -n "${CZAR_DB}${CZAR_PROXY}${CZAR_PROXYSQL}${CZAR_HTTP}${REPL_DB}${REPL_REG}${REPL_CONTR}" ]; then
   echo
   echo "[${MASTER}]"
   echo
   ssh -n $MASTER 'ls -l '"${QSERV_BASE_DIR}/master/log/*.log" 2>/dev/null | awk '{print "  "$0}'
 fi
-if [ -n "${WORKER_DB}${WORKER_CMSD}${WORKER_XROOTD}${REPL_WORKER}" ]; then
+if [ -n "${WORKER_DB}${WORKER_SVC}${REPL_WORKER}" ]; then
   for WORKER in $WORKERS; do
     echo
     echo "[${WORKER}]"
