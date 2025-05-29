@@ -80,11 +80,8 @@ if [ -n "${REPL_CONTR}" ]; then
   get_logfile master $MASTER $REPL_CONTR_CONTAINER_NAME
 fi
 for HOST in $WORKERS; do
-  if [ -n "${WORKER_CMSD}" ]; then
-    get_logfile worker $HOST $WORKER_CMSD_CONTAINER_NAME
-  fi
-  if [ -n "${WORKER_XROOTD}" ]; then
-    get_logfile worker $HOST $WORKER_XROOTD_CONTAINER_NAME
+  if [ -n "${WORKER_SVC}" ]; then
+    get_logfile worker $HOST $WORKER_SVC_CONTAINER_NAME
   fi
   if [ -n "${REPL_WORKER}" ]; then
     get_logfile worker $HOST $REPL_WORKER_CONTAINER_NAME

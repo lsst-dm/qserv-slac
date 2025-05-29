@@ -48,51 +48,6 @@ if [ -n "${CZAR_DB}" ]; then
     --pid-file="${LOG_DIR}/${CZAR_DB_CONTAINER_NAME}.pid"
 fi
 
-if [ -n "${CZAR_CMSD}" ]; then
-  echo "[${MASTER}] starting qserv czar cmsd"
-  LOG_DIR=${QSERV_BASE_DIR}/master/log
-  ssh -n $MASTER docker run \
-    --privileged \
-    --cap-add=SYS_PTRACE \
-    --network=host \
-    --detach=true \
-    --name="${CZAR_CMSD_CONTAINER_NAME}" \
-    --restart="${CONTAINER_RESTART_POLICY}" \
-    -u ${CONTAINER_UID}:${CONTAINER_GID} \
-    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
-    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
-    -v "${QSERV_BASE_DIR}/master/config:/config-etc:ro" \
-    -v "${QSERV_BASE_DIR}/master/var-run-xrootd:/var/run/xrootd" \
-    -v "${LOG_DIR}:/qserv/log" \
-    -v "${QSERV_BASE_DIR}/master/qserv:/home/qserv" \
-    -e "LSST_LOG_CONFIG=/config-etc/log/cmsd.cfg" \
-    -e "CONTAINER_NAME=${CZAR_CMSD_CONTAINER_NAME}" \
-    "${QSERV_IMAGE_TAG}" \
-    bash -c \''cmsd -c /config-etc/cmsd.cfg -n manager -I v4 -d -l @libXrdSsiLog.so >& /qserv/log/${CONTAINER_NAME}.log'\'
-fi
-
-if [ -n "${CZAR_XROOTD}" ]; then
-  echo "[${MASTER}] starting qserv czar xrootd"
-  LOG_DIR=${QSERV_BASE_DIR}/master/log
-  ssh -n $MASTER docker run \
-    --privileged \
-    --cap-add=SYS_PTRACE \
-    --network=host \
-    --detach=true \
-    --name="${CZAR_XROOTD_CONTAINER_NAME}" \
-    --restart="${CONTAINER_RESTART_POLICY}" \
-    -u ${CONTAINER_UID}:${CONTAINER_GID} \
-    -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
-    -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
-    -v "${QSERV_BASE_DIR}/master/config:/config-etc:ro" \
-    -v "${QSERV_BASE_DIR}/master/var-run-xrootd:/var/run/xrootd" \
-    -v "${LOG_DIR}:/qserv/log" \
-    -v "${QSERV_BASE_DIR}/master/qserv:/home/qserv" \
-    -e "LSST_LOG_CONFIG=/config-etc/log/xrootd.cfg" \
-    -e "CONTAINER_NAME=${CZAR_XROOTD_CONTAINER_NAME}" \
-    "${QSERV_IMAGE_TAG}" \
-    bash -c \''xrootd -c /config-etc/xrootd.cfg -n manager -I v4 -d -l @libXrdSsiLog.so >& /qserv/log/${CONTAINER_NAME}.log'\'
-fi
 
 if [ -n "${CZAR_PROXY}" ]; then
   echo "[${MASTER}] starting qserv czar proxy"
@@ -235,35 +190,10 @@ if [ -n "${WORKER_DB}" ]; then
   done
   wait
 fi
-if [ -n "${WORKER_CMSD}" ]; then
-  for WORKER in $WORKERS; do
-    echo "[${WORKER}] starting qserv worker cmsd"
-    LOG_DIR=${QSERV_BASE_DIR}/worker/log
-    ssh -n $WORKER docker run \
-      --privileged \
-      --cap-add=SYS_PTRACE \
-      --network=host \
-      --detach=true \
-      --name="${WORKER_CMSD_CONTAINER_NAME}" \
-      --restart="${CONTAINER_RESTART_POLICY}" \
-      -u ${CONTAINER_UID}:${CONTAINER_GID} \
-      -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
-      -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
-      -v "${QSERV_BASE_DIR}/worker/config:/config-etc:ro" \
-      -v "${QSERV_BASE_DIR}/worker/var-run-xrootd:/var/run/xrootd" \
-      -v "${LOG_DIR}:/qserv/log" \
-      -v "${QSERV_BASE_DIR}/worker/qserv:/home/qserv" \
-      -e "LSST_LOG_CONFIG=/config-etc/log/cmsd.cfg" \
-      -e "CONTAINER_NAME=${WORKER_CMSD_CONTAINER_NAME}" \
-      "${QSERV_IMAGE_TAG}" \
-      bash -c \''cmsd -c /config-etc/cmsd.cfg -n worker -I v4 -d -l @libXrdSsiLog.so -+xrdssi /config-etc/xrdssi.cfg >& /qserv/log/${CONTAINER_NAME}.log'\'&
-  done
-  wait
-fi
 
-if [ -n "${WORKER_XROOTD}" ]; then
+if [ -n "${WORKER_SVC}" ]; then
   for WORKER in $WORKERS; do
-    echo "[${WORKER}] starting qserv worker xrootd"
+    echo "[${WORKER}] starting qserv worker service"
     LOG_DIR=${QSERV_BASE_DIR}/worker/log
     ssh -n $WORKER docker run \
       --init \
@@ -271,24 +201,23 @@ if [ -n "${WORKER_XROOTD}" ]; then
       --cap-add=SYS_PTRACE \
       --network=host \
       --detach=true \
-      --name="${WORKER_XROOTD_CONTAINER_NAME}" \
+      --name="${WORKER_SVC_CONTAINER_NAME}" \
       --restart="${CONTAINER_RESTART_POLICY}" \
       -u ${CONTAINER_UID}:${CONTAINER_GID} \
       -v ${QSERV_BASE_DIR}/worker/etc/passwd:/etc/passwd:ro \
       -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
       -v "${QSERV_BASE_DIR}/worker/config:/config-etc:ro" \
-      -v "${QSERV_BASE_DIR}/worker/var-run-xrootd:/var/run/xrootd" \
       -v "${QSERV_BASE_DIR}/worker/data/mysql:/qserv/data/mysql:ro" \
       -v "${QSERV_BASE_DIR}/worker/data/results:/qserv/data/results" \
       -v "${LOG_DIR}:/qserv/log" \
       -v "${QSERV_BASE_DIR}/worker/qserv:/home/qserv" \
       -v "${CORE_DUMPS}:${CORE_DUMPS}" \
-      -e "LSST_LOG_CONFIG=/config-etc/log/xrootd.cfg" \
-      -e "CONTAINER_NAME=${WORKER_XROOTD_CONTAINER_NAME}" \
+      -e "LSST_LOG_CONFIG=/config-etc/log/worker-svc.cfg" \
+      -e "CONTAINER_NAME=${WORKER_SVC_CONTAINER_NAME}" \
       --ulimit memlock=${ULIMIT_MEMLOCK} \
       --ulimit core=${ULIMIT_CORE} \
       "${QSERV_IMAGE_TAG}" \
-      bash -c \''LD_PRELOAD=libjemalloc.so.2 xrootd -c /config-etc/cmsd.cfg -n worker -I v4 -d -l @libXrdSsiLog.so -+xrdssi /config-etc/xrdssi.cfg >& /qserv/log/${CONTAINER_NAME}.log'\'&
+      bash -c \''LD_PRELOAD=libjemalloc.so.2 qserv-worker-http -v -n worker -c /config-etc/worker-svc.cfg >& /qserv/log/${CONTAINER_NAME}.log'\'&
   done
   wait
 fi

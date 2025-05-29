@@ -68,16 +68,13 @@ MASTER="$(get_param config/master)"
 ALL_WORKERS="$(get_param config/workers)"
 
 CZAR_DB_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-mariadb"
-CZAR_CMSD_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-cmsd"
-CZAR_XROOTD_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-xrootd"
 CZAR_PROXY_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-proxy"
 CZAR_PROXYSQL_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-proxysql"
 CZAR_HTTP_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-http"
 CZAR_DEBUG_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-debug"
 
 WORKER_DB_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}worker-mariadb"
-WORKER_CMSD_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}worker-cmsd"
-WORKER_XROOTD_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}worker-xrootd"
+WORKER_SVC_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}worker-svc"
 WORKER_DEBUG_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}worker-debug"
 
 REPL_DB_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-mariadb"
@@ -148,12 +145,6 @@ Selectors for the Qserv czar:
     --czar-db
         MariaDB service of czar.
 
-    --czar-cmsd
-        Redirector service of czar.
-
-    --czar-xrootd
-        XROOTD service of czar.
-
     --czar-proxy
         MySQL proxy service of czar (the czar itself).
 
@@ -178,11 +169,8 @@ Selectors for Qserv workers:
     --worker-db
         MariaDB service of the select workers.
 
-    --worker-cmsd
-        Redirector service of the select workers.
-
-    --worker-xrootd
-        XROOTD service of the select worker.
+    --worker-svc
+        qserv worker service of the select worker.
 
     --worker-debug
         The side-cart container with GDB and other tools needed to debug
@@ -224,8 +212,6 @@ WORKERS="$ALL_WORKERS"
 
 CZAR_ALL_SERVICES=
 CZAR_DB=
-CZAR_CMSD=
-CZAR_XROOTD=
 CZAR_PROXY=
 CZAR_PROXYSQL=
 CZAR_HTTP=
@@ -233,8 +219,7 @@ CZAR_DEBUG=
 
 WORKER_ALL_SERVICES=
 WORKER_DB=
-WORKER_CMSD=
-WORKER_XROOTD=
+WORKER_SVC=
 WORKER_DEBUG=
 
 REPL_ALL_SERVICES=
@@ -249,14 +234,11 @@ for i in "$@"; do
     case $i in
     -a|--all)
         CZAR_DB=1
-        CZAR_CMSD=1
-        CZAR_XROOTD=1
         CZAR_PROXY=1
         CZAR_PROXYSQL=1
 	CZAR_HTTP=1
         WORKER_DB=1
-        WORKER_CMSD=1
-        WORKER_XROOTD=1
+        WORKER_SVC=1
         REPL_DB=1
         REPL_REG=1
         REPL_CONTR=1
@@ -277,20 +259,12 @@ for i in "$@"; do
         ;;
     --czar-all)
         CZAR_DB=1
-        CZAR_CMSD=1
-        CZAR_XROOTD=1
         CZAR_PROXY=1
         CZAR_PROXYSQL=1
 	CZAR_HTTP=1
         ;;
     --czar-db)
         CZAR_DB=1
-        ;;
-    --czar-cmsd)
-        CZAR_CMSD=1
-        ;;
-    --czar-xrootd)
-        CZAR_XROOTD=1
         ;;
     --czar-proxy)
         CZAR_PROXY=1
@@ -306,17 +280,13 @@ for i in "$@"; do
         ;;
     --worker-all)
         WORKER_DB=1
-        WORKER_CMSD=1
-        WORKER_XROOTD=1
+        WORKER_SVC=1
         ;;
     --worker-db)
         WORKER_DB=1
         ;;
-    --worker-cmsd)
-        WORKER_CMSD=1
-        ;;
-    --worker-xrootd)
-        WORKER_XROOTD=1
+    --worker-svc)
+        WORKER_SVC=1
         ;;
     --worker-debug)
         WORKER_DEBUG=1
@@ -355,7 +325,7 @@ for i in "$@"; do
         ;;
     esac
 done
-if [ -z "${CZAR_DB}${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}${CZAR_PROXYSQL}${CZAR_HTTP}${CZAR_DEBUG}${WORKER_DB}${WORKER_CMSD}${WORKER_XROOTD}${WORKER_DEBUG}${REPL_DB}${REPL_REG}${REPL_CONTR}${REPL_CONTR_DEBUG}${REPL_WORKER}${REPL_WORKER_DEBUG}" ]; then
+if [ -z "${CZAR_DB}${CZAR_PROXY}${CZAR_PROXYSQL}${CZAR_HTTP}${CZAR_DEBUG}${WORKER_DB}${WORKER_SVC}${WORKER_DEBUG}${REPL_DB}${REPL_REG}${REPL_CONTR}${REPL_CONTR_DEBUG}${REPL_WORKER}${REPL_WORKER_DEBUG}" ]; then
     >&2
 echo "error: please, select services to be affected by the operation, or use -a|--all
        for all services
