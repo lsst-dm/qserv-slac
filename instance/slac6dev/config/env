@@ -243,7 +243,11 @@ PROXYSQL_IMAGE_TAG="qserv/proxysql:2.5.3"
 #QSERV_IMAGE_TAG="qserv/lite-qserv:2024.11.2-rc1-66-g0515db58c-dirty"
 
 #2025-04-28 DM-45384
-QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.1-rc2-138-gce2b7a2e3-dirty"
+#QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.1-rc2-138-gce2b7a2e3-dirty"
+
+#2025-05-23 DM-50621
+QSERV_IMAGE_TAG="qserv/lite-qserv:2025.3.1-rc1-22-gb551bbb23-dirty"
+
 
 QSERV_BASE_DIR="/zfspool/qserv-dev"
 QSERV_CZAR_DB_PORT=3307

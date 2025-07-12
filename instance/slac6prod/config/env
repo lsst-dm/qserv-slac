@@ -62,7 +62,6 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2024.11.2-rc1"
 
 # Using custom versions built for Qserv
 #
-PROXYSQL_IMAGE_TAG="qserv/proxysql:2.5.3"
 CZAR_SSL_PROXY_IMAGE_TAG="qserv/mysql-proxy-ssl:latest"
 
 # 2023-07-19: The latest production version
@@ -107,31 +106,56 @@ CZAR_SSL_PROXY_IMAGE_TAG="qserv/mysql-proxy-ssl:latest"
 #
 # 2025-04-24: The latest production release.
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.3-rc1"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.3-rc1"
+#
+# 2025-05-01: The latest production release.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.5.1-rc1"
+#
+# 2025-05-08: The latest production release.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.5.2-rc1"
+#
+# 2025-05-29: The latest production release.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.5.3-rc2"
+#
+# 2025-06-05: The latest production release.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.6.1-rc1"
+#
+# 2025-06-06: The latest production release.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.6.1-rc2"
+#
+#
+# 2025-06-17: The latest production release. REST API version 43.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.6.2-rc1"
+#
+# 2025-06-30: DM-51663 (unsafe handling of the overlap parameter) during
+#             database creation triggered by user table ingest.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.6.2-rc1-1-ge78d489fc"
+#
+# 2025-07-01: The latest production release. REST API version 43.
+#
+QSERV_IMAGE_TAG="qserv/lite-qserv:2025.6.2-rc2"
 
 QSERV_BASE_DIR="/zfspool/qserv-prod"
 QSERV_CZAR_DB_PORT=3306
 QSERV_CZAR_PROXY_PORT=14040
-#QSERV_CZAR_PROXY_PORT=4040
+QSERV_CZAR_SSL_PROXY_PORT=4040
 QSERV_CZAR_HTTP_PORT=4048
 QSERV_WORKER_DB_PORT=3366
 QSERV_XROOTD_PORT=1094
-# These two ports are configured in $QSERV_BASE_DIR/master/config/proxysql.cnf
-# Thea are not used by none of the deployment management scripts.
-# Port QSERV_CZAR_PROXYSQL_USER_PORT is the SSL-encrypted fronend for
-# Czar's port QSERV_CZAR_PROXY_PORT.
-QSERV_CZAR_PROXYSQL_USER_PORT=4040
-QSERV_CZAR_PROXYSQL_ADMIN_PORT=16032
 QSERV_CZAR_HTTP_THREADS=16
 QSERV_CZAR_HTTP_INGEST_THREADS=16
 QSERV_CZAR_HTTP_CONFIG="/config-etc/qserv-czar-http.cfg"
 QSERV_CZAR_HTTP_SSL_CERT="/config-etc/ssl/czar-cert.pem"
 QSERV_CZAR_HTTP_SSL_KEY="/config-etc/ssl/czar-key.pem"
 QSERV_CZAR_HTTP_TMP_DIR="/qserv/data/ingest"
-QSERV_CZAR_HTTP_PARAMS="--config=${QSERV_CZAR_HTTP_CONFIG} --port=${QSERV_CZAR_HTTP_PORT} --threads=${QSERV_CZAR_HTTP_THREADS} --worker-ingest-threads=${QSERV_CZAR_HTTP_INGEST_THREADS} --ssl-cert-file=${QSERV_CZAR_HTTP_SSL_CERT} --ssl-private-key-file=${QSERV_CZAR_HTTP_SSL_KEY} --tmp-dir=${QSERV_CZAR_HTTP_TMP_DIR} --verbose"
-
-# An alternative option for the TLS/SSL termination of the port
-QSERV_CZAR_SSL_PROXY_PORT=4040
+QSERV_CZAR_HTTP_PARAMS="--config=${QSERV_CZAR_HTTP_CONFIG} --port=${QSERV_CZAR_HTTP_PORT} --threads=${QSERV_CZAR_HTTP_THREADS} --worker-ingest-threads=${QSERV_CZAR_HTTP_INGEST_THREADS} --ssl-cert-file=${QSERV_CZAR_HTTP_SSL_CERT} --ssl-private-key-file=${QSERV_CZAR_HTTP_SSL_KEY} --tmp-dir=${QSERV_CZAR_HTTP_TMP_DIR} --user=${QSERV_CZAR_HTTP_USER} --password=${QSERV_CZAR_HTTP_PASSWORD} --verbose"
 
 # -------------------------------------
 # ----- Replication/Ingest system -----

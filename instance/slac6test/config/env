@@ -62,7 +62,6 @@ QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2024.11.1-rc1-1-g36b8ad4a4"
 
 # Using custom versions built for Qserv
 #
-PROXYSQL_IMAGE_TAG="qserv/proxysql:2.5.3"
 CZAR_SSL_PROXY_IMAGE_TAG="qserv/mysql-proxy-ssl:latest"
 
 # 2024-05-13: The latest production release that supports HTTP frontend
@@ -324,23 +323,63 @@ CZAR_SSL_PROXY_IMAGE_TAG="qserv/mysql-proxy-ssl:latest"
 # QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.3-rc1-13-g6d7be5bf3"
 #
 #             Previous branch was mergd into main. Rebased against main.
-#             Temporarily upgraded CP-HTTPLIB to v0.20.0 to see if that would
+#             Temporarily upgraded CPP-HTTPLIB to v0.20.0 to see if that would
 #             help to address a problme with the SSL error 32 (write aborted).
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.3-rc1-16-gf5e5f57e9"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.4.3-rc1-16-gf5e5f57e9"
+#
+#             Previous library upgrades were merged into main. Rebased against main
+#             and added a commit from DM-50679 (Fixed race conditions in the query
+#             cancelation logic).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.5.1-rc1-12-g25be423aa"
+#
+#             Previous library upgrades were merged into main. Rebased against main.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.5.1-rc1-17-ga223a0cbf"
+#
+#             Same as before plus rebased against DM-50504 (explicit garbage collection
+#             of the ASYN Cqueries results).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.5.2-rc1-15-g1de7ef9be"
+#
+#             Refactored the main garbage collection loop for removing old
+#             result tables.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.5.2-rc1-16-gf4c70971f"
+#
+#             Same as before. Extended diagnostic to see if the row counter reported
+#             by the worker is not 0.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.5.2-rc1-17-g846dd1acf"
+#
+#             Same as before. Rebased against the main branch that includes all
+#             above-mentioned features plus extras (fixed bugs).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.5.3-rc2-21-g66e38e6c9"
+#
+#             Same as before. Rebased against the main branch that includes all
+#             above-mentioned features plus extras (fixed bugs).
+#             Also added a solution for the Czar lock up when a query hits the large
+#             result limit.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.6.1-rc1-9-ge1aa2fd19"
+#
+#             Same as above plus basic authentication in the HTTP-based Czar frontend
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.6.1-rc2-18-g46324b7aa"
+#
+#             Same as above plus a possible bug fix for the XROOTD/SSI issues #2479 and #2481.
+#
+QSERV_IMAGE_TAG="qserv/lite-qserv:2025.6.2-rc1-9-g91b3371f2"
 
 QSERV_BASE_DIR="/zfspool/qserv-test"
 QSERV_CZAR_DB_PORT=3308
 QSERV_CZAR_PROXY_PORT=4140
+QSERV_CZAR_SSL_PROXY_PORT=14140
 QSERV_CZAR_HTTP_PORT=4148
 QSERV_WORKER_DB_PORT=3368
 QSERV_XROOTD_PORT=1894
-# These two ports are configured in $QSERV_BASE_DIR/master/config/proxysql.cnf
-# Thea are not used by none of the deployment management scripts.
-# Port QSERV_CZAR_PROXYSQL_USER_PORT is the SSL-encrypted fronend for
-# Czar's port QSERV_CZAR_PROXY_PORT.
-QSERV_CZAR_PROXYSQL_USER_PORT=14140
-QSERV_CZAR_PROXYSQL_ADMIN_PORT=14141
 QSERV_CZAR_HTTP_THREADS=16
 QSERV_CZAR_HTTP_INGEST_THREADS=16
 QSERV_CZAR_HTTP_CONFIG="/config-etc/qserv-czar-http.cfg"
@@ -348,9 +387,6 @@ QSERV_CZAR_HTTP_SSL_CERT="/config-etc/ssl/czar-cert.pem"
 QSERV_CZAR_HTTP_SSL_KEY="/config-etc/ssl/czar-key.pem"
 QSERV_CZAR_HTTP_TMP_DIR="/qserv/data/ingest"
 QSERV_CZAR_HTTP_PARAMS="--config=${QSERV_CZAR_HTTP_CONFIG} --port=${QSERV_CZAR_HTTP_PORT} --threads=${QSERV_CZAR_HTTP_THREADS} --worker-ingest-threads=${QSERV_CZAR_HTTP_INGEST_THREADS} --ssl-cert-file=${QSERV_CZAR_HTTP_SSL_CERT} --ssl-private-key-file=${QSERV_CZAR_HTTP_SSL_KEY} --tmp-dir=${QSERV_CZAR_HTTP_TMP_DIR} --verbose"
-
-# An alternative option for the TLS/SSL termination of the port
-QSERV_CZAR_SSL_PROXY_PORT=14140
 
 # -------------------------------------
 # ----- Replication/Ingest system -----

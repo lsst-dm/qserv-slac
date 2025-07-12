@@ -68,7 +68,7 @@ if [ -n "${CZAR_CMSD}" ]; then
     -e "LSST_LOG_CONFIG=/config-etc/log/cmsd.cfg" \
     -e "CONTAINER_NAME=${CZAR_CMSD_CONTAINER_NAME}" \
     "${QSERV_IMAGE_TAG}" \
-    bash -c \''cmsd -c /config-etc/cmsd.cfg -n manager -I v4 -d -l @libXrdSsiLog.so >& /qserv/log/${CONTAINER_NAME}.log'\'
+    bash -c \''cmsd -c /config-etc/cmsd.cfg -n manager -I v4 -d -l @libXrdSsiLog.so 2>&1 >> /qserv/log/${CONTAINER_NAME}.log'\'
 fi
 
 if [ -n "${CZAR_XROOTD}" ]; then
@@ -91,7 +91,7 @@ if [ -n "${CZAR_XROOTD}" ]; then
     -e "LSST_LOG_CONFIG=/config-etc/log/xrootd.cfg" \
     -e "CONTAINER_NAME=${CZAR_XROOTD_CONTAINER_NAME}" \
     "${QSERV_IMAGE_TAG}" \
-    bash -c \''xrootd -c /config-etc/xrootd.cfg -n manager -I v4 -d -l @libXrdSsiLog.so >& /qserv/log/${CONTAINER_NAME}.log'\'
+    bash -c \''xrootd -c /config-etc/xrootd.cfg -n manager -I v4 -d -l @libXrdSsiLog.so 2>&1 >> /qserv/log/${CONTAINER_NAME}.log'\'
 fi
 
 if [ -n "${CZAR_PROXY}" ]; then
@@ -119,7 +119,7 @@ if [ -n "${CZAR_PROXY}" ]; then
     --ulimit memlock=${ULIMIT_MEMLOCK} \
     --ulimit core=${ULIMIT_CORE} \
     "${QSERV_IMAGE_TAG}" \
-    bash -c \''LD_PRELOAD=libjemalloc.so.2 mysql-proxy --proxy-lua-script=/usr/local/lua/qserv/scripts/mysqlProxy.lua --lua-cpath=/usr/local/lua/qserv/lib/czarProxy.so --defaults-file=/config-etc/my-proxy.cfg --log-file=/qserv/log/${CONTAINER_NAME}.mysql-proxy.log >& /qserv/log/${CONTAINER_NAME}.log'\'
+    bash -c \''LD_PRELOAD=libjemalloc.so.2 mysql-proxy --proxy-lua-script=/usr/local/lua/qserv/scripts/mysqlProxy.lua --lua-cpath=/usr/local/lua/qserv/lib/czarProxy.so --defaults-file=/config-etc/my-proxy.cfg --log-file=/qserv/log/${CONTAINER_NAME}.mysql-proxy.log 2>&1 >> /qserv/log/${CONTAINER_NAME}.log'\'
 fi
 
 if [ -n "${CZAR_SSL_PROXY}" ]; then
@@ -144,7 +144,7 @@ if [ -n "${CZAR_SSL_PROXY}" ]; then
     --ulimit memlock=${ULIMIT_MEMLOCK} \
     --ulimit core=${ULIMIT_CORE} \
     "${CZAR_SSL_PROXY_IMAGE_TAG}" \
-    /bin/sh -c \''/usr/local/bin/proxy ${SSL_PORT_OUT} ${PORT_IN} /etc/ssl/czar-cert.pem /etc/ssl/czar-key.pem >& /qserv/log/${CONTAINER_NAME}.log'\'
+    /bin/sh -c \''/usr/local/bin/proxy ${SSL_PORT_OUT} ${PORT_IN} /etc/ssl/czar-cert.pem /etc/ssl/czar-key.pem 2>&1 >> /qserv/log/${CONTAINER_NAME}.log'\'
 fi
 
 if [ -n "${CZAR_HTTP}" ]; then
@@ -173,7 +173,7 @@ if [ -n "${CZAR_HTTP}" ]; then
     --ulimit memlock=${ULIMIT_MEMLOCK} \
     --ulimit core=${ULIMIT_CORE} \
     "${QSERV_IMAGE_TAG}" \
-    bash -c \''qserv-czar-http ${QSERV_CZAR_HTTP_PARAMS} >& /qserv/log/${CONTAINER_NAME}.log'\'
+    bash -c \''qserv-czar-http ${QSERV_CZAR_HTTP_PARAMS} 2>&1 >> /qserv/log/${CONTAINER_NAME}.log'\'
 fi
 
 
@@ -257,7 +257,7 @@ if [ -n "${WORKER_CMSD}" ]; then
       -e "LSST_LOG_CONFIG=/config-etc/log/cmsd.cfg" \
       -e "CONTAINER_NAME=${WORKER_CMSD_CONTAINER_NAME}" \
       "${QSERV_IMAGE_TAG}" \
-      bash -c \''cmsd -c /config-etc/cmsd.cfg -n worker -I v4 -d -l @libXrdSsiLog.so -+xrdssi /config-etc/xrdssi.cfg >& /qserv/log/${CONTAINER_NAME}.log'\'&
+      bash -c \''cmsd -c /config-etc/cmsd.cfg -n worker -I v4 -d -l @libXrdSsiLog.so -+xrdssi /config-etc/xrdssi.cfg 2>&1 >> /qserv/log/${CONTAINER_NAME}.log'\'&
   done
   wait
 fi
@@ -289,7 +289,7 @@ if [ -n "${WORKER_XROOTD}" ]; then
       --ulimit memlock=${ULIMIT_MEMLOCK} \
       --ulimit core=${ULIMIT_CORE} \
       "${QSERV_IMAGE_TAG}" \
-      bash -c \''LD_PRELOAD=libjemalloc.so.2 xrootd -c /config-etc/cmsd.cfg -n worker -I v4 -d -l @libXrdSsiLog.so -+xrdssi /config-etc/xrdssi.cfg >& /qserv/log/${CONTAINER_NAME}.log'\'&
+      bash -c \''LD_PRELOAD=libjemalloc.so.2 xrootd -c /config-etc/cmsd.cfg -n worker -I v4 -d -l @libXrdSsiLog.so -+xrdssi /config-etc/xrdssi.cfg 2>&1 >> /qserv/log/${CONTAINER_NAME}.log'\'&
   done
   wait
 fi
@@ -379,7 +379,7 @@ if [ -n "${REPL_REG}" ]; then
     -e "'REPL_ADMIN_AUTH_KEY=${REPL_ADMIN_AUTH_KEY}'" \
     --ulimit core=${ULIMIT_CORE} \
     "${REPL_IMAGE_TAG}" \
-    bash -c \''qserv-replica-registry ${REPL_REG_PARAMETERS} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" >& /qserv/log/${REPL_REG_CONTAINER_NAME}.log'\'&
+    bash -c \''qserv-replica-registry ${REPL_REG_PARAMETERS} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" 2>&1 >> /qserv/log/${REPL_REG_CONTAINER_NAME}.log'\'&
 fi
 
 # Set the following environment variable before running the Controller
@@ -422,7 +422,7 @@ if [ -n "${REPL_CONTR}" ]; then
     -e "'REPL_REG_HOST=${MASTER}'" \
     --ulimit core=${ULIMIT_CORE} \
     "${REPL_IMAGE_TAG}" \
-    bash -c \''qserv-replica-master-http ${REPL_CONTR_PARAMETERS} --registry-host=${REPL_REG_HOST} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-czar-db="${QSERV_CZAR_DB_CONN}" --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" >& /qserv/log/${REPL_CONTR_CONTAINER_NAME}.log'\'&
+    bash -c \''qserv-replica-master-http ${REPL_CONTR_PARAMETERS} --registry-host=${REPL_REG_HOST} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-czar-db="${QSERV_CZAR_DB_CONN}" --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" 2>&1 >> /qserv/log/${REPL_CONTR_CONTAINER_NAME}.log'\'&
 fi
 
 if [ -n "${REPL_CONTR_DEBUG}" ]; then
@@ -492,7 +492,7 @@ if [ -n "${REPL_WORKER}" ]; then
       -e "'REPL_REG_HOST=${MASTER}'" \
       --ulimit core=${ULIMIT_CORE} \
      "${REPL_IMAGE_TAG}" \
-      bash -c \''qserv-replica-worker ${REPL_WORKER_PARAMETERS} --registry-host=${REPL_REG_HOST} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-worker-db="${QSERV_WORKER_DB_CONN}" --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" >& /qserv/log/${REPL_WORKER_CONTAINER_NAME}.log'\' &
+      bash -c \''qserv-replica-worker ${REPL_WORKER_PARAMETERS} --registry-host=${REPL_REG_HOST} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-worker-db="${QSERV_WORKER_DB_CONN}" --auth-key="${REPL_AUTH_KEY}" --admin-auth-key="${REPL_ADMIN_AUTH_KEY}" 2>&1 >> /qserv/log/${REPL_WORKER_CONTAINER_NAME}.log'\' &
   done
 fi
 if [ -n "${REPL_WORKER_DEBUG}" ]; then

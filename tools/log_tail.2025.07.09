@@ -1,0 +1,102 @@
+#/bin/bash -f
+
+set -e
+
+PREFIX=$(date +'%s');
+DEFAULT_LINES=100
+LINES=${DEFAULT_LINES}
+REGEXP=
+MERGE=
+HELP="
+Usage:
+  [--lines=<num>] [--regexp=<pattern>] [<service specificaton>]
+
+Where:
+  --lines=<number>
+      The number of lines in the end of each log file to search for
+      the given pattern. Default: '${DEFAULT_LINES}'.
+
+  --regexp=<pattern>
+      A regular expression. If the one is provided the content of the log stream
+      will be filtered using 'egrep <pattern>'. Otherwise, no additional
+      processing will be made on the stream.
+  --merge
+      Sort and merge results read from all log files based on the timestamps.
+      Otherwise group results by the log files.
+";
+
+ARGS=
+for i in "$@"; do
+    case $i in
+    --lines=*)
+        LINES="${i#*=}"
+        ;;
+    --regexp=*)
+        REGEXP="${i#*=}"
+        ;;
+    --merge)
+        MERGE=1
+        ;;
+    *)
+        if [ -n "${ARGS}" ]; then
+            ARGS="${ARGS} ${i}"
+        else
+            ARGS="${i}"
+        fi
+        ;;
+    esac
+done
+if [ ! -n "${LINES}" ]; then
+    LINES=${DEFAULT_LINES}
+fi
+
+# Load parameters of the setup into the corresponding environment
+# variables
+
+. $(dirname "$0")/config/env ${ARGS}
+
+function get_logfile {
+  set -x
+  local SERVER="$1"
+  local HOST="$2"
+  local SVC="$3"
+  local INFILE="$(ls ${QSERV_BASE_DIR}/${SERVER}/log/${SVC}/*.log | tail -1)"
+  local OUTFILE="/tmp/${PREFIX}.${HOST}.${SVC}.log"
+  ssh -n $HOST -- "tail -q -n ${LINES} ${INFILE}" | egrep "${REGEXP}" | awk '{print $1"  '${HOST}'"substr($0,length($1)+1)}' > ${OUTFILE}&
+}
+
+if [ -n "${CZAR_PROXY}" ]; then
+  get_logfile master $MASTER czar-proxy
+fi
+if [ -n "${CZAR_SSL_PROXY}" ]; then
+  get_logfile master $MASTER czar-ssl-proxy
+fi
+if [ -n "${CZAR_HTTP}" ]; then
+  get_logfile master $MASTER czar-http
+fi
+if [ -n "${REPL_REG}" ]; then
+  get_logfile master $MASTER repl-reg
+fi
+if [ -n "${REPL_CONTR}" ]; then
+  get_logfile master $MASTER repl-contr
+fi
+for HOST in $WORKERS; do
+  if [ -n "${WORKER_CMSD}" ]; then
+    get_logfile worker $HOST worker-cmsd
+  fi
+  if [ -n "${WORKER_XROOTD}" ]; then
+    get_logfile worker $HOST worker-xrootd
+  fi
+  if [ -n "${REPL_WORKER}" ]; then
+    get_logfile worker $HOST repl-worker
+  fi
+done
+wait
+if [ -n "${MERGE}" ]; then
+  cat /tmp/${PREFIX}.*.log | sort
+else
+  for f in $(ls /tmp/${PREFIX}.*.log); do
+    cat $f
+  done
+fi
+rm /tmp/${PREFIX}.*.log

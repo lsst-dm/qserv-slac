@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# List log files of the select services
+
+set -e
+
+# Load parameters of the setup into the corresponding environment
+# variables
+
+. $(dirname "$0")/config/env
+
+if [ -n "${CZAR_DB}${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}${CZAR_SSL_PROXY}${CZAR_HTTP}${REPL_DB}${REPL_REG}${REPL_CONTR}" ]; then
+  echo
+  echo "[${MASTER}]"
+  echo
+  if [ -n "${CZAR_DB}" ]; then
+    ssh -n $MASTER 'ls -l '"${QSERV_BASE_DIR}/master/log/czar-mariadb/*.log" 2>/dev/null | awk '{printf "%12s  %s\n", $5, $9}'
+  fi
+  if [ -n "${CZAR_CMSD}" ]; then
+    ssh -n $MASTER 'ls -l '"${QSERV_BASE_DIR}/master/log/czar-cmsd/*.log" 2>/dev/null | awk '{printf "%12s  %s\n", $5, $9}'
+  fi
+  if [ -n "${CZAR_XROOTD}" ]; then
+    ssh -n $MASTER 'ls -l '"${QSERV_BASE_DIR}/master/log/czar-xrootd/*.log" 2>/dev/null | awk '{printf "%12s  %s\n", $5, $9}'
+  fi
+  if [ -n "${CZAR_PROXY}" ]; then
+    ssh -n $MASTER 'ls -l '"${QSERV_BASE_DIR}/master/log/czar-proxy/*.log" 2>/dev/null | awk '{printf "%12s  %s\n", $5, $9}'
+    ssh -n $MASTER 'ls -l '"${QSERV_BASE_DIR}/master/log/mysql-proxy/*.log" 2>/dev/null | awk '{printf "%12s  %s\n", $5, $9}'
+  fi
+  if [ -n "${CZAR_SSL_PROXY}" ]; then
+    ssh -n $MASTER 'ls -l '"${QSERV_BASE_DIR}/master/log/czar-ssl-proxy/*.log" 2>/dev/null | awk '{printf "%12s  %s\n", $5, $9}'
+  fi
+  if [ -n "${CZAR_HTTP}" ]; then
+    ssh -n $MASTER 'ls -l '"${QSERV_BASE_DIR}/master/log/czar-http/*.log" 2>/dev/null | awk '{printf "%12s  %s\n", $5, $9}'
+  fi
+  if [ -n "${REPL_DB}" ]; then
+    ssh -n $MASTER 'ls -l '"${QSERV_BASE_DIR}/master/log/repl-mariadb/*.log" 2>/dev/null | awk '{printf "%12s  %s\n", $5, $9}'
+  fi
+  if [ -n "${REPL_REG}" ]; then
+    ssh -n $MASTER 'ls -l '"${QSERV_BASE_DIR}/master/log/repl-reg/*.log" 2>/dev/null | awk '{printf "%12s  %s\n", $5, $9}'
+  fi
+  if [ -n "${REPL_CONTR}" ]; then
+    ssh -n $MASTER 'ls -l '"${QSERV_BASE_DIR}/master/log/repl-constr/*.log" 2>/dev/null | awk '{printf "%12s  %s\n", $5, $9}'
+  fi
+fi
+if [ -n "${WORKER_DB}${WORKER_CMSD}${WORKER_XROOTD}${REPL_WORKER}" ]; then
+  for WORKER in $WORKERS; do
+    echo
+    echo "[${WORKER}]"
+    echo
+    if [ -n "${WORKER_DB}" ]; then
+      ssh -n $WORKER 'ls -l '"${QSERV_BASE_DIR}/worker/log/worker-mariadb/*.log" 2>/dev/null | awk '{printf "%12s  %s\n", $5, $9}'
+    fi
+    if [ -n "${WORKER_CMSD}" ]; then
+      ssh -n $WORKER 'ls -l '"${QSERV_BASE_DIR}/worker/log/worker-cmsd/*.log" 2>/dev/null | awk '{printf "%12s  %s\n", $5, $9}'
+    fi
+    if [ -n "${WORKER_XROOTD}" ]; then
+      ssh -n $WORKER 'ls -l '"${QSERV_BASE_DIR}/worker/log/worker-xrootd/*.log" 2>/dev/null | awk '{printf "%12s  %s\n", $5, $9}'
+    fi
+    if [ -n "${REPL_WORKER}" ]; then
+      ssh -n $WORKER 'ls -l '"${QSERV_BASE_DIR}/worker/log/repl-worker/*.log" 2>/dev/null | awk '{printf "%12s  %s\n", $5, $9}'
+    fi
+  done
+fi
+echo
