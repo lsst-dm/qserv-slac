@@ -39,7 +39,7 @@ if [ -n "${CZAR_DB}${CZAR_CMSD}${CZAR_XROOTD}${CZAR_PROXY}${CZAR_SSL_PROXY}${CZA
     ssh -n $MASTER 'ls -l '"${QSERV_BASE_DIR}/master/log/repl-reg/*.log" 2>/dev/null | awk '{printf "%12s  %s\n", $5, $9}'
   fi
   if [ -n "${REPL_CONTR}" ]; then
-    ssh -n $MASTER 'ls -l '"${QSERV_BASE_DIR}/master/log/repl-constr/*.log" 2>/dev/null | awk '{printf "%12s  %s\n", $5, $9}'
+    ssh -n $MASTER 'ls -l '"${QSERV_BASE_DIR}/master/log/repl-contr/*.log" 2>/dev/null | awk '{printf "%12s  %s\n", $5, $9}'
   fi
 fi
 if [ -n "${WORKER_DB}${WORKER_CMSD}${WORKER_XROOTD}${REPL_WORKER}" ]; then

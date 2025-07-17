@@ -154,7 +154,7 @@ QSERV_CZAR_HTTP_CONFIG="/config-etc/qserv-czar-http.cfg"
 QSERV_CZAR_HTTP_SSL_CERT="/config-etc/ssl/czar-cert.pem"
 QSERV_CZAR_HTTP_SSL_KEY="/config-etc/ssl/czar-key.pem"
 QSERV_CZAR_HTTP_TMP_DIR="/qserv/data/ingest"
-QSERV_CZAR_HTTP_PARAMS="--config=${QSERV_CZAR_HTTP_CONFIG} --port=${QSERV_CZAR_HTTP_PORT} --threads=${QSERV_CZAR_HTTP_THREADS} --worker-ingest-threads=${QSERV_CZAR_HTTP_INGEST_THREADS} --ssl-cert-file=${QSERV_CZAR_HTTP_SSL_CERT} --ssl-private-key-file=${QSERV_CZAR_HTTP_SSL_KEY} --tmp-dir=${QSERV_CZAR_HTTP_TMP_DIR} --user=${QSERV_CZAR_HTTP_USER} --password=${QSERV_CZAR_HTTP_PASSWORD} --verbose"
+QSERV_CZAR_HTTP_PARAMS="--config=${QSERV_CZAR_HTTP_CONFIG} --port=${QSERV_CZAR_HTTP_PORT} --threads=${QSERV_CZAR_HTTP_THREADS} --worker-ingest-threads=${QSERV_CZAR_HTTP_INGEST_THREADS} --ssl-cert-file=${QSERV_CZAR_HTTP_SSL_CERT} --ssl-private-key-file=${QSERV_CZAR_HTTP_SSL_KEY} --tmp-dir=${QSERV_CZAR_HTTP_TMP_DIR} --verbose"
 
 # -------------------------------------
 # ----- Replication/Ingest system -----
