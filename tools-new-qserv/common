@@ -85,6 +85,8 @@ REPL_WORKER_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-worker"
 REPL_WORKER_DEBUG_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}repl-worker-debug"
 
 QSERV_CZAR_DB_PASSWORD="$(get_param config/secrets/qserv_czar_db_root_password)"
+QSERV_CZAR_HTTP_USER="$(get_param config/secrets/qserv_czar_http_user)"
+QSERV_CZAR_HTTP_PASSWORD="$(get_param config/secrets/qserv_czar_http_password)"
 QSERV_WORKER_DB_PASSWORD="$(get_param config/secrets/qserv_worker_db_root_password)"
 REPL_DB_ROOT_PASSWORD="$(get_param config/secrets/repl_db_root_password)"
 REPL_DB_QSREPLICA_PASSWORD="$(get_param config/secrets/repl_db_qsreplica_password)"

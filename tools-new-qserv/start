@@ -128,12 +128,14 @@ if [ -n "${CZAR_HTTP}" ]; then
     -v "${QSERV_BASE_DIR}/master/qserv:/home/qserv" \
     -v "${CORE_DUMPS}:${CORE_DUMPS}" \
     -e "QSERV_CZAR_HTTP_PARAMS='"${QSERV_CZAR_HTTP_PARAMS}"'" \
+    -e QSERV_CZAR_HTTP_USER="'${QSERV_CZAR_HTTP_USER}'" \
+    -e QSERV_CZAR_HTTP_PASSWORD="'${QSERV_CZAR_HTTP_PASSWORD}'" \
     -e "LSST_LOG_CONFIG=/config-etc/log/czar-http.cfg" \
     -e "CONTAINER_NAME=${CZAR_HTTP_CONTAINER_NAME}" \
     --ulimit memlock=${ULIMIT_MEMLOCK} \
     --ulimit core=${ULIMIT_CORE} \
     "${QSERV_IMAGE_TAG}" \
-    bash -c \''LD_PRELOAD=libjemalloc.so.2 qserv-czar-http ${QSERV_CZAR_HTTP_PARAMS} >& /qserv/log/${CONTAINER_NAME}.log'\'
+    bash -c \''LD_PRELOAD=libjemalloc.so.2 qserv-czar-http ${QSERV_CZAR_HTTP_PARAMS} --user=${QSERV_CZAR_HTTP_USER} --password=${QSERV_CZAR_HTTP_PASSWORD} >& /qserv/log/${CONTAINER_NAME}.log'\'
 fi
 
 
