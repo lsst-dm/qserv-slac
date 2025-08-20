@@ -56,9 +56,14 @@ CORE_DUMPS=/zfspool/core-files
 #
 # QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2022.7.1-rc1-21-g292b0f1ea"
 #
-# 2024-11-19: pgraded to MariaDB 11.4.4
+# 2024-11-19: Upgraded to MariaDB 11.4.4 (Ubuntu 20.04)
 #
-QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2024.11.1-rc1-1-g36b8ad4a4"
+# QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2024.11.1-rc1-1-g36b8ad4a4"
+#
+# 2025-08-11: MariaDB 11.4.4 built on top of Ubuntu 22.04.
+#             The change was needed because 20.04 expired.
+#
+QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2025.8.1-rc1-17-gdc930850d"
 
 # Using custom versions built for Qserv
 #
@@ -371,7 +376,62 @@ CZAR_SSL_PROXY_IMAGE_TAG="qserv/mysql-proxy-ssl:latest"
 #
 #             Same as above plus a possible bug fix for the XROOTD/SSI issues #2479 and #2481.
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2025.6.2-rc1-9-g91b3371f2"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.6.2-rc1-9-g91b3371f2"
+#
+#             Based on DM-42005 + DM-51775 (special symbols in database/table names)
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.6.2-rc1-28-gbea8a0005"
+#
+#             Same as above plus the ongoing work on the improved query progression plot
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.6.2-rc1-33-g77ed4f350-dirty"
+#
+#             Plus extended information schema to report errors and special status FAILED_LR
+#             NOTE: qmeta schema evolution to version 11
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.6.2-rc1-43-g1af3b73ca"
+#
+#             Plus DM-51700 (Discarded result files at workers are not deleted automatically
+#             before query processing finishes).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.6.2-rc1-46-ge078eb2a9"
+#
+#             Plus DM-41534 (Display refined query scheduling info on the Qserv Web Dashboard).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.6.2-rc1-48-g73603814a"
+#
+#             Plus DM-50683(Finished queries may stuck in the metadata table QStatsTmp).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.6.2-rc1-60-g2575b5bbf"
+#
+#             Plus DM-51702 (Retain the query progression history in Qserv's metadata).
+#             All previous tickets (but DM-42005) have been merged into the "main" branch.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.6.2-rc1-68-gfdf0f9638"
+#
+#             Rebased DM-42005 against the latest production release 2025.8.1-rc1
+#             that includes all above-mentioned bracnhes merged into the "main" one.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.1-rc1-8-gfdf0f9638"
+#
+#             Same as above plus DM-52125 (Creating Qserv tables with specified character
+#             set and collation).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.1-rc1-15-g8ab2fae08"
+#
+#             Same as above plus DM-51977 (Test the mega-CMSD redirector capable
+#             of scaling up to 256 workers in Qserv).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.1-rc1-17-gdc930850d"
+#
+#             Same as above and rebased against "main" (new release 2025.8.2).
+#             All previous tags are included.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-9-g90cc74ed0"
+#
+#             Same as before and eliminated subchunk materialization.
+#
+QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-14-g8658d3a95"
 
 QSERV_BASE_DIR="/zfspool/qserv-test"
 QSERV_CZAR_DB_PORT=3308
