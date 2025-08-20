@@ -15,8 +15,8 @@ fi
 if [ -n "${CZAR_PROXY}" ]; then
   ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar proxy:     "$(docker ps -a | grep -e '$CZAR_PROXY_CONTAINER_NAME'$)'
 fi
-if [ -n "${CZAR_PROXYSQL}" ]; then
-  ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar proxysql:  "$(docker ps -a | grep '$CZAR_PROXYSQL_CONTAINER_NAME')'
+if [ -n "${CZAR_SSL_PROXY}" ]; then
+  ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar ssl proxy: "$(docker ps -a | grep '$CZAR_SSL_PROXY_CONTAINER_NAME')'
 fi
 if [ -n "${CZAR_HTTP}" ]; then
   ssh -n $MASTER 'echo "["'$MASTER'"] qserv czar http:      "$(docker ps -a | grep '$CZAR_HTTP_CONTAINER_NAME')'

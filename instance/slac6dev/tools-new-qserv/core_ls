@@ -9,7 +9,7 @@ set -e
 
 . $(dirname "$0")/config/env
 
-if [ -n "${CZAR_DB}${CZAR_PROXY}${CZAR_PROXYSQL}${CZAR_HTTP}${REPL_DB}${REPL_REG}${REPL_CONTR}" ]; then
+if [ -n "${CZAR_DB}${CZAR_PROXY}${CZAR_SSL_PROXY}${CZAR_HTTP}${REPL_DB}${REPL_REG}${REPL_CONTR}" ]; then
   echo
   echo "[${MASTER}]"
   echo

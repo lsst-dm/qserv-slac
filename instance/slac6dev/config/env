@@ -67,9 +67,9 @@ CORE_DUMPS=/zfspool/core-files
 #
 QSERV_DB_IMAGE_TAG="qserv/lite-mariadb:2025.8.1-rc1-17-gdc930850d"
 
-# Using a custom version built for Qserv
+# Using custom versions built for Qserv
 #
-PROXYSQL_IMAGE_TAG="qserv/proxysql:2.5.3"
+CZAR_SSL_PROXY_IMAGE_TAG="qserv/mysql-proxy-ssl:latest"
 
 # The latest stable release.
 # QSERV_IMAGE_TAG="qserv/lite-qserv:2022.5.2-rc1"
@@ -267,16 +267,11 @@ QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-34-g32c92e392-dirty"
 
 QSERV_BASE_DIR="/zfspool/qserv-dev"
 QSERV_CZAR_DB_PORT=3307
-QSERV_CZAR_PROXY_PORT=4047
+QSERV_CZAR_PROXY_PORT=14047
+QSERV_CZAR_SSL_PROXY_PORT=4047
 QSERV_CZAR_HTTP_PORT=4078
 QSERV_WORKER_DB_PORT=3367
 QSERV_XROOTD_PORT=1794
-# These two ports are configured in $QSERV_BASE_DIR/master/config/proxysql.cnf
-# Thea are not used by none of the deployment management scripts.
-# Port QSERV_CZAR_PROXYSQL_USER_PORT is the SSL-encrypted fronend for
-# Czar's port QSERV_CZAR_PROXY_PORT.
-QSERV_CZAR_PROXYSQL_USER_PORT=14047
-QSERV_CZAR_PROXYSQL_ADMIN_PORT=14148
 QSERV_CZAR_HTTP_THREADS=16
 QSERV_CZAR_HTTP_INGEST_THREADS=16
 QSERV_CZAR_HTTP_CONFIG="/config-etc/qserv-czar-http.cfg"

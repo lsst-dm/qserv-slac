@@ -69,7 +69,7 @@ ALL_WORKERS="$(get_param config/workers)"
 
 CZAR_DB_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-mariadb"
 CZAR_PROXY_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-proxy"
-CZAR_PROXYSQL_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-proxysql"
+CZAR_SSL_PROXY_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-ssl-proxy"
 CZAR_HTTP_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-http"
 CZAR_DEBUG_CONTAINER_NAME="${CONTAINER_NAME_PREFIX}czar-debug"
 
@@ -148,8 +148,8 @@ Selectors for the Qserv czar:
     --czar-proxy
         MySQL proxy service of czar (the czar itself).
 
-    --czar-proxysql
-        ProxySQL service providing SSL-encrypted frontend for Czar's MySQL proxy.
+    --czar-ssl-proxy
+        TLS/SSL termination service providing encrypted frontend for Czar's MySQL proxy.
 
     --czar-http
         The HTTP service of Czar (the czar itself).
@@ -213,7 +213,7 @@ WORKERS="$ALL_WORKERS"
 CZAR_ALL_SERVICES=
 CZAR_DB=
 CZAR_PROXY=
-CZAR_PROXYSQL=
+CZAR_SSL_PROXY=
 CZAR_HTTP=
 CZAR_DEBUG=
 
@@ -235,7 +235,7 @@ for i in "$@"; do
     -a|--all)
         CZAR_DB=1
         CZAR_PROXY=1
-        CZAR_PROXYSQL=1
+        CZAR_SSL_PROXY=1
 	CZAR_HTTP=1
         WORKER_DB=1
         WORKER_SVC=1
@@ -260,7 +260,7 @@ for i in "$@"; do
     --czar-all)
         CZAR_DB=1
         CZAR_PROXY=1
-        CZAR_PROXYSQL=1
+        CZAR_SSL_PROXY=1
 	CZAR_HTTP=1
         ;;
     --czar-db)
@@ -269,8 +269,8 @@ for i in "$@"; do
     --czar-proxy)
         CZAR_PROXY=1
         ;;
-    --czar-proxysql)
-        CZAR_PROXYSQL=1
+    --czar-ssl-proxy)
+        CZAR_SSL_PROXY=1
         ;;
     --czar-http)
         CZAR_HTTP=1
@@ -325,7 +325,7 @@ for i in "$@"; do
         ;;
     esac
 done
-if [ -z "${CZAR_DB}${CZAR_PROXY}${CZAR_PROXYSQL}${CZAR_HTTP}${CZAR_DEBUG}${WORKER_DB}${WORKER_SVC}${WORKER_DEBUG}${REPL_DB}${REPL_REG}${REPL_CONTR}${REPL_CONTR_DEBUG}${REPL_WORKER}${REPL_WORKER_DEBUG}" ]; then
+if [ -z "${CZAR_DB}${CZAR_PROXY}${CZAR_SSL_PROXY}${CZAR_HTTP}${CZAR_DEBUG}${WORKER_DB}${WORKER_SVC}${WORKER_DEBUG}${REPL_DB}${REPL_REG}${REPL_CONTR}${REPL_CONTR_DEBUG}${REPL_WORKER}${REPL_WORKER_DEBUG}" ]; then
     >&2
 echo "error: please, select services to be affected by the operation, or use -a|--all
        for all services

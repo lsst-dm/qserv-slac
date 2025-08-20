@@ -9,6 +9,8 @@ set -e
 
 . $(dirname "$0")/config/env
 
+yyyymmdd=$(date +"%Y%m%d")
+
 if [ -n "${CZAR_DB}" ]; then
   echo "[${MASTER}] starting qserv czar mariadb"
   LOG_DIR=${QSERV_BASE_DIR}/master/log
@@ -78,28 +80,30 @@ if [ -n "${CZAR_PROXY}" ]; then
     bash -c \''LD_PRELOAD=libjemalloc.so.2 mysql-proxy --proxy-lua-script=/usr/local/lua/qserv/scripts/mysqlProxy.lua --lua-cpath=/usr/local/lua/qserv/lib/czarProxy.so --defaults-file=/config-etc/my-proxy.cfg --log-file=/qserv/log/${CONTAINER_NAME}.mysql-proxy.log >& /qserv/log/${CONTAINER_NAME}.log'\'
 fi
 
-if [ -n "${CZAR_PROXYSQL}" ]; then
-  echo "[${MASTER}] starting qserv czar proxysql"
+if [ -n "${CZAR_SSL_PROXY}" ]; then
+  echo "[${MASTER}] starting qserv czar ssl proxy"
   LOG_DIR=${QSERV_BASE_DIR}/master/log
+  ssh -n $MASTER mkdir -p ${LOG_DIR}/czar-ssl-proxy
   ssh -n $MASTER docker run \
     --privileged \
     --cap-add=SYS_PTRACE \
     --network=host \
     --detach=true \
-    --name="${CZAR_PROXYSQL_CONTAINER_NAME}" \
-    --restart="${CONTAINER_RESTART_POLICY}" \
+    --name=${CZAR_SSL_PROXY_CONTAINER_NAME} \
+    --restart=${CONTAINER_RESTART_POLICY} \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
     -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
     -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
-    -v "${QSERV_BASE_DIR}/master/config/proxysql.cnf:/etc/proxysql.cnf:ro" \
-    -v "${LOG_DIR}:/qserv/log" \
-    -v "${QSERV_BASE_DIR}/master/config/proxysql_var_lib:/var/lib/proxysql" \
-    -v "${CORE_DUMPS}:${CORE_DUMPS}" \
-    -e "CONTAINER_NAME=${CZAR_PROXYSQL_CONTAINER_NAME}" \
+    -v ${QSERV_BASE_DIR}/master/config/ssl:/etc/ssl:ro \
+    -v ${LOG_DIR}:/qserv/log \
+    -v ${CORE_DUMPS}:${CORE_DUMPS} \
+    -e PORT_IN=${QSERV_CZAR_PROXY_PORT} \
+    -e SSL_PORT_OUT=${QSERV_CZAR_SSL_PROXY_PORT} \
+    -e yyyymmdd=${yyyymmdd} \
     --ulimit memlock=${ULIMIT_MEMLOCK} \
     --ulimit core=${ULIMIT_CORE} \
-    "${PROXYSQL_IMAGE_TAG}" \
-    bash -c \''proxysql --reload --idle-threads -D /var/lib/proxysql -c /etc/proxysql.cnf >& /qserv/log/${CONTAINER_NAME}.log'\'
+    ${CZAR_SSL_PROXY_IMAGE_TAG} \
+    /bin/sh -c \''/usr/local/bin/proxy ${SSL_PORT_OUT} ${PORT_IN} /etc/ssl/czar-cert.pem /etc/ssl/czar-key.pem 2>&1 >> /qserv/log/czar-ssl-proxy/${yyyymmdd}.log'\'&
 fi
 
 if [ -n "${CZAR_HTTP}" ]; then
