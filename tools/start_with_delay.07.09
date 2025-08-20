@@ -4,7 +4,7 @@
 sleep 10
 ./start --czar-proxy
 ./start --czar-http
-./start --czar-proxysql
+./start --czar-ssl-proxy
 ./start --czar-xrootd
 ./start --czar-cmsd
 ./start --worker-xrootd
