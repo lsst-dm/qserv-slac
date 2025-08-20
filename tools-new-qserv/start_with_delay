@@ -1,0 +1,11 @@
+./start --czar-db
+./start --worker-db
+./start --repl-db
+sleep 10
+./start --czar-proxy
+./start --czar-http
+./start --czar-ssl-proxy
+./start --worker-svc
+./start --repl-contr
+./start --repl-reg
+./start --repl-worker
