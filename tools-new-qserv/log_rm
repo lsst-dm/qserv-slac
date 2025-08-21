@@ -11,40 +11,40 @@ set -e
 . $(dirname "$0")/config/env
 
 if [ -n "${CZAR_DB}" ]; then
-    ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/'${CZAR_DB_CONTAINER_NAME}'.*.log'&
+    ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/czar-mariadb/*.log'&
 fi
 if [ -n "${CZAR_PROXY}" ]; then
-    ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/'${CZAR_PROXY_CONTAINER_NAME}'.mysql-proxy.log'&
-    ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/'${CZAR_PROXY_CONTAINER_NAME}'.log'&
+    ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/mysql-proxy/*.log'&
+    ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/czar-proxy/*.log'&
 fi
 if [ -n "${CZAR_SSL_PROXY}" ]; then
-    ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/'${CZAR_SSL_PROXY_CONTAINER_NAME}'.log'&
+    ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/czar-ssl-proxy/*.log'&
 fi
 if [ -n "${CZAR_HTTP}" ]; then
-    ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/'${CZAR_HTTP_CONTAINER_NAME}'.log'&
+    ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/czar-http/*.log'&
 fi
 if [ -n "${WORKER_DB}" ]; then
   for WORKER in $WORKERS; do
-    ssh -n $WORKER 'rm -vf '${QSERV_BASE_DIR}/worker/log'/'${WORKER_DB_CONTAINER_NAME}'.*.log'&
+    ssh -n $WORKER 'rm -vf '${QSERV_BASE_DIR}'/worker/log/worker-mariadb/*.log'&
   done
 fi
 if [ -n "${WORKER_SVC}" ]; then
   for WORKER in $WORKERS; do
-    ssh -n $WORKER 'rm -vf '${QSERV_BASE_DIR}/worker/log'/'${WORKER_SVC_CONTAINER_NAME}'.log'&
+    ssh -n $WORKER 'rm -vf '${QSERV_BASE_DIR}'/worker/log/worker-svc/*.log'&
   done
 fi
 if [ -n "${REPL_DB}" ]; then
-    ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/'${REPL_DB_CONTAINER_NAME}'.*.log'&
+    ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/repl-mariadb/*.log'&
 fi
 if [ -n "${REPL_REG}" ]; then
-    ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/'${REPL_REG_CONTAINER_NAME}'.log'&
+    ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/repl-reg/*.log'&
 fi
 if [ -n "${REPL_CONTR}" ]; then
-    ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/'${REPL_CONTR_CONTAINER_NAME}'.log'&
+    ssh -n $MASTER 'rm -vf '${QSERV_BASE_DIR}'/master/log/repl-contr/*.log'&
 fi
 if [ -n "${REPL_WORKER}" ]; then
   for WORKER in $WORKERS; do
-    ssh -n $WORKER 'rm -vf '${QSERV_BASE_DIR}/worker/log'/'${REPL_WORKER_CONTAINER_NAME}'.log'&
+    ssh -n $WORKER 'rm -vf '${QSERV_BASE_DIR}'/worker/log/repl-worker/*.log'&
   done
 fi
 wait

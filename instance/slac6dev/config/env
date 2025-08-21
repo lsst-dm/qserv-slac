@@ -547,7 +547,7 @@ REPL_REG_PARAMETERS="--registry-port=${REPL_REG_PORT} --debug"
 # --qserv-chunk-map-update
 # Temporarily disabled to avoid removing extra replicas:
 # --purge
-REPL_CONTR_PARAMETERS="--registry-port=${REPL_REG_PORT} --xrootd-port=${QSERV_XROOTD_PORT} --controller-http-server-port=${REPL_CONTR_HTTP_PORT} --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --purge --debug"
+REPL_CONTR_PARAMETERS="--registry-port=${REPL_REG_PORT} --xrootd-port=${QSERV_XROOTD_PORT} --controller-http-server-port=${REPL_CONTR_HTTP_PORT} --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --purge --debug --qserv-chunk-map-update"
 
 REPL_WORKER_SVC_PORT=25700
 REPL_WORKER_FS_PORT=25701
