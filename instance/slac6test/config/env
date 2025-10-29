@@ -431,7 +431,112 @@ CZAR_SSL_PROXY_IMAGE_TAG="qserv/mysql-proxy-ssl:latest"
 #
 #             Same as before and eliminated subchunk materialization.
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-14-g8658d3a95"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-14-g8658d3a95"
+#
+#             Same as before and added debugging to UserQueryFactory to measure
+#             query parsing/analyzing performance.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-16-gb0c0fdace"
+#
+#             Based on the previous effort. Switched to pre-materialized subchunks.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-14-g1b7339ce6"
+#
+#             Avoid locking query during parsing
+#             Expanded logging of the query parsing process.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-17-gdc1aa53a7-dirty"
+#
+#             Serialized access to ANTRL4 DFA during parsing in attempt
+#             to improve the query performance.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-18-g9d289777c"
+#
+#             Removed the serialization
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-17-gdc1aa53a7"
+#
+#             Upgraded ANTLR to 4.13.2 + thread local DFA
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-21-g2d6120af4"
+#
+#             Compiling Qserv ANTLR-generated classes with one-thread-per-parser option
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-22-g79bb6ef71"
+#
+#             Hucked build/src/parser/QSMySqlLexer.cpp and build/src/parser/QSMySqlParser.cpp
+#             to enforce ANTLR4_USE_THREAD_LOCAL_CACHE
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-22-g79bb6ef71"
+#
+#             Construct the parser using the alternative constructor
+#               antlr4::atn::ParserATNSimulatorOptions const defaultOptions;
+#               QSMySqlParser parser(&tokens, defaultOptions);
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-22-g79bb6ef71-dirty"
+#
+#             Same as above, plus truncated ANTLR4 parser definition
+#             to a very tiny subset of the MySQL grammar supported by Qserv.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-24-gdf2f3b5eb"
+#
+#             Back to the normal ctor of QSMySqlParser. The ANTLR4 gramma remains
+#             truncated.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-23-g726a45b22"
+#
+#             Same as above, just reduce logging at the TRACE level in the sync()
+#             method of ccontrol::ParserRunner.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-24-g1416ee6da"
+#
+#             Same as above, plus thread-safe impl of CssAccess.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-25-ge77077f26"
+#
+#             Same as above, plus removing extra locking before analyzeQuery()
+#             in UserQueryFactory in a hope that above-made changes to CssAccess
+#             make the locking unnecesarily.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-26-gdc1a93a5b"
+#
+#             Same as above rebased against the latest main branch (source tree
+#             reorganizaton). This version is meant to test the Python tools
+#             like smig.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1-50-gb57f1df2d"
+#
+#             Reduced logging in ParseListener, ParseAdapters and src/query/* classes.
+#             Rebased agains the latest release.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.9.1-rc1-23-g7be3b2813"
+#
+#             Custom version of ANTLR4's Parser (run-time for C++) that doesn't lock
+#             the shared cache.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.9.1-rc1-24-gcaca11f36"
+#
+#             Same plus user table monitoring
+#             NOTE: schema change in Czar DB
+#             NOTE: REST API change to 50
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.9.1-rc1-29-g9811c275d"
+#
+#             Same as above, rebased against the main branch (includes XROOTD 5.9.0
+#             and the automatic creation of the missing databases on new workers joining Qserv)
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.10.1-rc1-27-gf8236c4af"
+#
+#
+#             Back to pure DM-42005 rebased against the latest state of the main branch.
+#             Removed all experiments with ANTL4 optimizations and pre-materialized subchunks.
+#             Only the HTTP-based Replication Worker service is present on top of the main branch.
+#             NOTE: Schema upgrade of all databases after Fritze's effort to streamline schema management
+#             NOTE: REST API change to 51
+#             NOTE: Extra configuration option(s) required by the HTTP-based Replication Worker service
+#                   require a special version of the "start" script.
+#
+QSERV_IMAGE_TAG="qserv/lite-qserv:2025.10.1-rc1-15-g4666db084"
 
 QSERV_BASE_DIR="/zfspool/qserv-test"
 QSERV_CZAR_DB_PORT=3308
@@ -509,7 +614,7 @@ REPL_WORKER_PARAMETERS="--registry-port=${REPL_REG_PORT} --worker-svc-port=${REP
 # the Web dashboard and other Web apps served by the HTTP server of
 # the Master Controller 
 #
-# REPL_HTTP_ROOT="/zfspool/management/qserv/src/www"
+#REPL_HTTP_ROOT="/zfspool/management/qserv/src/www"
 
 # Limit size of the replication containers by 100 GB
 # This is needed for ingesting (very) large numbers of contributions.

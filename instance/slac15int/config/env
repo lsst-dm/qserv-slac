@@ -141,9 +141,13 @@ CZAR_SSL_PROXY_IMAGE_TAG="qserv/mysql-proxy-ssl:latest"
 #
 # QSERV_IMAGE_TAG="qserv/lite-qserv:2025.6.2-rc2"
 #
-# 2025-08-08: The latest production release. REST API versaion 48.
+# 2025-08-08: The latest production release. REST API version 48.
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.1-rc1"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.1-rc1"
+#
+# 2025-08-21: The latest production release. REST API version 49.
+#
+QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1"
 
 QSERV_BASE_DIR="/zfspool/qserv-int"
 QSERV_CZAR_DB_PORT=3309
