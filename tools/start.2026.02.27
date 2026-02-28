@@ -122,6 +122,7 @@ if [ -n "${CZAR_PROXY}" ]; then
     -w /qserv/log \
     --ulimit memlock=${ULIMIT_MEMLOCK} \
     --ulimit core=${ULIMIT_CORE} \
+    --ulimit nofile=${ULIMIT_NOFILE} \
     ${QSERV_IMAGE_TAG} \
     bash -c \''LD_PRELOAD=libjemalloc.so.2 mysql-proxy --proxy-lua-script=/usr/local/lua/qserv/scripts/mysqlProxy.lua --lua-cpath=/usr/local/lua/qserv/lib/czarProxy.so --defaults-file=/config-etc/my-proxy.cfg --log-file=/qserv/log/mysql-proxy/${yyyymmdd}.log'\'&
 fi
@@ -148,6 +149,7 @@ if [ -n "${CZAR_SSL_PROXY}" ]; then
     -e yyyymmdd=${yyyymmdd} \
     --ulimit memlock=${ULIMIT_MEMLOCK} \
     --ulimit core=${ULIMIT_CORE} \
+    --ulimit nofile=${ULIMIT_NOFILE} \
     ${CZAR_SSL_PROXY_IMAGE_TAG} \
     /bin/sh -c \''/usr/local/bin/proxy ${SSL_PORT_OUT} ${PORT_IN} /etc/ssl/czar-cert.pem /etc/ssl/czar-key.pem 2>&1 >> /qserv/log/czar-ssl-proxy/${yyyymmdd}.log'\'&
 fi
@@ -179,6 +181,7 @@ if [ -n "${CZAR_HTTP}" ]; then
     -e LSST_LOG_CONFIG=/config-etc/log/czar-http.cfg \
     --ulimit memlock=${ULIMIT_MEMLOCK} \
     --ulimit core=${ULIMIT_CORE} \
+    --ulimit nofile=${ULIMIT_NOFILE} \
     ${QSERV_IMAGE_TAG} \
     bash -c \''LD_PRELOAD=libjemalloc.so.2 qserv-czar-http ${QSERV_CZAR_HTTP_PARAMS} --user=${QSERV_CZAR_HTTP_USER} --password=${QSERV_CZAR_HTTP_PASSWORD}'\'&
 fi
@@ -197,6 +200,7 @@ if [ -n "${CZAR_DEBUG}" ]; then
     -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
     -v ${CORE_DUMPS}:/tmp/core-files \
     -v ${QSERV_BASE_DIR}/master/qserv:/home/qserv \
+    --ulimit nofile=${ULIMIT_NOFILE} \
     ${QSERV_IMAGE_TAG} \
     bash -c \''yum -y install gdb lz4 && tail -f /dev/null'\'
 fi
@@ -220,6 +224,7 @@ if [ -n "${WORKER_DB}" ]; then
       -v ${LOG_DIR}:/qserv/log \
       -v ${QSERV_BASE_DIR}/worker/qserv:/home/qserv \
       -e MYSQL_ROOT_PASSWORD="'${QSERV_WORKER_DB_ROOT_PASSWORD}'" \
+      --ulimit nofile=${ULIMIT_NOFILE} \
       ${QSERV_DB_IMAGE_TAG} \
       --port=${QSERV_WORKER_DB_PORT} \
       --max-connections=16384 \
@@ -263,6 +268,7 @@ if [ -n "${WORKER_CMSD}" ]; then
       -v ${LOG_DIR}:/qserv/log \
       -v ${QSERV_BASE_DIR}/worker/qserv:/home/qserv \
       -e LSST_LOG_CONFIG=/config-etc/log/cmsd.cfg \
+      --ulimit nofile=${ULIMIT_NOFILE} \
       ${QSERV_IMAGE_TAG} \
       bash -c \''cmsd -c /config-etc/cmsd.cfg -n worker -I v4 -d -l @libXrdSsiLog.so -+xrdssi /config-etc/xrdssi.cfg'\'&
   done
@@ -294,6 +300,7 @@ if [ -n "${WORKER_XROOTD}" ]; then
       -e LSST_LOG_CONFIG=/config-etc/log/xrootd.cfg \
       --ulimit memlock=${ULIMIT_MEMLOCK} \
       --ulimit core=${ULIMIT_CORE} \
+      --ulimit nofile=${ULIMIT_NOFILE} \
       ${QSERV_IMAGE_TAG} \
       bash -c \''LD_PRELOAD=libjemalloc.so.2 xrootd -c /config-etc/cmsd.cfg -n worker -I v4 -d -l @libXrdSsiLog.so -+xrdssi /config-etc/xrdssi.cfg'\'&
   done
@@ -315,6 +322,7 @@ if [ -n "${WORKER_DEBUG}" ]; then
       -v ${QSERV_BASE_DIR}/worker/etc/group:/etc/group:ro \
       -v ${CORE_DUMPS}:/tmp/core-files \
       -v ${QSERV_BASE_DIR}/worker/qserv:/home/qserv \
+      --ulimit nofile=${ULIMIT_NOFILE} \
       ${QSERV_IMAGE_TAG} \
       bash -c \''yum -y install gdb lz4 && tail -f /dev/null'\'
   done
@@ -340,6 +348,7 @@ if [ -n "${REPL_DB}" ]; then
     -v ${LOG_DIR}:/qserv/log \
     -v ${QSERV_BASE_DIR}/master/replication/config/docker/etc/mysql/conf.d/docker.cnf:/etc/mysql/conf.d/docker.cnf:ro \
     -e MYSQL_ROOT_PASSWORD=${REPL_DB_ROOT_PASSWORD} \
+    --ulimit nofile=${ULIMIT_NOFILE} \
     ${REPL_DB_IMAGE_TAG} \
     --port=${REPL_DB_PORT} \
     --max-connections=16384 \
@@ -387,6 +396,7 @@ if [ -n "${REPL_REG}" ]; then
     -e REPL_AUTH_KEY="'${REPL_AUTH_KEY}'" \
     -e REPL_ADMIN_AUTH_KEY="'${REPL_ADMIN_AUTH_KEY}'" \
     --ulimit core=${ULIMIT_CORE} \
+    --ulimit nofile=${ULIMIT_NOFILE} \
     ${REPL_IMAGE_TAG} \
     bash -c \''qserv-replica-registry ${REPL_REG_PARAMETERS} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --auth-key=${REPL_AUTH_KEY} --admin-auth-key=${REPL_ADMIN_AUTH_KEY}'\'&
 fi
@@ -426,6 +436,7 @@ if [ -n "${REPL_CONTR}" ]; then
     -e REPL_ADMIN_AUTH_KEY="'${REPL_ADMIN_AUTH_KEY}'" \
     -e REPL_REG_HOST="'${MASTER}'" \
     --ulimit core=${ULIMIT_CORE} \
+    --ulimit nofile=${ULIMIT_NOFILE} \
     ${REPL_IMAGE_TAG} \
     bash -c \''LD_PRELOAD=libjemalloc.so.2 qserv-replica-master-http ${REPL_CONTR_PARAMETERS} --registry-host=${REPL_REG_HOST} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-czar-db=${QSERV_CZAR_DB_CONN} --auth-key=${REPL_AUTH_KEY} --admin-auth-key=${REPL_ADMIN_AUTH_KEY}'\'&
 fi
@@ -457,6 +468,7 @@ if [ -n "${REPL_CONTR_DEBUG}" ]; then
     -e REPL_AUTH_KEY="'${REPL_AUTH_KEY}'" \
     -e REPL_ADMIN_AUTH_KEY="'${REPL_ADMIN_AUTH_KEY}'" \
     -e REPL_REG_HOST="'${MASTER}'" \
+    --ulimit nofile=${ULIMIT_NOFILE} \
     ${REPL_IMAGE_TAG} \
     bash -c \''yum -y install gdb lz4 && tail -f /dev/null'\'&
 fi
@@ -490,6 +502,7 @@ if [ -n "${REPL_WORKER}" ]; then
       -e REPL_REG_HOST="'${MASTER}'" \
       -w /qserv/log \
       --ulimit core=${ULIMIT_CORE} \
+      --ulimit nofile=${ULIMIT_NOFILE} \
      ${REPL_IMAGE_TAG} \
       bash -c \''qserv-replica-worker ${REPL_WORKER_PARAMETERS} --registry-host=${REPL_REG_HOST} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-worker-db=${QSERV_WORKER_DB_CONN} --auth-key=${REPL_AUTH_KEY} --admin-auth-key=${REPL_ADMIN_AUTH_KEY}'\' &
   done
@@ -522,6 +535,7 @@ if [ -n "${REPL_WORKER_DEBUG}" ]; then
       -e REPL_AUTH_KEY="'${REPL_AUTH_KEY}'" \
       -e REPL_ADMIN_AUTH_KEY="'${REPL_ADMIN_AUTH_KEY}'" \
       -e REPL_REG_HOST="'${MASTER}'" \
+      --ulimit nofile=${ULIMIT_NOFILE} \
       ${REPL_IMAGE_TAG} \
       bash -c \''yum -y install gdb lz4 && tail -f /dev/null'\'&
   done

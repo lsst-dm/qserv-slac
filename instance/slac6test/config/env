@@ -536,7 +536,104 @@ CZAR_SSL_PROXY_IMAGE_TAG="qserv/mysql-proxy-ssl:latest"
 #             NOTE: Extra configuration option(s) required by the HTTP-based Replication Worker service
 #                   require a special version of the "start" script.
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2025.10.1-rc1-15-g4666db084"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.10.1-rc1-15-g4666db084"
+#
+#             Same as above, plus commits from:
+#             DM-53152: Improve error handling in the implementation of the HTTP-based frontend of Qserv
+#             DM-52370: Extending Qserv REST API to allow ingesting partitioned user tables
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.10.1-rc1-21-gb2db6fd67"
+#
+#             Same as above. Rebased against the latest production release 2025.11.1-rc1 which includes:
+#             DM-53152: Improve error handling in the implementation of the HTTP-based frontend of Qserv
+#             NOTE: REST API change to 52
+#
+#             Same as above. Plus commits from DM-53361: catalog exportation services.
+#             NOTE: REST API change to 53
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.11.1-rc1-21-gd7c15f5dc"
+#
+#            Same as above. Plus DM-53597 (a fix to the Controller and R workers
+#            crashes after deleting databases).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.11.1-rc1-23-g46deb52ec"
+#
+#            Same as above. Previous tag DM-53597 was merged into the main branch,
+#            and DM-40005 was buit on top of the new release 2025.12.1-rc1. Plus
+#            extra logging to investiogate ongoing problems with Qserv sync stage
+#            during user table ingests. Fixed a bug in the user table ingest REST API.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.12.1-rc1-23-g3cd2c36a9"
+#
+#            Same as above. Plus added one commit from DM-53780 (Migrate the Qserv
+#            Replication/Ingest System and Czar HTTP frontend to use FQDN instead
+#            of IP addresses in internal communications).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.12.1-rc1-25-g97565394f"
+#
+#            Temporaly removed the table exportation PR from the build.
+#            The PR will be back here after being reviewed and merged into the main branch.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.12.1-rc1-24-g13e429190"
+#
+#            Based on DM-42005 rebased against main (release 2026.1.1-rc1i which also
+#            includes the table exportation services) plus DM-52370 (support user-defined
+#            directors in the user table ingest API)
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2026.1.1-rc1-20-g00d11c0f5"
+#
+#            Same as above plus connecton reset after allocating/releasing MySQL connections
+#            via pools in the R-I system. A goal is to see if thi scould help reduce memory
+#            utilization during the Replication System's operations.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2026.1.1-rc1-19-g22f0a40ff"
+#
+#            Plus "Track instances of  MessageWrapperBase"
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2026.1.1-rc1-20-g6207598e4"
+#
+#            Stopped registering requests in the Controller
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2026.1.1-rc1-21-gcb6cf562f"
+#
+#            Rebased against main which now includes DM-52370.
+#            Added commit from DM-53665 (Qserv Worker Replication service may crash after
+#            databases are deleted).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2026.1.1-rc1-24-gd8027bf18"
+#
+#            Based on DM-42005 which was rebaised against the new release 2026.2.1-rc1
+#            that includes all above-mentioned features (except experiments with ANTL4
+#            and prepaterialized sub-chunks).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2026.1.2-rc1-8-g57b99e298"
+#
+#            Same as above, plus DM-54026 (The Replication system may fail to sync the database
+#            state with Qserv workers).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2026.1.2-rc1-18-gcd65511fd"
+#
+#            Rebased against main (based on 2026.2.1-rc1) which also included
+#            DM-53922 for the partial migration (Repl/Ingest. qhttp, czar frontend)
+#            from boost::filesystem to std::filesystem.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2026.2.1-rc1-13-ge001e9a81"
+#
+#            Rebased against main which includes std::filesystem migration
+#            and backporting qservMeta.chunkMap population (for the sake for compatibility
+#            with John's version).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2026.2.1-rc1-15-g00c7aa3ed"
+#
+#            Same as above plus the prototyping commits from DM-54050 (Extending Qserv REST API
+#            to allow ingesting partitioned user tables which depend on existing directors).
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2026.2.1-rc1-27-ge904e4eec"
+#
+#            Based on the latest production releases that includes all the latest branches
+#	     mentiond above plus DM-42005.
+#
+QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.2.2-rc1-8-gc485e461f"
 
 QSERV_BASE_DIR="/zfspool/qserv-test"
 QSERV_CZAR_DB_PORT=3308
@@ -596,7 +693,10 @@ REPL_REG_PARAMETERS="--registry-port=${REPL_REG_PORT} --debug"
 #   --qserv-sync-disable
 #   --xrootd-auto-notify=0
 #
-REPL_CONTR_PARAMETERS="--registry-port=${REPL_REG_PORT} --xrootd-port=${QSERV_XROOTD_PORT} --controller-http-server-port=${REPL_CONTR_HTTP_PORT} --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --purge --debug"
+# DISABLED Changed default pool size from the number of cores to 16.
+#   --database-services-pool-size=64
+#
+REPL_CONTR_PARAMETERS="--common-request-buf-size-bytes=4096 --registry-port=${REPL_REG_PORT} --xrootd-port=${QSERV_XROOTD_PORT} --controller-http-server-port=${REPL_CONTR_HTTP_PORT} --http-root=/usr/local/qserv/www/ --worker-evict-timeout=3600 --health-probe-interval=120 --replication-interval=600 --qserv-sync-timeout=600 --do-not-create-folders --controller-ingest-job-monitor-ival-sec=1 --controller-request-timeout-sec=28800 --controller-job-timeout-sec=86400 --controller-num-threads=32 --controller-http-server-threads=32 --purge --debug"
 
 REPL_WORKER_SVC_PORT=25800
 REPL_WORKER_FS_PORT=25801
@@ -605,16 +705,17 @@ REPL_WORKER_EXPORTER_PORT=25803
 REPL_WORKER_HTTP_LOADER_PORT=25804
 REPL_WORKER_HTTP_SVC_PORT=25805
 
-# Uncomment to configure properly the HTTP-based Replication worker
-REPL_WORKER_PARAMETERS="--registry-port=${REPL_REG_PORT} --worker-svc-port=${REPL_WORKER_SVC_PORT} --worker-fs-port=${REPL_WORKER_FS_PORT} --worker-loader-port=${REPL_WORKER_LOADER_PORT} --worker-exporter-port=${REPL_WORKER_EXPORTER_PORT} --worker-http-loader-port=${REPL_WORKER_HTTP_LOADER_PORT} --worker-ingest-num-retries=4 --schema-upgrade-wait=1 --schema-upgrade-wait-timeout=600 --do-not-create-folders --worker-num-async-loader-processing-threads=32 --worker-num-http-loader-processing-threads=32 --worker-http-svc-port=${REPL_WORKER_HTTP_SVC_PORT} --debug"
-# REPL_WORKER_PARAMETERS="--registry-port=${REPL_REG_PORT} --worker-svc-port=${REPL_WORKER_SVC_PORT} --worker-fs-port=${REPL_WORKER_FS_PORT} --worker-loader-port=${REPL_WORKER_LOADER_PORT} --worker-exporter-port=${REPL_WORKER_EXPORTER_PORT} --worker-http-loader-port=${REPL_WORKER_HTTP_LOADER_PORT} --worker-ingest-num-retries=4 --schema-upgrade-wait=1 --schema-upgrade-wait-timeout=600 --do-not-create-folders --worker-num-async-loader-processing-threads=32 --worker-num-http-loader-processing-threads=32 --debug"
-
+# NOTE: config parameters for the HTTP-based Replication worker:
+#
+#   --worker-http-svc-port=
+#
+REPL_WORKER_PARAMETERS="--registry-port=${REPL_REG_PORT} --worker-svc-port=${REPL_WORKER_SVC_PORT} --worker-fs-port=${REPL_WORKER_FS_PORT} --worker-loader-port=${REPL_WORKER_LOADER_PORT} --worker-exporter-port=${REPL_WORKER_EXPORTER_PORT} --worker-http-loader-port=${REPL_WORKER_HTTP_LOADER_PORT} --worker-ingest-num-retries=4 --schema-upgrade-wait=1 --schema-upgrade-wait-timeout=600 --do-not-create-folders --worker-num-async-loader-processing-threads=32 --worker-num-http-loader-processing-threads=32 --worker-exporter-threads=32 --worker-http-svc-port=${REPL_WORKER_HTTP_SVC_PORT} --debug"
 
 # Uncomment if needed to mount the local (ouside the container) version of
 # the Web dashboard and other Web apps served by the HTTP server of
 # the Master Controller 
 #
-#REPL_HTTP_ROOT="/zfspool/management/qserv/src/www"
+# REPL_HTTP_ROOT="/zfspool/management/qserv/src/www"
 
 # Limit size of the replication containers by 100 GB
 # This is needed for ingesting (very) large numbers of contributions.
@@ -639,6 +740,9 @@ ULIMIT_MEMLOCK=1099511627776
 
 # Unlimited core file size
 ULIMIT_CORE="-1:-1"
+
+# The number of file descriptors
+ULIMIT_NOFILE="65536:65536"
 
 # Other parameters are set by the following script based on the above defined
 # one, or be loaded from predefined locations.

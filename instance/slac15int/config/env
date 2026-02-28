@@ -147,7 +147,31 @@ CZAR_SSL_PROXY_IMAGE_TAG="qserv/mysql-proxy-ssl:latest"
 #
 # 2025-08-21: The latest production release. REST API version 49.
 #
-QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1"
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.8.2-rc1"
+#
+# 2025-10-30: The latest production release. REST API version 51. Qmeta schema version 17.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.10.1-rc1"
+#
+# 2025-11-06: The latest production release.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.11.1-rc1"
+#
+# 2025-12-11: The latest production release. REST API version 51. Qmeta schema version 17.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2025.12.1-rc1"
+#
+# 2026-01-29: The latest production release. REST API version 54.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2026.1.2-rc1"
+#
+# 2026-02-05: The latest production release.
+#
+# QSERV_IMAGE_TAG="qserv/lite-qserv:2026.2.1-rc1"
+#
+# 2026-02-26: The latest production release.
+#
+QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.2.2-rc1"
 
 QSERV_BASE_DIR="/zfspool/qserv-int"
 QSERV_CZAR_DB_PORT=3309
@@ -238,6 +262,9 @@ ULIMIT_MEMLOCK=1099511627776
 
 # Unlimited core file size
 ULIMIT_CORE="-1:-1"
+
+# The number of file descriptors
+ULIMIT_NOFILE="65536:65536"
 
 # Other parameters are set by the following script based on the above defined
 # one, or be loaded from predefined locations.

@@ -96,6 +96,7 @@ if [ -n "${CZAR_XROOTD}" ]; then
     bash -c \''xrootd -c /config-etc/xrootd.cfg -n manager -I v4 -d -l @libXrdSsiLog.so'\'&
 fi
 
+#     -v ${QSERV_BASE_DIR}/master/etc/hosts:/etc/hosts:ro \
 if [ -n "${CZAR_PROXY}" ]; then
   echo "[${MASTER}] starting qserv czar proxy"
   LOG_DIR=${QSERV_BASE_DIR}/master/log
@@ -108,6 +109,7 @@ if [ -n "${CZAR_PROXY}" ]; then
     --name=${CZAR_PROXY_CONTAINER_NAME} \
     --restart=${CONTAINER_RESTART_POLICY} \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
+    -v ${QSERV_BASE_DIR}/master/etc/hosts:/etc/hosts:ro \
     -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
     -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
     -v ${QSERV_BASE_DIR}/master/config:/config-etc:ro \
@@ -152,6 +154,7 @@ if [ -n "${CZAR_SSL_PROXY}" ]; then
     /bin/sh -c \''/usr/local/bin/proxy ${SSL_PORT_OUT} ${PORT_IN} /etc/ssl/czar-cert.pem /etc/ssl/czar-key.pem 2>&1 >> /qserv/log/czar-ssl-proxy/${yyyymmdd}.log'\'&
 fi
 
+#     -v ${QSERV_BASE_DIR}/master/etc/hosts:/etc/hosts:ro \
 if [ -n "${CZAR_HTTP}" ]; then
   echo "[${MASTER}] starting qserv czar http frontend"
   LOG_DIR=${QSERV_BASE_DIR}/master/log
@@ -163,6 +166,7 @@ if [ -n "${CZAR_HTTP}" ]; then
     --name=${CZAR_HTTP_CONTAINER_NAME} \
     --restart=${CONTAINER_RESTART_POLICY} \
     -u ${CONTAINER_UID}:${CONTAINER_GID} \
+    -v ${QSERV_BASE_DIR}/master/etc/hosts:/etc/hosts:ro \
     -v ${QSERV_BASE_DIR}/master/etc/passwd:/etc/passwd:ro \
     -v ${QSERV_BASE_DIR}/master/etc/group:/etc/group:ro \
     -v ${QSERV_BASE_DIR}/master/config:/config-etc:ro \
@@ -391,6 +395,10 @@ if [ -n "${REPL_REG}" ]; then
     bash -c \''qserv-replica-registry ${REPL_REG_PARAMETERS} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --auth-key=${REPL_AUTH_KEY} --admin-auth-key=${REPL_ADMIN_AUTH_KEY}'\'&
 fi
 
+# Set the following environment variable before running the Controller
+#
+#   LD_PRELOAD=/usr/lib64/libjemalloc.so.2 qserv-replica-master-http ...
+
 if [ -n "${REPL_CONTR}" ]; then
   echo "[${MASTER}] starting repl contr"
   LOG_DIR=${QSERV_BASE_DIR}/master/log
@@ -427,7 +435,7 @@ if [ -n "${REPL_CONTR}" ]; then
     -e REPL_REG_HOST="'${MASTER}'" \
     --ulimit core=${ULIMIT_CORE} \
     ${REPL_IMAGE_TAG} \
-    bash -c \''LD_PRELOAD=libjemalloc.so.2 qserv-replica-master-http ${REPL_CONTR_PARAMETERS} --registry-host=${REPL_REG_HOST} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-czar-db=${QSERV_CZAR_DB_CONN} --auth-key=${REPL_AUTH_KEY} --admin-auth-key=${REPL_ADMIN_AUTH_KEY}'\'&
+    bash -c \''qserv-replica-master-http ${REPL_CONTR_PARAMETERS} --registry-host=${REPL_REG_HOST} --config=${REPL_DB_CONN} --instance-id=${REPL_INSTANCE_ID} --qserv-czar-db=${QSERV_CZAR_DB_CONN} --auth-key=${REPL_AUTH_KEY} --admin-auth-key=${REPL_ADMIN_AUTH_KEY}'\'&
 fi
 
 if [ -n "${REPL_CONTR_DEBUG}" ]; then
