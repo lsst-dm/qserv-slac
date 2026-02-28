@@ -1,0 +1,1 @@
+{"query":"SELECT * FROM dp1.Object WHERE subChunkId=1 LIMIT 50000"}
