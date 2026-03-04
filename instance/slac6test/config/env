@@ -633,7 +633,21 @@ CZAR_SSL_PROXY_IMAGE_TAG="qserv/mysql-proxy-ssl:latest"
 #            Based on the latest production releases that includes all the latest branches
 #	     mentiond above plus DM-42005.
 #
-QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.2.2-rc1-8-gc485e461f"
+# QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.2.2-rc1-8-gc485e461f"
+#
+#            Fixed a potential bug in the implementation of the result merger.
+#
+# QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.2.2-rc1-9-g8fffdaeb6"
+#
+#            Increased DNS cache size in http::Client (libcurl) from the default 60 seconds
+#            to 600 seconds.
+#
+# QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.2.2-rc1-10-g4f8b74ebf"
+#
+#            Fixed a bug in the implementation of http::Client, which was not properly
+#            handling stream read termination conditions reported by a caller.
+#
+QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.2.2-rc1-10-g8c6602616"
 
 QSERV_BASE_DIR="/zfspool/qserv-test"
 QSERV_CZAR_DB_PORT=3308
@@ -742,7 +756,8 @@ ULIMIT_MEMLOCK=1099511627776
 ULIMIT_CORE="-1:-1"
 
 # The number of file descriptors
-ULIMIT_NOFILE="65536:65536"
+# ULIMIT_NOFILE="131072:131072"
+ULIMIT_NOFILE="262144:262144"
 
 # Other parameters are set by the following script based on the above defined
 # one, or be loaded from predefined locations.
