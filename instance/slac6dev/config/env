@@ -2,6 +2,21 @@
 
 #set -x
 
+cat << EOF
+
+                            *** ATTENTION ***
+
+   This Qserv instance is presently disabled. For managing the alternative
+   deployment do:
+
+     ssh sdfqserv009
+     cd /zfspool/management/qserv-slac/instance/slac6dev
+     git checkout tickets/DM-43715
+
+EOF
+
+exit 1
+
 # This instance-specific script is supposed to be sourced from the Qserv
 # management scripts in order to set up proper values of the corresponding
 # parameters.

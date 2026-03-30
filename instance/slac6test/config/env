@@ -647,7 +647,70 @@ CZAR_SSL_PROXY_IMAGE_TAG="qserv/mysql-proxy-ssl:latest"
 #            Fixed a bug in the implementation of http::Client, which was not properly
 #            handling stream read termination conditions reported by a caller.
 #
-QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.2.2-rc1-10-g8c6602616"
+# QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.2.2-rc1-10-g8c6602616a"
+#
+#            Rebased against the latest release 2026.3.1-rc1.
+#            Rebuild xrootd with cmake "-DCMAKE_BUILD_TYPE=Debug" to prevent code optimization
+#            and allow debugging locks in the XROOTD/SSI stack.
+#
+# QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.3.1-rc1-9-g01f812e79"
+#
+#            Rebuild xrootd with a patch that is supposed to fix the deadloack.
+#
+# QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.3.1-rc1-11-gfda6e2d0b"
+#
+#            Rebuild xrootd with the second patch that is supposed to address a problem
+#            that was introduced by the first patch.
+#
+# QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.3.1-rc1-11-g1cefe1bed"
+#
+#            Added a commit to test DM-54401 (The query analysis plugin in Qserv uses
+#            the incorrect director table when joining between partitioned and
+#            fully-replicated tables of different catalogs).
+#
+# QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.3.1-rc1-12-g3cfedba7f"
+#
+#            Rebased against the main branch. The branch now included the previously
+#            mentioned patches (except the ones for the XROOTD/SSI deadlock).
+#
+# QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.3.1-rc1-15-g1c06b5881"
+#
+#            Same as before plus prototype commits from DM-52781 (Joining tables of catalogs
+#            that have non-exact spatial coverage).
+#
+# QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.3.1-rc1-16-g2e08b9453"
+#
+#            Same as before, except built on top of the latest release that includes DM-54401
+#            and DM-52781. Experimental patches attempting to fix the XROOTD/SSI deadlock
+#            have bee retained as well.
+#
+# QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.3.2-rc1-11-g23c9699e6"
+#
+#            Same as before plus one more patch to XRootD/SSI that is meant
+#            to prevent thread lockups (witing XRootD/SSI).
+#
+# QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.3.2-rc1-12-gb79a82531"
+# QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.3.2-rc1-10-g8f38bb3e4"
+#
+#            Same as before plus one commit to investigate an issue with the result file
+#            retrievals from workers.
+#
+# QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.3.2-rc1-11-g294a0f5fd"
+#
+#            One extra commit to fix Qserv worker crashes due to the DNS resolution hiccups
+#            as described in DM-54443.
+#
+# QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.3.2-rc1-12-ga869e7f8b"
+#
+#            Rebased against the latest "main" which includes the previous PRs for the XROOTD
+#            fix and for DM-54443 merged in there.
+#
+# QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.3.2-rc1-13-geace5f99b"
+#
+#            Same as above rebased againts the latest production release
+#
+QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.3.3-rc1-11-ga0cf97e3f"
+
 
 QSERV_BASE_DIR="/zfspool/qserv-test"
 QSERV_CZAR_DB_PORT=3308

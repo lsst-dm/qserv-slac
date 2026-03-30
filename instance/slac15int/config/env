@@ -1,5 +1,20 @@
 #!/bin/bash
 
+cat << EOF
+
+                            *** ATTENTION ***
+
+   This Qserv instance is presently disabled. For managing the alternative
+   deployment do:
+
+     ssh sdfqserv001
+     cd /zfspool/management/qserv-slac/instance/slac6int
+     git checkout main
+
+EOF
+
+exit 1
+
 #set -x
 
 # This instance-specific script is supposed to be sourced from the Qserv
@@ -175,7 +190,15 @@ CZAR_SSL_PROXY_IMAGE_TAG="qserv/mysql-proxy-ssl:latest"
 #
 # 2026-03-03: The latest production release.
 #
-QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.3.1-rc1"
+# QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.3.1-rc1"
+#
+# 2026-03-19: The latest production release.
+#
+# QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.3.2-rc1"
+#
+# 2026-03-22: The latest production release.
+#
+QSERV_IMAGE_TAG="ghcr.io/lsst/qserv:2026.3.3-rc1"
 
 QSERV_BASE_DIR="/zfspool/qserv-int"
 QSERV_CZAR_DB_PORT=3309
